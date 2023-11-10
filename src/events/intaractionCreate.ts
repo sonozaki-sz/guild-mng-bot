@@ -34,10 +34,12 @@ export const interactionCreateEvent: BotEvent = {
                 .then(() => {
                     logger.info(__t("bot/command/execute/success", { command: interaction.commandName, guild: interaction.guildId! }));
                 }).catch((error: Error) => {
-                    const replyMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: error.message || "unknown error" });
-                    const logMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: error.stack || error.message || "unknown error" });
+                    const errorDescMsg = error.message || "unknown error";
+                    const replyMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
                     const embed = GetReplyEmbed(replyMsg, ReplyEmbedType.Error);
                     interaction.reply({ embeds: [embed] });
+                    const errorDescLog = error.stack || error.message || "unknown error";
+                    const logMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
                     logger.error(logMsg);
                     interaction
                     if (error instanceof KeyvsError) {
@@ -60,9 +62,9 @@ export const interactionCreateEvent: BotEvent = {
             command.autocomplete(interaction)
                 .then(() => {
                     logger.info(__t("bot/command/autocomplete/success", { command: interaction.commandName, guild: interaction.guildId! }));
-                }).catch((error) => {
-                    const errorText = error?.toString() || "unknown error";
-                    logger.error(__t("bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorText }));
+                }).catch((error: Error) => {
+                    const errorDesc = error.stack || error.message || "unknown error";
+                    logger.error(__t("bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDesc }));
                 });
         } else if (interaction.isModalSubmit()) {
             const command: Command = interaction.client.commands.get(interaction.customId);
@@ -77,9 +79,9 @@ export const interactionCreateEvent: BotEvent = {
             command.modal(interaction)
                 .then(() => {
                     logger.info(__t("bot/command/modal/success", { command: interaction.customId, guild: interaction.guildId! }));
-                }).catch((error) => {
-                    const errorText = error?.toString() || "unknown error";
-                    logger.error(__t("bot/command/modal/faild", { command: interaction.customId, guild: interaction.channelId!, error: errorText }));
+                }).catch((error: Error) => {
+                    const errorDesc = error.stack || error.message || "unknown error";
+                    logger.error(__t("bot/command/modal/faild", { command: interaction.customId, guild: interaction.guildId!, error: errorDesc }));
                 });
         }
     }
