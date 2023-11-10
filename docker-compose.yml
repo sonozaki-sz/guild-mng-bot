@@ -2,4 +2,10 @@ version: '3'
 services:
   bot:
     build: .
-    init: true
+    # init: true  # docker stackでは使えないので不可
+    # .envファイルではなく、環境変数を使用するが、docker-compose.ymlに直接書くのはよくないので、以下のようにする
+    environment:
+      TOKEN: ${TOKEN}
+      APP_ID: ${APP_ID}
+      GUILD_ID: ${GUILD_ID}
+      LOCALE: ${LOCALE}
