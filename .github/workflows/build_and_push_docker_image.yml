@@ -21,10 +21,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # ユーザー名に大文字が含まれる場合に備えて小文字に変換する
+      - name: Convert to lowercase
+        id: lowercase
+        run: echo "::set-output name=actor::$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')"
       # プロジェクトルートのDockerfileをビルドして、ghcr.io/username/guild-mng-bot:latestとして公開する
       - name: build for bot
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.actor }}/guild-mng-bot:latest
+          tags: ghcr.io/${{ steps.lowercase.outputs.actor }}/guild-mng-bot:latest
