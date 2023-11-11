@@ -1,7 +1,7 @@
 version: '3'
 services:
   bot:
-    build: .
+    image: ghcr.io/sylx/guild-mng-bot:latest
     # init: true  # docker stackでは使えないので不可
     # .envファイルではなく、環境変数を使用するが、docker-compose.ymlに直接書くのはよくないので、以下のようにする
     environment:
