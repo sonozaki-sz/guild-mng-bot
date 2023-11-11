@@ -12,8 +12,8 @@ export const channelDeleteEvent: BotEvent = {
                 // VCの自動作成機能実行中にトリガーチャンネルが消されたとき、自動作成機能を停止する。
                 stopVCAutoCreation(channel as VoiceChannel)
                     .catch(error => {
-                        const errorDescLog = error.stack || error.message || "unknown error";
-                        const logMsg = __t("bot/vcAutoCreation/error/logMessage", { guild: channel.guildId, error: errorDescLog });
+                        const errorDesc = error.stack || error.message || "unknown error";
+                        const logMsg = __t("bot/vcAutoCreation/error/logMessage", { guild: channel.guildId, error: errorDesc });
                         logger.error(logMsg);
                         if (error instanceof KeyvsError) {
                             keyvs.setkeyv(channel.guildId);

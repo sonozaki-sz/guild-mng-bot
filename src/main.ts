@@ -37,7 +37,8 @@ rest.setToken(config.token);
         );
         logger.info(__t("bot/command/register/complated"));
     } catch (error: any) {
-        logger.error(__t("bot/command/register/faild", { error: error.toString() }));
+        const errorDesc = error.stack || error.message || "unknown error";
+        logger.error(__t("bot/command/register/faild", { error: errorDesc }));
     }
 })();
 
@@ -53,6 +54,7 @@ for (const event of events) {
 
 // Discordにログイン
 client.login(config.token)
-    .catch(error => {
-        logger.error(__t("bot/login/faild", { error: error.toString() }));
+    .catch((error: Error) => {
+        const errorDesc = error.stack || error.message || "unknown error";
+        logger.error(__t("bot/login/faild", { error: errorDesc }));
     });
