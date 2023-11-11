@@ -1,0 +1,30 @@
+name: Build and Deploy
+on:
+  workflow_dispatch:
+    branches: [ main ]
+  push: 
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # レポジトリのチェックアウト
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      # dockerxを使用可能にする
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      # github packagesにログイン
+      - name: Login GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # プロジェクトルートのDockerfileをビルドして、ghcr.io/username/guild-mng-bot:latestとして公開する
+      - name: build for bot
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.actor }}/guild-mng-bot:latest
