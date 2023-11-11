@@ -1,7 +1,7 @@
 version: '3'
 services:
   bot:
-    image: ghcr.io/sonozakiSZ/guild-mng-bot:latest
+    image: ghcr.io/sonozakisz/guild-mng-bot:latest
     volumes:
       - guild-mng-bot-logs:/app/logs
     # init: true  # docker stackでは使えないので不可
