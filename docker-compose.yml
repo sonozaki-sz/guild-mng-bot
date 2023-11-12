@@ -3,7 +3,8 @@ services:
   bot:
     image: ghcr.io/sonozakisz/guild-mng-bot:latest
     volumes:
-      - guild-mng-bot-logs:/app/logs
+      - logs:/app/logs
+      - storage:/app/storage
     # init: true  # docker stackでは使えないので不可
     # .envファイルではなく、環境変数を使用するが、docker-compose.ymlに直接書くのはよくないので、以下のようにする
     environment:
@@ -12,5 +13,5 @@ services:
       GUILD_ID: ${GUILD_ID}
       LOCALE: ${LOCALE}
 volumes:
-  guild-mng-bot-logs:
-    external: true
+  logs:
+  storage:
