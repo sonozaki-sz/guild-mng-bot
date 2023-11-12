@@ -74,7 +74,7 @@ export type Vocabulary = {
     "bot/command/cnf-vc/notInVC": Message,
     "bot/command/cnf-vc/rename/description": Message,
     "bot/command/cnf-vc/rename/nameOption/description": Message,
-    "bot/command/cnf-vc/rename/success": Message<{ channel: string }>,
+    "bot/command/cnf-vc/rename/success": Message<{ channel: string, name: string }>,
     "bot/command/cnf-vc/rename/faild": Message<{ error: string }>,
     "bot/command/cnf-vc/user-limit/description": Message,
     "bot/command/cnf-vc/user-limit/userLimitOption/description": Message,

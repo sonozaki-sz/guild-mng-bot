@@ -73,7 +73,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-vc/notInVC": msg("設定するボイスチャンネルに入室中に実行してください。"),
     "bot/command/cnf-vc/rename/description": msg("ボイスチャンネルの名前を変更します。"),
     "bot/command/cnf-vc/rename/nameOption/description": msg("変更する名前を入力してください。"),
-    "bot/command/cnf-vc/rename/success": msg("名前を{channel}に変更しました。"),
+    "bot/command/cnf-vc/rename/success": msg("{channel}の名前を{name}に変更しました。"),
     "bot/command/cnf-vc/rename/faild": msg("ボイスチャンネルの名前の変更に失敗しました。\n詳細：\n{error}"),
     "bot/command/cnf-vc/user-limit/description": msg("ボイスチャンネルの人数制限を設定します。"),
     "bot/command/cnf-vc/user-limit/userLimitOption/description": msg("人数制限を入力してください。(0~99 0：無制限)"),
