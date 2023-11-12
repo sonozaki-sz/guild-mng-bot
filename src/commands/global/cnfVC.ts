@@ -43,7 +43,7 @@ export const cnfVCCommand: Command = {
                 const name = interaction.options.getString("name")!;
                 member.voice.channel.setName(name)
                     .then(channel => {
-                        const embed = GetReplyEmbed(__t("bot/command/cnf-vc/rename/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                        const embed = GetReplyEmbed(__t("bot/command/cnf-vc/rename/success", { channel: channel.toString(), name: channel.name }), ReplyEmbedType.Success);
                         interaction.reply({ embeds: [embed] });
                     }).catch((error) => {
                         const embed = GetReplyEmbed(__t("bot/command/cnf-vc/rename/faild", { error: error.toString() }), ReplyEmbedType.Warn);
