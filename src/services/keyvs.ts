@@ -4,7 +4,7 @@ export class Keyvs {
     private keyvs: Map<string, Keyv> = new Map();
 
     setkeyv(namespace: string) {
-        return this.keyvs.set(namespace, new Keyv("sqlite://db.sqlite", { namespace: namespace }));
+        return this.keyvs.set(namespace, new Keyv("sqlite://storage/db.sqlite", { namespace: namespace }));
     }
 
     async deletekeyv(namespace: string) {
