@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import keyvs, { KeyvKeys, KeyvsError } from "../services/keyvs";
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
+import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
 import { Command } from "../types";
 
 export const afkCommand: Command = {
-    data: new SlashCommandBuilder()
+    data: new SlashCommandSubcommandBuilder()
         .setName("afk")
         .setDescription(__t("bot/command/afk/description"))
         .addUserOption(option =>
@@ -22,10 +22,7 @@ export const afkCommand: Command = {
             interaction.reply({ embeds: [embed] });
             return;
         }
-        const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC)
-            .catch((error) => {
-                throw new KeyvsError(error);
-            });
+        const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
         if (!afkChannel) {
             const embed = GetReplyEmbed(__t("bot/command/notSetDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });

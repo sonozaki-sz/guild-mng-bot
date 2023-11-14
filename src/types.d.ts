@@ -1,7 +1,7 @@
-import { AutocompleteInteraction, CacheType, ChatInputCommandInteraction, ModalSubmitInteraction, SlashCommandBuilder } from "discord.js";
+import { AutocompleteInteraction, CacheType, ChatInputCommandInteraction, ModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export interface Command {
-    data: Omit<SlashCommandBuilder, "addSubcommandGroup" | "addSubcommand" | "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">,
+    data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandSubcommandGroupBuilder,
     async execute: (interaction: ChatInputCommandInteraction) => Promise<any>,
     async autocomplete?: (interaction: AutocompleteInteraction) => Promise<any>,
     async modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<any>,

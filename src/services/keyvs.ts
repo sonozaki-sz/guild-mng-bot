@@ -8,24 +8,39 @@ export class Keyvs {
     }
 
     async deletekeyv(namespace: string) {
-        await this.keyvs.get(namespace)?.clear();
+        await this.keyvs.get(namespace)?.clear()
+            .catch((error: Error) => {
+                throw new KeyvsError(error.message);
+            });
         return this.keyvs.delete(namespace);
     }
 
     async getValue(namespace: string, key: string) {
-        return this.keyvs.get(namespace)?.get(key);
+        return this.keyvs.get(namespace)?.get(key)
+            .catch((error: Error) => {
+                throw new KeyvsError(error.message)
+            });
     }
 
     async setValue(namespace: string, key: string, value: any, ttl?: number) {
-        return this.keyvs.get(namespace)?.set(key, value, ttl);
+        return this.keyvs.get(namespace)?.set(key, value, ttl)
+            .catch((error: Error) => {
+                throw new KeyvsError(error.message)
+            });
     }
 
     async deleteValue(namespace: string, key: string) {
-        return this.keyvs.get(namespace)?.delete(key);
+        return this.keyvs.get(namespace)?.delete(key)
+            .catch((error: Error) => {
+                throw new KeyvsError(error.message)
+            });
     }
 
     async clearKeyvs() {
-        this.keyvs.forEach(async keyv => await keyv.clear());
+        this.keyvs.forEach(async keyv => await keyv.clear()
+            .catch((error: Error) => {
+                throw new KeyvsError(error.message)
+            }));
         return this.keyvs.clear();
     }
 }
@@ -35,14 +50,8 @@ export enum KeyvKeys {
     VacTriggerVC = "vcAutoCreation/triggerVC",
     IsValidVac = "vcAutoCreation/isValidVac",
     VacChannels = "vcAutoCreation/channels",
+    ProfChannel = "profChannel",
 }
-
-// interface KysvsError extends Error { };
-// interface KeyvsErrorConstructor extends ErrorConstructor {
-//     new(message?: string, options?: ErrorOptions): KysvsError;
-//     (message?: string, options?: ErrorOptions): KysvsError;
-// }
-// export declare const KeyvsError: KeyvsErrorConstructor;
 
 export class KeyvsError extends Error {
     constructor(message?: string) {

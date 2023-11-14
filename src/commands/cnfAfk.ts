@@ -1,5 +1,5 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import keyvs, { KeyvKeys, KeyvsError } from "../services/keyvs";
+import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
 import { Command } from "../types";
@@ -12,7 +12,7 @@ export const cnfAfkCommand: Command = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName("set-dest")
-                .setDescription(__t("bot/command/cnf-afk/description"))
+                .setDescription(__t("bot/command/cnf-afk/set-dest/description"))
                 .addChannelOption(option =>
                     option
                         .setName("channel")
@@ -31,19 +31,12 @@ export const cnfAfkCommand: Command = {
             case "set-dest": {
                 const channel: VoiceChannel = interaction.options.getChannel("channel")!;
                 await keyvs.setValue(interaction.guildId!, KeyvKeys.DestAfkVC, channel)
-                    .then(() => {
-                        const embed = GetReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
-                        interaction.reply({ embeds: [embed] });
-                    }).catch(error => {
-                        throw new KeyvsError(error);
-                    });
+                const embed = GetReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-dest": {
-                const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC)
-                    .catch((error) => {
-                        throw new KeyvsError(error);
-                    });
+                const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
                 if (!afkChannel) {
                     const embed = GetReplyEmbed(__t("bot/command/notSetDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
