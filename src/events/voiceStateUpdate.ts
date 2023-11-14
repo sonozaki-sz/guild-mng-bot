@@ -50,6 +50,7 @@ const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState)
             createChannels.push(newChannel);
             await keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, createChannels);
             await oldState.member?.voice.setChannel(newChannel);
+            logger.info(__t("bot/vcAutoCreation/channelCreate", { guild: newState.guild.id, channel: newChannel.id }));
         } catch (error: any) {
             const embed = GetReplyEmbed("", ReplyEmbedType.Warn);
             newState.channel?.send({ embeds: [embed] });
@@ -70,6 +71,7 @@ const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState)
         .catch(error => {
             throw new KeyvsError(error);
         });
+    logger.info(__t("bot/vcAutoCreation/channelDelete", { guild: oldState.guild.id, channel: oldState.channelId! }));
 }
 
 export default voiceStateUpdateEvent;

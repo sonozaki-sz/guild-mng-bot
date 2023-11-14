@@ -11,3 +11,5 @@ export const globalCommands = [
     vcAutoCreationCommand,
     cnfVCCommand
 ];
+
+export default globalCommands;
