@@ -35,6 +35,7 @@ const stopVCAutoCreation = async (channel: VoiceChannel) => {
             if (channel.id === triggerChannel?.id) {
                 await keyvs.setValue(channel.guildId!, KeyvKeys.IsValidVac, false);
                 await keyvs.deleteValue(channel.guildId!, KeyvKeys.VacTriggerVC);
+                logger.info(__t("bot/vcAutoCreation/stop", { guild: channel.guildId }));
             }
         }
     } catch (error: any) {

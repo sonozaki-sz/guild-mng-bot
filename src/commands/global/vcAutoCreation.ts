@@ -1,6 +1,7 @@
 import { ChannelType, ChatInputCommandInteraction, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import keyvs, { KeyvKeys, KeyvsError } from "../../services/keyvs";
 import { __t } from "../../services/locale";
+import { logger } from "../../services/logger";
 import { GetReplyEmbed, ReplyEmbedType } from "../../services/utility";
 import { Command } from "../../types";
 
@@ -56,6 +57,7 @@ export const vcAutoCreationCommand: Command = {
                 }
                 const embed = GetReplyEmbed(__t("bot/command/vac/start/success"), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
+                logger.info(__t("bot/vcAutoCreation/start", { guild: interaction.guildId! }));
                 break;
             }
             case "stop": {
@@ -82,6 +84,7 @@ export const vcAutoCreationCommand: Command = {
                 }
                 const embed = GetReplyEmbed(__t("bot/command/vac/stop/success"), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
+                logger.info(__t("bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
                 break;
             }
             case "status": {
