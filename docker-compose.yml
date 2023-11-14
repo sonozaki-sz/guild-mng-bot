@@ -10,7 +10,6 @@ services:
     environment:
       TOKEN: ${TOKEN}
       APP_ID: ${APP_ID}
-      GUILD_ID: ${GUILD_ID}
       LOCALE: ${LOCALE}
 volumes:
   logs:

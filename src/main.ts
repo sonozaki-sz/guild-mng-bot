@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits, Routes } from "discord.js";
-import { globalCommands } from "./commands/global";
+import { globalCommands } from "./commands";
 import { events } from "./events";
 import { config } from "./services/config";
 import { __t } from "./services/locale";
@@ -29,11 +29,6 @@ rest.setToken(config.token);
         await rest.put(
             Routes.applicationCommands(config.appID),
             { body: globalCommands.map(command => command.data.toJSON()) },
-        );
-        // ギルドコマンドの登録
-        await rest.put(
-            Routes.applicationGuildCommands(config.appID, config.guildID),
-            { body: [] },
         );
         logger.info(__t("bot/command/register/complated"));
     } catch (error: any) {
