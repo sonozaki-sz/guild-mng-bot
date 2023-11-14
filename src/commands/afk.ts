@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
 import { Command } from "../types";
 
 export const afkCommand: Command = {
-    data: new SlashCommandBuilder()
+    data: new SlashCommandSubcommandBuilder()
         .setName("afk")
         .setDescription(__t("bot/command/afk/description"))
         .addUserOption(option =>

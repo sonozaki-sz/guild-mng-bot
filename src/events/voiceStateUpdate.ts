@@ -9,7 +9,7 @@ export const voiceStateUpdateEvent: BotEvent = {
     name: Events.VoiceStateUpdate,
     execute: async (oldState: VoiceState, newState: VoiceState) => {
         executeVCAutoCreation(oldState, newState)
-            .catch(error => {
+            .catch((error: Error) => {
                 const errorDescUser = error.message || "unknown error";
                 const userMsg = __t("bot/vcAutoCreation/error/userMessage", { error: errorDescUser });
                 const embed = GetReplyEmbed(userMsg, ReplyEmbedType.Error);

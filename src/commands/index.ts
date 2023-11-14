@@ -13,5 +13,3 @@ export const globalCommands = [
     cnfVCCommand,
     cnfProfChannelCommand
 ];
-
-export default globalCommands;
