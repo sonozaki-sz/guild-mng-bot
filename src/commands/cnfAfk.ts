@@ -12,7 +12,7 @@ export const cnfAfkCommand: Command = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName("set-dest")
-                .setDescription(__t("bot/command/cnf-afk/description"))
+                .setDescription(__t("bot/command/cnf-afk/set-dest/description"))
                 .addChannelOption(option =>
                     option
                         .setName("channel")
