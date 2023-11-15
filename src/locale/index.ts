@@ -4,6 +4,7 @@ import catalogJa from "./ja";
 
 export type Vocabulary = {
     // 凡例: "翻訳ID": Message<{ 引数 }>; (引数がないときは単に Message でOK)
+    // 共通
     "success": Message,
     "info": Message,
     "warn": Message,
@@ -14,9 +15,23 @@ export type Vocabulary = {
     "unlimited": Message,
     "executing": Message,
     "stoping": Message,
+    "userID": Message,
+    "displayName": Message,
+    "nickname": Message,
+    "unset": Message,
+    "role": Message,
+    "profile": Message,
+    "blank": Message,
+    "accountCreationDate": Message,
+    "serverJoinDate": Message,
+    "authority": Message,
+
+    // Keyv
     "keyvs/set": Message<{ namespace: string }>,
     "keyvs/reset": Message<{ namespace: string }>,
     "keyvs/delete": Message<{ namespace: string }>,
+
+    // Bot
     "bot/ready": Message<{ name: string }>,
     "bot/login/faild": Message<{ error: string }>,
     "bot/config/reset": Message,
@@ -28,6 +43,8 @@ export type Vocabulary = {
     "bot/event/set": Message<{ name: string }>,
     "bot/vcAutoCreation/channelCreate": Message<{ guild: string, channel: string }>,
     "bot/vcAutoCreation/channelDelete": Message<{ guild: string, channel: string }>,
+
+    // コマンド共通
     "bot/command/register/pre": Message,
     "bot/command/register/complated": Message,
     "bot/command/register/faild": Message<{ error: string }>,
@@ -41,14 +58,17 @@ export type Vocabulary = {
     "bot/command/modal/undefined": Message<{ command: string }>,
     "bot/command/modal/success": Message<{ command: string, guild: string }>,
     "bot/command/modal/faild": Message<{ command: string, guild: string, error: string }>,
-    "bot/command/notSetDestAfk": Message,
+    "bot/command/unsetDestAfk": Message,
     "bot/command/notFoundDestAfk": Message,
+    "bot/command/notFoundUser": Message<{ user: string }>,
+    "bot/command/unsetProfChannel": Message,
+
+    // コマンド固有
     "bot/command/echo/description": Message,
     "bot/command/echo/textOption/description": Message,
     "bot/command/afk/description": Message,
     "bot/command/afk/userOption/description": Message,
     "bot/command/afk/success": Message<{ user: string, channel: string }>,
-    "bot/command/afk/notFoundUser": Message<{ user: string }>,
     "bot/command/afk/alreadyAfk": Message<{ user: string, channel: string }>,
     "bot/command/afk/faild": Message<{ user: string, error: string }>,
     "bot/command/cnf-afk/description": Message,
@@ -91,8 +111,10 @@ export type Vocabulary = {
     "bot/command/cnf-prof/set-ch/success": Message<{ channel: string }>,
     "bot/command/cnf-prof/get-ch/description": Message,
     "bot/command/cnf-prof/get-ch/success": Message<{ channel: string }>,
-    "bot/command/cnf-prof/get-ch/notSetProfChannel": Message,
-    "bot/command/cnf-prof/get-ch/notFoundProfChannel": Message,
+    "bot/command/notFoundProfChannel": Message,
+    "bot/command/user-info/description": Message,
+    "bot/command/user-info/userOption/description": Message,
+    "bot/command/user-info/success": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

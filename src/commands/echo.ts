@@ -14,6 +14,6 @@ export const echoCommand: Command = {
         const text = interaction.options.getString("text")!;
         interaction.reply(text);
     }
-}
+};
 
 export default echoCommand;

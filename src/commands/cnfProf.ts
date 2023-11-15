@@ -38,13 +38,13 @@ export const cnfProfChannelCommand: Command = {
             case "get-ch": {
                 const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
                 if (!profChannel) {
-                    const embed = GetReplyEmbed(__t("bot/command/cnf-prof/get-ch/notSetProfChannel"), ReplyEmbedType.Warn);
+                    const embed = GetReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.find(channel => channel.id === profChannel.id);
+                const channel = interaction.guild?.channels.cache.get(profChannel.id);
                 if (!channel) {
-                    const embed = GetReplyEmbed(__t("bot/command/cnf-prof/get-ch/notFoundProfChannel"), ReplyEmbedType.Warn);
+                    const embed = GetReplyEmbed(__t("bot/command/notFoundProfChannel"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }

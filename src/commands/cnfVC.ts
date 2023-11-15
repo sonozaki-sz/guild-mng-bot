@@ -32,7 +32,7 @@ export const cnfVCCommand: Command = {
                 )
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const member = interaction.guild?.members.cache.find(member => member.id === interaction.user.id);
+        const member = interaction.guild?.members.cache.get(interaction.user.id);
         if (!member?.voice.channel) {
             const embed = GetReplyEmbed(__t("bot/command/cnf-vc/notInVC"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
@@ -66,6 +66,6 @@ export const cnfVCCommand: Command = {
             }
         }
     }
-}
+};
 
 export default cnfVCCommand;

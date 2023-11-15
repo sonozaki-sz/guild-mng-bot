@@ -3,6 +3,7 @@ import type { Vocabulary } from ".";
 
 export default new Catalog<Vocabulary>("ja", {
     // 凡例: "翻訳ID": msg(翻訳文字列),
+    // 共通
     "success": msg("成功"),
     "info": msg("情報"),
     "warn": msg("警告"),
@@ -13,9 +14,21 @@ export default new Catalog<Vocabulary>("ja", {
     "unlimited": msg("無制限"),
     "executing": msg("実行中"),
     "stoping": msg("停止中"),
+    "userID": msg("ユーザーID"),
+    "displayName": msg("表示名"),
+    "nickname": msg("ニックネーム"),
+    "unset": msg("未設定"),
+    "role": msg("ロール"),
+    "accountCreationDate": msg("アカウント作成日"),
+    "serverJoinDate": msg("サーバー参加日"),
+    "authority": msg("権限"),
+    "profile": msg("プロフィール"),
+    "blank": msg("未記入"),
     "keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
     "keyvs/reset": msg("keyvをリセットしました。namespace：{namespace}"),
     "keyvs/delete": msg("keyvを削除しました。namespace：{namespace}"),
+
+    // Bot
     "bot/ready": msg("{name}が起動しました。"),
     "bot/login/faild": msg("ログインに失敗しました。\n詳細：\n{error}"),
     "bot/config/reset": msg("Botの設定をリセットしました。"),
@@ -27,6 +40,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/vcAutoCreation/channelDelete": msg("VCの自動作成機能でチャンネルを削除しました。\nサーバー：{guild}\nチャンネル：{channel}"),
     "bot/vcAutoCreation/error/userMessage": msg("VCの自動管理機能でエラーが発生しました。\n詳細：\n{error}"),
     "bot/vcAutoCreation/error/logMessage": msg("VCの自動管理機能でエラーが発生しました。\nサーバー：{guild}\n詳細：\n{error}"),
+
+    // コマンド共通
     "bot/command/register/pre": msg("スラッシュコマンドを登録します。"),
     "bot/command/register/complated": msg("スラッシュコマンドの登録が完了しました。"),
     "bot/command/register/faild": msg("スラッシュコマンドの登録に失敗しました。\n詳細：\n{error}"),
@@ -40,14 +55,17 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/modal/undefined": msg("modalが未定義です。コマンド：{command}"),
     "bot/command/modal/success": msg("modalの実行に成功しました。コマンド：{command}\nサーバー：{guild}"),
     "bot/command/modal/faild": msg("modalの実行に失敗しました。コマンド：{command}\nサーバー：{guild}\n詳細：\n{error}"),
-    "bot/command/notSetDestAfk": msg("移動先の休止チャンネルが設定されていません。"),
+    "bot/command/unsetDestAfk": msg("移動先の休止チャンネルが設定されていません。"),
     "bot/command/notFoundDestAfk": msg("移動先に設定されいてる休止チャンネルが見つかりませんでした。\n移動先を設定し直してください。"),
+    "bot/command/notFoundUser": msg("{user}が見つかりませんでした。"),
+    "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
+
+    // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),
     "bot/command/echo/textOption/description": msg("テキストを入力してください。"),
     "bot/command/afk/description": msg("ユーザーを休止チャンネルに移動させます。"),
     "bot/command/afk/userOption/description": msg("移動させるユーザーを入力してください。"),
     "bot/command/afk/success": msg("{user}を{channel}に移動させました。"),
-    "bot/command/afk/notFoundUser": msg("{user}が見つかりませんでした。"),
     "bot/command/afk/alreadyAfk": msg("{user}は既に{channel}に居ます。"),
     "bot/command/afk/faild": msg("{user}の移動に失敗しました。\n詳細：\n{error}"),
     "bot/command/cnf-afk/description": msg("休止チャンネルを設定します。"),
@@ -90,6 +108,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-prof/set-ch/success": msg("プロフィールチャンネルを{channel}に設定しました。"),
     "bot/command/cnf-prof/get-ch/description": msg("プロフィールチャンネルを取得します。"),
     "bot/command/cnf-prof/get-ch/success": msg("プロフィールチャンネルを{channel}に設定しました。"),
-    "bot/command/cnf-prof/get-ch/notSetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
-    "bot/command/cnf-prof/get-ch/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
+    "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
+    "bot/command/user-info/description": msg("ユーザーの情報を表示します。"),
+    "bot/command/user-info/userOption/description": msg("情報を表示するユーザーを入力してください。"),
+    "bot/command/user-info/success": msg("ユーザー情報の取得に成功しました。"),
 });

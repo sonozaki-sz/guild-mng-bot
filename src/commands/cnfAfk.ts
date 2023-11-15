@@ -38,11 +38,11 @@ export const cnfAfkCommand: Command = {
             case "get-dest": {
                 const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
                 if (!afkChannel) {
-                    const embed = GetReplyEmbed(__t("bot/command/notSetDestAfk"), ReplyEmbedType.Warn);
+                    const embed = GetReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.find(channel => channel.id === afkChannel.id);
+                const channel = interaction.guild?.channels.cache.get(afkChannel.id);
                 if (!channel) {
                     const embed = GetReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
@@ -54,6 +54,6 @@ export const cnfAfkCommand: Command = {
             }
         }
     }
-}
+};
 
 export default cnfAfkCommand;
