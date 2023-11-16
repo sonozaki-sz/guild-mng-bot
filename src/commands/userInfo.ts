@@ -24,7 +24,7 @@ export const userInfocommand: Command = {
             return;
         }
 
-        interaction.deferReply();
+        await interaction.deferReply();
         const profText = await (async () => {
             const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
             if (!profChannel) {
