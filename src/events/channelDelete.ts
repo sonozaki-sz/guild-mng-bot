@@ -2,7 +2,7 @@ import { ChannelType, DMChannel, Events, GuildChannel, VoiceChannel } from "disc
 import keyvs, { KeyvKeys, KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { BotEvent } from "../types";
+import { BotEvent } from "../types/discord";
 
 export const channelDeleteEvent: BotEvent = {
     name: Events.ChannelDelete,

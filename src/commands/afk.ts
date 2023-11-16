@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
+import "../services/discord";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { Command } from "../types";
+import { Command } from "../types/discord";
 
 export const afkCommand: Command = {
     data: new SlashCommandSubcommandBuilder()

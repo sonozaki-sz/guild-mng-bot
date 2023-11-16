@@ -2,7 +2,7 @@ import { Client, Events } from "discord.js";
 import keyvs from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { BotEvent } from "../types";
+import { BotEvent } from "../types/discord";
 
 export const readyEvent: BotEvent = {
     name: Events.ClientReady,

@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandStringOption, SlashCommandSubcommandBuilder } from "discord.js";
 import { __t } from "../services/locale";
-import { Command } from "../types";
+import { Command } from "../types/discord";
 
 export const echoCommand: Command = {
     data: new SlashCommandSubcommandBuilder()

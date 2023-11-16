@@ -1,17 +1,17 @@
 import { Events, Interaction } from "discord.js";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { BotEvent, Command } from "../types";
+import { BotEvent } from "../types/discord";
 
 export const interactionCreateEvent: BotEvent = {
     name: Events.InteractionCreate,
     execute: (interaction: Interaction) => {
         interaction.isAnySelectMenu()
         if (interaction.isChatInputCommand()) {
-            const command: Command = interaction.client.commands.get(interaction.commandName);
-            const cooldown: number = interaction.client.cooldowns.get(`${interaction.commandName}-${interaction.user.username}`);
+            const command = interaction.client.commands.get(interaction.commandName);
+            const cooldown = interaction.client.cooldowns.get(`${interaction.commandName}-${interaction.user.username}`);
             if (!command) {
                 logger.error(__t("bot/command/notFound", { command: interaction.commandName }));
                 return;
@@ -50,7 +50,7 @@ export const interactionCreateEvent: BotEvent = {
                     }
                 });
         } else if (interaction.isAutocomplete()) {
-            const command: Command = interaction.client.commands.get(interaction.commandName);
+            const command = interaction.client.commands.get(interaction.commandName);
             if (!command) {
                 logger.error(__t("bot/command/notFound", { command: interaction.commandName }));
                 return;
@@ -67,7 +67,7 @@ export const interactionCreateEvent: BotEvent = {
                     logger.error(__t("bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDesc }));
                 });
         } else if (interaction.isModalSubmit()) {
-            const command: Command = interaction.client.commands.get(interaction.customId);
+            const command = interaction.client.commands.get(interaction.customId);
             if (!command) {
                 logger.error(__t("bot/command/notFound", { command: interaction.customId }));
                 return;

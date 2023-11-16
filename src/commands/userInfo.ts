@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, TextChannel } from "discord.js";
+import "../services/discord";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { Command } from "../types";
+import { Command } from "../types/discord";
 
 export const userInfocommand: Command = {
     data: new SlashCommandSubcommandBuilder()
@@ -23,6 +24,7 @@ export const userInfocommand: Command = {
             return;
         }
 
+        interaction.deferReply();
         const profText = await (async () => {
             const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
             if (!profChannel) {
@@ -32,10 +34,20 @@ export const userInfocommand: Command = {
             if (!channel?.isTextBased()) {
                 return __t("bot/command/notFoundProfChannel");
             }
-            const prof = channel.messages.cache.find(message => message.author.id === member.id)?.content;
+            const prof = await (async () => {
+                let messageID = channel.lastMessageId || undefined;
+                while (messageID) {
+                    const messages = await channel.messages.fetch({ limit: 100, before: messageID });
+                    const message = messages.find(message => message.author.id === member.id)?.content;
+                    if (message) {
+                        return message;
+                    }
+                    messageID = messages.last()?.id;
+                };
+            })();
+
             return prof || __t("blank");
         })();
-
         const embeds = new Array<EmbedBuilder>();
         embeds.push(
             GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success)
@@ -52,11 +64,11 @@ export const userInfocommand: Command = {
                     { name: __t("accountCreationDate"), value: member.user.createdAt.toString(), inline: true },
                     { name: __t("serverJoinDate"), value: member.joinedAt?.toString()!, inline: true },
                     { name: __t("profile"), value: profText },
-                    { name: __t("role"), value: member.roles.cache.map(role => role.toString()).join(", ") },
+                    { name: __t("role"), value: member.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString()).join(", ") },
                     { name: __t("authority"), value: member.permissions.toArray().join(", ") },
                 )
         );
-        interaction.reply({ embeds: embeds });
+        interaction.editReply({ embeds: embeds });
     }
 };
 
