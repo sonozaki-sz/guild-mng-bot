@@ -1,9 +1,9 @@
 import { ChannelType, Events, VoiceChannel, VoiceState } from "discord.js";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys, KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { BotEvent } from "../types";
+import { BotEvent } from "../types/discord";
 
 export const voiceStateUpdateEvent: BotEvent = {
     name: Events.VoiceStateUpdate,

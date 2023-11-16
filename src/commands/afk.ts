@@ -1,8 +1,9 @@
 import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
+import "../services/discord";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { Command } from "../types";
+import { Command } from "../types/discord";
 
 export const afkCommand: Command = {
     data: new SlashCommandSubcommandBuilder()
@@ -16,19 +17,19 @@ export const afkCommand: Command = {
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         const user = interaction.options.getUser("user")!;
-        const member = interaction.guild?.members.cache.find(member => member.id === user.id);
+        const member = interaction.guild?.members.cache.get(user.id);
         if (!member) {
-            const embed = GetReplyEmbed(__t("bot/command/afk/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
+            const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
         const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
         if (!afkChannel) {
-            const embed = GetReplyEmbed(__t("bot/command/notSetDestAfk"), ReplyEmbedType.Warn);
+            const embed = GetReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
-        const channel = interaction.guild?.channels.cache.find(channel => channel.id === afkChannel.id);
+        const channel = interaction.guild?.channels.cache.get(afkChannel.id);
         if (!channel) {
             const embed = GetReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
@@ -48,6 +49,6 @@ export const afkCommand: Command = {
                 interaction.reply({ embeds: [embed] });
             });
     }
-}
+};
 
 export default afkCommand;

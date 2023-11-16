@@ -1,9 +1,9 @@
 import { ChannelType, ChatInputCommandInteraction, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/utility";
-import { Command } from "../types";
+import { Command } from "../types/discord";
 
 export const vcAutoCreationCommand: Command = {
     data: new SlashCommandBuilder()
@@ -64,7 +64,7 @@ export const vcAutoCreationCommand: Command = {
                     return;
                 }
                 const triggerChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
-                const channel = interaction.guild?.channels.cache.find(channel => channel.id === triggerChannel.id);
+                const channel = interaction.guild?.channels.cache.get(triggerChannel.id);
                 channel?.delete();
                 await keyvs.setValue(interaction.guildId!, KeyvKeys.IsValidVac, false);
                 await keyvs.deleteValue(interaction.guildId!, KeyvKeys.VacTriggerVC)
@@ -82,6 +82,6 @@ export const vcAutoCreationCommand: Command = {
             }
         }
     }
-}
+};
 
 export default vcAutoCreationCommand;

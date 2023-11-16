@@ -4,7 +4,7 @@ import { events } from "./events";
 import { config } from "./services/config";
 import { __t } from "./services/locale";
 import { logger } from "./services/logger";
-import { Command } from "./types";
+import { Command } from "./types/discord";
 
 const client = new Client({
     intents: [
