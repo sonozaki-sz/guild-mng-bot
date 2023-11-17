@@ -25,6 +25,7 @@ export type Vocabulary = {
     "accountCreationDate": Message,
     "serverJoinDate": Message,
     "authority": Message,
+    "grouwing": Message,
 
     // Keyv
     "keyvs/set": Message<{ namespace: string }>,
