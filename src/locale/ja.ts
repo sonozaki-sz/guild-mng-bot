@@ -27,6 +27,7 @@ export default new Catalog<Vocabulary>("ja", {
     "keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
     "keyvs/reset": msg("keyvをリセットしました。namespace：{namespace}"),
     "keyvs/delete": msg("keyvを削除しました。namespace：{namespace}"),
+    "grouwing": msg("せいちょーちう。"),
 
     // Bot
     "bot/ready": msg("{name}が起動しました。"),

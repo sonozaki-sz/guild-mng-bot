@@ -21,6 +21,5 @@ declare module "discord.js" {
     }
     interface GuildMessageManager {
         fetchMany(options?: FetchMessagesOptions | undefined): Promise<Collection<string, Message<true>>>;
-        test: string;
     }
 }
