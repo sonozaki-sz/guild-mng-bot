@@ -155,7 +155,7 @@ export class EmbedPage {
                             customId: "selectPage",
                             placeholder: __t("selectPage"),
                             minValues: 1,
-                            maxValues: pages.length,
+                            maxValues: 1,
                             options: pages.map((value, index) => {
                                 return {
                                     label: `${index + 1}`,

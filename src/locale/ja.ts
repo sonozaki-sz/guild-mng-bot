@@ -119,6 +119,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-prof/get-ch/success": msg("プロフィールチャンネルを{channel}に設定しました。"),
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/user-info/description": msg("ユーザーの情報を表示します。"),
-    "bot/command/user-info/userOption/description": msg("情報を表示するユーザーを入力してください。"),
-    "bot/command/user-info/success": msg("ユーザー情報の取得に成功しました。"),
+    "bot/command/user-info/normal/description": msg("指定されたユーザーの情報を表示します。"),
+    "bot/command/user-info/normal/userOption/description": msg("情報を表示するユーザーを入力してください。"),
+    "bot/command/user-info/normal/success": msg("ユーザー情報の取得に成功しました。"),
+    "bot/command/user-info/vc-members/description": msg("VCに参加しているメンバーの情報を表示します。"),
 });

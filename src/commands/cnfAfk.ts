@@ -20,8 +20,7 @@ export const cnfAfkCommand: Command = {
                         .addChannelTypes(ChannelType.GuildVoice)
                         .setRequired(true)
                 )
-        )
-        .addSubcommand(subcommand =>
+        ).addSubcommand(subcommand =>
             subcommand
                 .setName("get-dest")
                 .setDescription(__t("bot/command/cnf-afk/get-dest/description"))

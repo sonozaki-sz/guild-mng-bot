@@ -17,8 +17,7 @@ export const cnfVCCommand: Command = {
                         .setDescription(__t("bot/command/cnf-vc/rename/nameOption/description"))
                         .setRequired(true)
                 )
-        )
-        .addSubcommand(subcommand =>
+        ).addSubcommand(subcommand =>
             subcommand
                 .setName("user-limit")
                 .setDescription(__t("bot/command/cnf-vc/user-limit/description"))

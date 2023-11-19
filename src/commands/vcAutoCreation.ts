@@ -14,13 +14,11 @@ export const vcAutoCreationCommand: Command = {
             subcommand
                 .setName("start")
                 .setDescription(__t("bot/command/vac/start/description"))
-        )
-        .addSubcommand(subcommand =>
+        ).addSubcommand(subcommand =>
             subcommand
                 .setName("stop")
                 .setDescription(__t("bot/command/vac/stop/description"))
-        )
-        .addSubcommand(subcommand =>
+        ).addSubcommand(subcommand =>
             subcommand
                 .setName("status")
                 .setDescription(__t("bot/command/vac/status/description"))

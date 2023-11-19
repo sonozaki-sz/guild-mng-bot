@@ -122,8 +122,10 @@ export type Vocabulary = {
     "bot/command/cnf-prof/get-ch/success": Message<{ channel: string }>,
     "bot/command/notFoundProfChannel": Message,
     "bot/command/user-info/description": Message,
-    "bot/command/user-info/userOption/description": Message,
-    "bot/command/user-info/success": Message,
+    "bot/command/user-info/normal/description": Message,
+    "bot/command/user-info/normal/userOption/description": Message,
+    "bot/command/user-info/normal/success": Message,
+    "bot/command/user-info/vc-members/description": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

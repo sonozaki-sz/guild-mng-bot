@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
 import { EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
@@ -6,14 +6,23 @@ import { __t } from "../services/locale";
 import { Command } from "../types/discord";
 
 export const userInfocommand: Command = {
-    data: new SlashCommandSubcommandBuilder()
+    data: new SlashCommandBuilder()
         .setName("user-info")
         .setDescription(__t("bot/command/user-info/description"))
-        .addUserOption(option =>
-            option
-                .setName("user")
-                .setDescription(__t("bot/command/user-info/userOption/description"))
-                .setRequired(true)
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName("normal")
+                .setDescription(__t("bot/command/user-info/normal/description"))
+                .addUserOption(option =>
+                    option
+                        .setName("user")
+                        .setDescription(__t("bot/command/user-info/normal/userOption/description"))
+                        .setRequired(true)
+                )
+        ).addSubcommand(subcommand =>
+            subcommand
+                .setName("vc-members")
+                .setDescription(__t("bot/command/user-info/vc-members/description"))
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         const user = interaction.options.getUser("user")!;
@@ -48,7 +57,7 @@ export const userInfocommand: Command = {
 
             return prof || __t("blank");
         })();
-        const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+        const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/normal/success"), ReplyEmbedType.Success);
         const userInfoEmbeds = new Array<EmbedBuilder>();
         userInfoEmbeds.push(
             new EmbedBuilder()
