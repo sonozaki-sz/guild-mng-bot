@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandSubcommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { Command } from "../types/discord";
@@ -48,11 +48,9 @@ export const userInfocommand: Command = {
 
             return prof || __t("blank");
         })();
-        const embeds = new Array<EmbedBuilder>();
-        embeds.push(
-            GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success)
-        );
-        embeds.push(
+        const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+        const userInfoEmbeds = new Array<EmbedBuilder>();
+        userInfoEmbeds.push(
             new EmbedBuilder()
                 .setTitle(member.user.tag)
                 .setThumbnail(member.displayAvatarURL())
@@ -64,11 +62,23 @@ export const userInfocommand: Command = {
                     { name: __t("accountCreationDate"), value: member.user.createdAt.toString(), inline: true },
                     { name: __t("serverJoinDate"), value: member.joinedAt?.toString()!, inline: true },
                     { name: __t("profile"), value: profText },
+                ),
+            new EmbedBuilder()
+                .setTitle(member.user.tag)
+                .setThumbnail(member.displayAvatarURL())
+                .setColor(member.user.accentColor || member.displayColor)
+                .addFields(
+                    { name: __t("userID"), value: member.id, inline: true },
+                    { name: __t("displayName"), value: member.user.displayName, inline: true },
+                    { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
                     { name: __t("role"), value: member.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString()).join(", ") },
                     { name: __t("authority"), value: member.permissions.toArray().join(", ") },
                 )
+
         );
-        interaction.editReply({ embeds: embeds });
+        interaction.editReply({ embeds: [replyEmbed] });
+        const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
+        embedPage.send();
     }
 };
 

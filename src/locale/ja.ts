@@ -28,6 +28,14 @@ export default new Catalog<Vocabulary>("ja", {
     "keyvs/reset": msg("keyvをリセットしました。namespace：{namespace}"),
     "keyvs/delete": msg("keyvを削除しました。namespace：{namespace}"),
     "grouwing": msg("せいちょーちう。"),
+    "toFirst": msg("最初へ"),
+    "toPrevious": msg("前へ"),
+    "delete": msg("削除"),
+    "toNext": msg("次へ"),
+    "toLast": msg("最後へ"),
+    "selectPage": msg("ページを選択してください。"),
+    "operationTimeOut": msg("{target}の操作がタイムアウトしました。"),
+    "footer/page": msg("ページ：{page}"),
 
     // Bot
     "bot/ready": msg("{name}が起動しました。"),

@@ -26,6 +26,14 @@ export type Vocabulary = {
     "serverJoinDate": Message,
     "authority": Message,
     "grouwing": Message,
+    "toFirst": Message,
+    "toPrevious": Message,
+    "delete": Message,
+    "toNext": Message,
+    "toLast": Message,
+    "selectPage": Message,
+    "operationTimeOut": Message<{ target: string }>,
+    "footer/page": Message<{ page: string }>,
 
     // Keyv
     "keyvs/set": Message<{ namespace: string }>,
