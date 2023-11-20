@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, Collection, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
 import { EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
@@ -25,70 +25,113 @@ export const userInfocommand: Command = {
                 .setDescription(__t("bot/command/user-info/vc-members/description"))
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const user = interaction.options.getUser("user")!;
-        const member = interaction.guild!.members.cache.get(user.id);
-        if (!member) {
-            const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
-            return;
+        switch (interaction.options.getSubcommand()) {
+            case "normal": {
+                executeNormal(interaction);
+                break;
+            }
+            case "vc-members": {
+                executeVcMembers(interaction);
+                break;
+            }
         }
-
-        await interaction.deferReply();
-        const profText = await (async () => {
-            const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
-            if (!profChannel) {
-                return __t("bot/command/unsetProfChannel");
-            }
-            const channel = interaction.guild?.channels.cache.get(profChannel.id);
-            if (!channel?.isTextBased()) {
-                return __t("bot/command/notFoundProfChannel");
-            }
-            const prof = await (async () => {
-                let messageID = channel.lastMessageId || undefined;
-                while (messageID) {
-                    const messages = await channel.messages.fetch({ limit: 100, before: messageID });
-                    const message = messages.find(message => message.author.id === member.id)?.content;
-                    if (message) {
-                        return message;
-                    }
-                    messageID = messages.last()?.id;
-                };
-            })();
-
-            return prof || __t("blank");
-        })();
-        const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/normal/success"), ReplyEmbedType.Success);
-        const userInfoEmbeds = new Array<EmbedBuilder>();
-        userInfoEmbeds.push(
-            new EmbedBuilder()
-                .setTitle(member.user.tag)
-                .setThumbnail(member.displayAvatarURL())
-                .setColor(member.user.accentColor || member.displayColor)
-                .addFields(
-                    { name: __t("userID"), value: member.id, inline: true },
-                    { name: __t("displayName"), value: member.user.displayName, inline: true },
-                    { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
-                    { name: __t("accountCreationDate"), value: member.user.createdAt.toString(), inline: true },
-                    { name: __t("serverJoinDate"), value: member.joinedAt?.toString()!, inline: true },
-                    { name: __t("profile"), value: profText },
-                ),
-            new EmbedBuilder()
-                .setTitle(member.user.tag)
-                .setThumbnail(member.displayAvatarURL())
-                .setColor(member.user.accentColor || member.displayColor)
-                .addFields(
-                    { name: __t("userID"), value: member.id, inline: true },
-                    { name: __t("displayName"), value: member.user.displayName, inline: true },
-                    { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
-                    { name: __t("role"), value: member.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString()).join(", ") },
-                    { name: __t("authority"), value: member.permissions.toArray().join(", ") },
-                )
-
-        );
-        interaction.editReply({ embeds: [replyEmbed] });
-        const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
-        embedPage.send();
     }
 };
+
+const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
+    const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
+    if (!profChannel) {
+        return __t("bot/command/unsetProfChannel");
+    }
+    const channel = interaction.guild?.channels.cache.get(profChannel.id);
+    if (!channel?.isTextBased()) {
+        return __t("bot/command/notFoundProfChannel");
+    }
+    const prof = await (async () => {
+        let messageID = channel.lastMessageId || undefined;
+        while (messageID) {
+            const messages = await channel.messages.fetch({ limit: 100, before: messageID });
+            const message = messages.find(message => message.author.id === member.id)?.content;
+            if (message) {
+                return message;
+            }
+            messageID = messages.last()?.id;
+        };
+    })();
+    return prof || __t("blank");
+}
+
+const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
+    const userInfoEmbeds = new Array<EmbedBuilder>();
+    userInfoEmbeds.push(
+        new EmbedBuilder()
+            .setTitle(member.user.tag)
+            .setThumbnail(member.displayAvatarURL())
+            .setColor(member.user.accentColor || member.displayColor)
+            .addFields(
+                { name: __t("userID"), value: member.id, inline: true },
+                { name: __t("displayName"), value: member.user.displayName, inline: true },
+                { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
+                { name: __t("accountCreationDate"), value: member.user.createdAt.toString(), inline: true },
+                { name: __t("serverJoinDate"), value: member.joinedAt?.toString()!, inline: true },
+                { name: __t("profile"), value: await getProfText(interaction, member) },
+            ),
+        new EmbedBuilder()
+            .setTitle(member.user.tag)
+            .setThumbnail(member.displayAvatarURL())
+            .setColor(member.user.accentColor || member.displayColor)
+            .addFields(
+                { name: __t("userID"), value: member.id, inline: true },
+                { name: __t("displayName"), value: member.user.displayName, inline: true },
+                { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
+                { name: __t("role"), value: member.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString()).join(", ") },
+                { name: __t("authority"), value: member.permissions.toArray().join(", ") },
+            )
+
+    );
+    return userInfoEmbeds;
+}
+
+const executeNormal = async (interaction: ChatInputCommandInteraction) => {
+    const user = interaction.options.getUser("user")!;
+    const member = interaction.guild!.members.cache.get(user.id);
+    if (!member) {
+        const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
+        interaction.reply({ embeds: [embed] });
+        return;
+    }
+
+    await interaction.deferReply();
+    const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+    const userInfoEmbeds = await getUserInfoEmbes(interaction, member);
+    interaction.editReply({ embeds: [replyEmbed] });
+    const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
+    embedPage.send();
+}
+
+const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
+    const member = interaction.guild!.members.cache.get(interaction.user.id);
+    if (!member) {
+        const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: interaction.user.toString() }), ReplyEmbedType.Warn);
+        interaction.reply({ embeds: [embed] });
+        return;
+    }
+    if (!member.voice.channel) {
+        const embed = GetReplyEmbed(__t("bot/command/user-info/vc-members/notInVC"), ReplyEmbedType.Warn);
+        interaction.reply({ embeds: [embed] });
+        return;
+    }
+    await interaction.deferReply();
+    const members = member.voice.channel.members;
+    const membersInfoPages = new Collection<string, EmbedPage>(
+        await Promise.all(members.map(async member => {
+            const userInfoPage = new EmbedPage(interaction.channel!, await getUserInfoEmbes(interaction, member));
+            return [member.displayName, userInfoPage] as const;
+        }))
+    );
+    const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+    const reply = await interaction.editReply({ embeds: [replyEmbed] });
+    membersInfoPages.forEach(async page => await page.send());
+}
 
 export default userInfocommand;

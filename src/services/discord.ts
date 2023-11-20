@@ -115,6 +115,7 @@ export class EmbedPage {
                             customId: "toFirst",
                             label: __t("toFirst"),
                             emoji: "⏮",
+                            disabled: true,
                         },
                         {
                             type: ComponentType.Button,
@@ -122,6 +123,7 @@ export class EmbedPage {
                             customId: "toPrevious",
                             label: __t("toPrevious"),
                             emoji: "◀",
+                            disabled: true,
                         },
                         {
                             type: ComponentType.Button,
@@ -215,11 +217,10 @@ export class EmbedPage {
             await interaction.editReply({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
         collector.once("end", async (interactions, reason) => {
-            if (reason === "delete") {
-                return;
+            if (reason === "time") {
+                const embed = GetReplyEmbed(__t("operationTimeOut", { target: message.url! }), ReplyEmbedType.Info);
+                this._channel.send({ embeds: [embed] });
             }
-            const embed = GetReplyEmbed(__t("operationTimeOut", { target: message.url }), ReplyEmbedType.Info);
-            this._channel.send({ embeds: [embed] });
         });
     }
 }
