@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, Message, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, Message, MessageCollectorOptionsParams, MessageComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
@@ -94,11 +94,11 @@ GuildMessageManager.prototype.fetchMany = async function (
 
 export class EmbedPage {
     private _channel: TextBasedChannel;
-    private _pages: EmbedBuilder[];
+    private _pages: Array<EmbedBuilder>;
     private _currentPageIndex: number;
     private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
 
-    constructor(channel: TextBasedChannel, pages: EmbedBuilder[]) {
+    constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
         this._channel = channel;
         this._pages = pages;
         this._pages.forEach((page, index, pages) => {
@@ -171,17 +171,18 @@ export class EmbedPage {
         );
     }
 
-    public async send() {
+    public async send(options?: MessageCollectorOptionsParams<MessageComponentType, boolean>) {
         const message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
-        const collector = message.createMessageComponentCollector({ time: 300000 });
+        const collector = message.createMessageComponentCollector({ ...options });
         collector.on("collect", async interaction => {
             await interaction.deferUpdate();
+
             switch (interaction.customId) {
                 case "toFirst":
                     this._currentPageIndex = 0;
                     break;
                 case "toPrevious":
-                    this._currentPageIndex = (this._currentPageIndex - 1 + this._pages.length) % this._pages.length;
+                    this._currentPageIndex = (this._currentPageIndex - 1) % this._pages.length;
                     break;
                 case "delete":
                     await message.delete();
