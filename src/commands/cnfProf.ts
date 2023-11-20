@@ -20,8 +20,7 @@ export const cnfProfChannelCommand: Command = {
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true)
                 )
-        )
-        .addSubcommand(subcommand =>
+        ).addSubcommand(subcommand =>
             subcommand
                 .setName("get-ch")
                 .setDescription(__t("bot/command/cnf-prof/get-ch/description"))

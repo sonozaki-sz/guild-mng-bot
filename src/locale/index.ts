@@ -26,6 +26,15 @@ export type Vocabulary = {
     "serverJoinDate": Message,
     "authority": Message,
     "grouwing": Message,
+    "toFirst": Message,
+    "toPrevious": Message,
+    "delete": Message,
+    "toNext": Message,
+    "toLast": Message,
+    "selectPage": Message,
+    "operationTimeOut": Message<{ target: string }>,
+    "footer/page": Message<{ page: string }>,
+    "selectDispUser": Message,
 
     // Keyv
     "keyvs/set": Message<{ namespace: string }>,
@@ -114,8 +123,11 @@ export type Vocabulary = {
     "bot/command/cnf-prof/get-ch/success": Message<{ channel: string }>,
     "bot/command/notFoundProfChannel": Message,
     "bot/command/user-info/description": Message,
-    "bot/command/user-info/userOption/description": Message,
+    "bot/command/user-info/normal/description": Message,
+    "bot/command/user-info/normal/userOption/description": Message,
     "bot/command/user-info/success": Message,
+    "bot/command/user-info/vc-members/description": Message,
+    "bot/command/user-info/vc-members/notInVC": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト
