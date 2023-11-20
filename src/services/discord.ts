@@ -57,7 +57,7 @@ GuildMessageManager.prototype.fetchMany = async function (
         let messageID = targetMessageID || undefined;
         for (let remainingCount = limit; remainingCount > 0 && messageID; remainingCount -= 100) {
             const limit = (remainingCount <= 100) ? remainingCount : 100;
-            const msgs = (await this.fetch({ limit: limit, after: messageID, cache: options?.cache }));
+            const msgs = await this.fetch({ limit: limit, after: messageID, cache: options?.cache });
             messages = messages.concat(msgs.reverse());
             messageID = msgs.last()?.id;
         }
