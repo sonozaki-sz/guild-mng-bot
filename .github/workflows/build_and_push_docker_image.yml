@@ -31,3 +31,7 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ steps.lowercase.outputs.actor }}/guild-mng-bot:latest
+      # Webhookを送信する
+      - name: Send Webhook to Portainer
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{"repository": "${{ github.repository }}", "branch": "${{ github.ref }}", "commit": "${{ github.sha }}", "actor": "${{ github.actor }}", "workflow": "${{ github.workflow }}"}' ${{ secrets.PORTAINER_WEBHOOK_URL }}
