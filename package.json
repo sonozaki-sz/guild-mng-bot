@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@hi18n/cli": "^0.1.11",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.2"
   }
 }
