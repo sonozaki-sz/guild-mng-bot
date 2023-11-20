@@ -72,8 +72,8 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
                 { name: __t("userID"), value: member.id, inline: true },
                 { name: __t("displayName"), value: member.user.displayName, inline: true },
                 { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
-                { name: __t("accountCreationDate"), value: member.user.createdAt.toString(), inline: true },
-                { name: __t("serverJoinDate"), value: member.joinedAt?.toString()!, inline: true },
+                { name: __t("accountCreationDateTime"), value: `<t:${Math.round(member.user.createdTimestamp / 1000)}>`, inline: true },
+                { name: __t("serverJoinDateTime"), value: `<t:${Math.round(member.joinedTimestamp! / 1000)}>`, inline: true },
                 { name: __t("profile"), value: await getProfText(interaction, member) },
             ),
         new EmbedBuilder()
