@@ -2,9 +2,9 @@ import { Client, Collection, GatewayIntentBits, Routes } from "discord.js";
 import { globalCommands } from "./commands";
 import { events } from "./events";
 import { config } from "./services/config";
+import { Command } from "./services/discord";
 import { __t } from "./services/locale";
 import { logger } from "./services/logger";
-import { Command } from "./types/discord";
 
 const client = new Client({
     intents: [

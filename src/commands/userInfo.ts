@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, Collection, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
-import { EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const userInfocommand: Command = {
     data: new SlashCommandBuilder()

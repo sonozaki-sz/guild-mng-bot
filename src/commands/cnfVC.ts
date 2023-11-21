@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const cnfVCCommand: Command = {
     data: new SlashCommandBuilder()

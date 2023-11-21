@@ -1,5 +1,29 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, ModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandSubcommandsOnlyBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
+
+export interface Command {
+    data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandSubcommandGroupBuilder;
+    execute: (interaction: ChatInputCommandInteraction) => Promise<any>;
+    autocomplete?: (interaction: AutocompleteInteraction) => Promise<any>;
+    modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<any>;
+    cooldown?: number // in seconds
+}
+
+export interface BotEvent {
+    name: string;
+    once?: boolean | false;
+    execute: (...args: any[]) => void;
+}
+
+declare module "discord.js" {
+    interface Client {
+        commands: Collection<string, Command>;
+        cooldowns: Collection<string, number>;
+    }
+    interface GuildMessageManager {
+        fetchMany(options?: FetchMessagesOptions | undefined): Promise<Collection<string, Message<true>>>;
+    }
+}
 
 export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
     const embedData: { title: string, color: ColorResolvable } = ((type) => {

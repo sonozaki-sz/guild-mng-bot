@@ -1,8 +1,7 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const cnfAfkCommand: Command = {
     data: new SlashCommandBuilder()

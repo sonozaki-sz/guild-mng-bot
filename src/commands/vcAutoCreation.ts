@@ -1,9 +1,8 @@
 import { ChannelType, ChatInputCommandInteraction, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { Command } from "../types/discord";
 
 export const vcAutoCreationCommand: Command = {
     data: new SlashCommandBuilder()
