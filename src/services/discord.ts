@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, Message, MessageCollectorOptionsParams, MessageComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
@@ -97,6 +97,8 @@ export class EmbedPage {
     private _pages: Array<EmbedBuilder>;
     private _currentPageIndex: number;
     private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
+    private _message: Message<true> | Message<false> | undefined;
+    private _collector: InteractionCollector<MappedInteractionTypes<boolean>[MessageComponentType]> | undefined;
 
     constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
         this._channel = channel;
@@ -172,9 +174,9 @@ export class EmbedPage {
     }
 
     public async send(options?: MessageCollectorOptionsParams<MessageComponentType, boolean>) {
-        const message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
-        const collector = message.createMessageComponentCollector({ ...options });
-        collector.on("collect", async interaction => {
+        this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
+        this._collector = this._message.createMessageComponentCollector({ ...options }) as any; // HACK: this._collectorの型定義が間違っているのでanyで回避
+        this._collector?.on("collect", async interaction => {
             await interaction.deferUpdate();
 
             switch (interaction.customId) {
@@ -185,8 +187,8 @@ export class EmbedPage {
                     this._currentPageIndex = (this._currentPageIndex - 1) % this._pages.length;
                     break;
                 case "delete":
-                    await message.delete();
-                    collector.stop("delete");
+                    await this._message?.delete();
+                    this._collector?.stop("delete");
                     return;
                 case "toNext":
                     this._currentPageIndex = (this._currentPageIndex + 1) % this._pages.length;
@@ -217,11 +219,18 @@ export class EmbedPage {
 
             await interaction.editReply({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        collector.once("end", async (interactions, reason) => {
+        this._collector?.once("end", async (interactions, reason) => {
             if (reason === "time") {
-                const embed = GetReplyEmbed(__t("operationTimeOut", { target: message.url! }), ReplyEmbedType.Info);
+                const embed = GetReplyEmbed(__t("operationTimeOut", { target: this._message?.url! }), ReplyEmbedType.Info);
                 this._channel.send({ embeds: [embed] });
             }
         });
+    }
+
+    public async delete() {
+        if (!this._message) return;
+        await this._message.delete();
+        if (!this._collector) return;
+        this._collector.stop("delete");
     }
 }

@@ -1,6 +1,7 @@
 import afkCommand from "./afk";
 import cnfAfkCommand from "./cnfAfk";
-import cnfProfChannelCommand from "./cnfProf";
+import cnfProfChannelCommand from "./cnfProfChannel";
+import cnfRmdBumpCommand from "./cnfRmdBump";
 import cnfVCCommand from "./cnfVC";
 import echoCommand from "./echo";
 import userInfocommand from "./userInfo";
@@ -13,5 +14,8 @@ export const globalCommands = [
     vcAutoCreationCommand,
     cnfVCCommand,
     cnfProfChannelCommand,
-    userInfocommand
+    userInfocommand,
+    cnfRmdBumpCommand
 ];
+
+export default globalCommands;

@@ -35,7 +35,7 @@ export const cnfAfkCommand: Command = {
                 break;
             }
             case "get-dest": {
-                const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
+                const afkChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
                 if (!afkChannel) {
                     const embed = GetReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });

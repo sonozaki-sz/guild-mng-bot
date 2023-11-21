@@ -29,31 +29,36 @@ export const voiceStateUpdateEvent: BotEvent = {
 
 // VCの自動作成機能を実行する
 const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState) => {
-    const isValidVac: boolean = await keyvs.getValue(newState.guild.id, KeyvKeys.IsValidVac);
-    if (!isValidVac) return;
-    // トリガーVCに入室時にVCを作成する
-    const triggerVC: VoiceChannel = await keyvs.getValue(newState.guild.id, KeyvKeys.VacTriggerVC);
-    if (oldState.member?.voice.channelId === triggerVC.id) {
+    const isVacEnabled: boolean | undefined = await keyvs.getValue(newState.guild.id, KeyvKeys.IsVacEnabled);
+    if (!isVacEnabled) return;
+    // トリガーVCに入室時に新しいVCを作成する
+    const triggerVC: VoiceChannel | undefined = await keyvs.getValue(newState.guild.id, KeyvKeys.VacTriggerVC);
+    if (!triggerVC) {
+        const embed = GetReplyEmbed(__t("bot/vcAutoCreation/notSetTriggerVC"), ReplyEmbedType.Warn);
+        newState.channel?.send({ embeds: [embed] });
+        return;
+    }
+    if (oldState.member && oldState.member.voice.channelId === triggerVC.id) {
         const newChannel = await newState.guild.channels.create({
             name: `${oldState.member.displayName}'s room`,
             type: ChannelType.GuildVoice,
             parent: newState.channel?.parent,
             userLimit: 99,
         })
-        const createChannels = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels);
-        createChannels.push(newChannel);
-        await keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, createChannels);
+        const vacChannels: Array<VoiceChannel> = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels) || new Array<VoiceChannel>();
+        vacChannels.push(newChannel);
+        await keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, vacChannels);
         await oldState.member?.voice.setChannel(newChannel);
         logger.info(__t("bot/vcAutoCreation/channelCreate", { guild: newState.guild.id, channel: newChannel.id }));
     }
 
     // 自動作成したVCを全員が退出時に削除する
-    const createChannels: VoiceChannel[] = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels);
-    if (!createChannels) return;
-    if (!createChannels.some(channel => channel.id === oldState.channelId)) return;
+    const vacChannels: Array<VoiceChannel> | undefined = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels);
+    if (!vacChannels) return;
+    if (!vacChannels.some(channel => channel.id === oldState.channelId)) return;
     if (oldState.channel?.members.size !== 0) return;
     oldState.channel?.delete();
-    keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, createChannels.filter(channel => channel.id !== oldState.channelId));
+    keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, vacChannels.filter(channel => channel.id !== oldState.channelId));
     logger.info(__t("bot/vcAutoCreation/channelDelete", { guild: oldState.guild.id, channel: oldState.channelId! }));
 }
 
