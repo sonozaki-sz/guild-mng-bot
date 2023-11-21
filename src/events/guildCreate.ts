@@ -6,10 +6,10 @@ import { logger } from "../services/logger";
 
 export const guildCreateEvent: BotEvent = {
     name: Events.GuildCreate,
-    execute: (guild) => {
+    execute: async (guild) => {
         keyvs.setkeyv(guild.id);
         logger.info(__t("keyvs/set", { namespace: guild.id }));
     }
-}
+};
 
 export default guildCreateEvent;

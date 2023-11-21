@@ -6,10 +6,10 @@ import { logger } from "../services/logger";
 
 export const guildDeleteEvent: BotEvent = {
     name: Events.GuildDelete,
-    execute: (guild) => {
+    execute: async (guild) => {
         keyvs.deletekeyv(guild.id);
         logger.info(__t("keyvs/delete", { namespace: guild.id }));
     }
-}
+};
 
 export default guildDeleteEvent;

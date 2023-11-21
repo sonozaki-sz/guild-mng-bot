@@ -7,7 +7,7 @@ import { logger } from "../services/logger";
 export const readyEvent: BotEvent = {
     name: Events.ClientReady,
     once: true,
-    execute: (client: Client) => {
+    execute: async (client: Client) => {
         logger.info(__t("bot/ready", { name: client.user?.tag! }));
         client.user?.setActivity({ name: __t("grouwing"), type: ActivityType.Playing });
         client.guilds.cache.forEach(guild => {
@@ -15,6 +15,6 @@ export const readyEvent: BotEvent = {
             logger.info(__t("keyvs/set", { namespace: guild.id }));
         });
     }
-}
+};
 
 export default readyEvent;

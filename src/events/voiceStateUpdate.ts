@@ -24,7 +24,7 @@ export const voiceStateUpdateEvent: BotEvent = {
                 }
             });
     }
-}
+};
 
 // VCの自動作成機能を実行する
 const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState) => {
@@ -59,6 +59,6 @@ const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState)
     oldState.channel?.delete();
     keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, vacChannels.filter(channel => channel.id !== oldState.channelId));
     logger.info(__t("bot/vcAutoCreation/channelDelete", { guild: oldState.guild.id, channel: oldState.channelId! }));
-}
+};
 
 export default voiceStateUpdateEvent;

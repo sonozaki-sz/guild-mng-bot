@@ -6,7 +6,7 @@ import { logger } from "../services/logger";
 
 export const interactionCreateEvent: BotEvent = {
     name: Events.InteractionCreate,
-    execute: (interaction: Interaction) => {
+    execute: async (interaction: Interaction) => {
         interaction.isAnySelectMenu()
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
@@ -84,6 +84,6 @@ export const interactionCreateEvent: BotEvent = {
                 });
         }
     }
-}
+};
 
 export default interactionCreateEvent;

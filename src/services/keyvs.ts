@@ -51,8 +51,8 @@ export enum KeyvKeys {
     IsVacEnabled = "vcAutoCreation/isEnabled",
     VacChannels = "vcAutoCreation/channels",
     ProfChannel = "profChannel",
-    IsRmdBumpEnabled = "rmdBump/isEnabled",
-    RmdBumpMentionRole = "rmdBump/mentionRole",
+    IsBumpReminderEnabled = "rmdBump/isEnabled",
+    BumpReminderMentionRole = "rmdBump/mentionRole",
 }
 
 export class KeyvsError extends Error {

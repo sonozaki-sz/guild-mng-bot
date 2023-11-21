@@ -6,7 +6,7 @@ import { logger } from "../services/logger";
 
 export const channelDeleteEvent: BotEvent = {
     name: Events.ChannelDelete,
-    execute: (channel: DMChannel | GuildChannel) => {
+    execute: async (channel: DMChannel | GuildChannel) => {
         switch (channel.type) {
             case ChannelType.GuildVoice: {
                 // VCの自動作成機能実行中にトリガーチャンネルが消されたとき、自動作成機能を停止する。
@@ -24,7 +24,7 @@ export const channelDeleteEvent: BotEvent = {
             }
         }
     }
-}
+};
 
 // VCの自動作成機能実行中にトリガーチャンネルが消されたとき、自動作成機能を停止する。
 const stopVCAutoCreation = async (channel: VoiceChannel) => {
@@ -37,6 +37,6 @@ const stopVCAutoCreation = async (channel: VoiceChannel) => {
             logger.info(__t("bot/vcAutoCreation/stop", { guild: channel.guildId }));
         }
     }
-}
+};
 
 export default channelDeleteEvent;

@@ -53,6 +53,18 @@ export type Vocabulary = {
     "bot/vcAutoCreation/error/logMessage": Message<{ guild: string, error: string }>,
     "bot/vcAutoCreation/channelCreate": Message<{ guild: string, channel: string }>,
     "bot/vcAutoCreation/channelDelete": Message<{ guild: string, channel: string }>,
+    "bot/bumpReminder/bumpMessage": Message<{ time: string, diffCurTime: string }>,
+    "bot/bumpReminder/button/doRemind": Message,
+    "bot/bumpReminder/button/doNotRemind": Message,
+    "bot/bumpReminder/setRemind": Message,
+    "bot/bumpReminder/cancelRemind": Message,
+    "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, user: string }>,
+    "bot/bumpReminder/start": Message<{ guild: string }>,
+    "bot/bumpReminder/stop": Message<{ guild: string }>,
+    "bot/bumpReminder/detectBump": Message<{ guild: string }>,
+    "bot/bumpReminder/setRemindLog": Message<{ guild: string }>,
+    "bot/bumpReminder/cancelRemindLog": Message<{ guild: string }>,
+    "bot/bumpReminder/remindLog": Message<{ guild: string }>,
     "bot/event/set": Message<{ name: string }>,
 
     // コマンド共通
@@ -129,17 +141,17 @@ export type Vocabulary = {
     "bot/command/user-info/success": Message,
     "bot/command/user-info/vc-members/description": Message,
     "bot/command/user-info/vc-members/notInVC": Message,
-    "bot/command/cnf-rmd-bump/description": Message,
-    "bot/command/cnf-rmd-bump/start/description": Message,
-    "bot/command/cnf-rmd-bump/start/success": Message,
-    "bot/command/cnf-rmd-bump/stop/description": Message,
-    "bot/command/cnf-rmd-bump/stop/success": Message,
-    "bot/command/cnf-rmd-bump/set-mention/description": Message,
-    "bot/command/cnf-rmd-bump/set-mention/roleOption/description": Message,
-    "bot/command/cnf-rmd-bump/set-mention/success": Message<{ role: string }>
-    "bot/command/cnf-rmd-bump/set-mention/notMentionable": Message<{ role: string }>,
-    "bot/command/cnf-rmd-bump/status/description": Message,
-    "bot/command/cnf-rmd-bump/status/success": Message<{ status: string, mentionRole: string }>,
+    "bot/command/cnf-bump-reminder/description": Message,
+    "bot/command/cnf-bump-reminder/start/description": Message,
+    "bot/command/cnf-bump-reminder/start/success": Message,
+    "bot/command/cnf-bump-reminder/stop/description": Message,
+    "bot/command/cnf-bump-reminder/stop/success": Message,
+    "bot/command/cnf-bump-reminder/set-mention/description": Message,
+    "bot/command/cnf-bump-reminder/set-mention/roleOption/description": Message,
+    "bot/command/cnf-bump-reminder/set-mention/success": Message<{ role: string }>
+    "bot/command/cnf-bump-reminder/set-mention/notMentionable": Message<{ role: string }>,
+    "bot/command/cnf-bump-reminder/status/description": Message,
+    "bot/command/cnf-bump-reminder/status/success": Message<{ status: string, mentionRole: string }>,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

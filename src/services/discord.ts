@@ -3,16 +3,16 @@ import { __t } from "./locale";
 
 export interface Command {
     data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandSubcommandGroupBuilder;
-    execute: (interaction: ChatInputCommandInteraction) => Promise<any>;
-    autocomplete?: (interaction: AutocompleteInteraction) => Promise<any>;
-    modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<any>;
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+    autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
+    modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<void>;
     cooldown?: number // in seconds
 }
 
 export interface BotEvent {
     name: string;
     once?: boolean | false;
-    execute: (...args: any[]) => void;
+    execute: (...args: any[]) => Promise<void>;
 }
 
 declare module "discord.js" {
@@ -25,7 +25,7 @@ declare module "discord.js" {
     }
 }
 
-export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
+export const GetReplyEmbed = (description: string, type: ReplyEmbedType) => {
     const embedData: { title: string, color: ColorResolvable } = ((type) => {
         switch (type) {
             case ReplyEmbedType.Success:
@@ -40,9 +40,9 @@ export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
     })(type);
     return new EmbedBuilder()
         .setTitle(embedData.title)
-        .setDescription(message)
+        .setDescription(description)
         .setColor(embedData.color);
-}
+};
 
 export enum ReplyEmbedType {
     Success,
@@ -241,13 +241,12 @@ export class EmbedPage {
                 this._actionRows[0].components[4].setDisabled(false);
             }
 
-            await interaction.editReply({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
+            await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async (interactions, reason) => {
-            if (reason === "time") {
-                const embed = GetReplyEmbed(__t("operationTimeOut", { target: this._message?.url! }), ReplyEmbedType.Info);
-                this._channel.send({ embeds: [embed] });
-            }
+        this._collector?.once("end", async (interactions) => {
+            interactions.forEach(async interaction => {
+                await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: [] });
+            });
         });
     }
 

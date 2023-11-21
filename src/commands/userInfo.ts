@@ -58,7 +58,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
         };
     })();
     return prof || __t("blank");
-}
+};
 
 const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
     const userInfoEmbeds = new Array<EmbedBuilder>();
@@ -89,7 +89,7 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
 
     );
     return userInfoEmbeds;
-}
+};
 
 const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     const user = interaction.options.getUser("user")!;
@@ -131,6 +131,6 @@ const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
     const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
     const reply = await interaction.editReply({ embeds: [replyEmbed] });
     membersInfoPages.forEach(async page => await page.send({ time: 300_000 }));
-}
+};
 
 export default userInfocommand;
