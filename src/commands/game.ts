@@ -70,8 +70,8 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
         if (stringSelectMenuInteraction.customId === "selectRps") {
             collector.stop();
             const botHandIndex = rpsHands.randomKey()!;
-            const userHandIndex = stringSelectMenuInteraction.values[0];
-            const rpsResult = judgeRps(botHandIndex, Number(userHandIndex));
+            const userHandIndex = Number(stringSelectMenuInteraction.values[0]);
+            const rpsResult = judgeRps(botHandIndex, userHandIndex);
             const botResponse = ((result) => {
                 switch (result) {
                     case 0: {
@@ -85,7 +85,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
                     }
                 }
             })(rpsResult.result);
-            await stringSelectMenuInteraction.update({ content: "***", components: [] });
+            await stringSelectMenuInteraction.update({ content: rpsHands.get(userHandIndex)?.handEmoji, components: [] });
             await (await stringSelectMenuInteraction.followUp({ content: rpsResult.resultText }))
                 .reply(botResponse);
         }
