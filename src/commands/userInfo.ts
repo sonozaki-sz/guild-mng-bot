@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction, Collection, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
-import { EmbedPage, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const userInfocommand: Command = {
     data: new SlashCommandBuilder()
@@ -39,13 +38,13 @@ export const userInfocommand: Command = {
 };
 
 const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
+    const profChannel: TextChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
-    const channel = interaction.guild?.channels.cache.get(profChannel.id);
+    const channel = await interaction.guild?.channels.fetch(profChannel.id);
     if (!channel?.isTextBased()) {
-        return __t("bot/command/notFoundProfChannel");
+        return __t("bot/command/modal/faild");
     }
     const prof = await (async () => {
         let messageID = channel.lastMessageId || undefined;
@@ -59,7 +58,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
         };
     })();
     return prof || __t("blank");
-}
+};
 
 const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
     const userInfoEmbeds = new Array<EmbedBuilder>();
@@ -90,34 +89,34 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
 
     );
     return userInfoEmbeds;
-}
+};
 
 const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     const user = interaction.options.getUser("user")!;
-    const member = interaction.guild!.members.cache.get(user.id);
+    const member = await interaction.guild!.members.fetch(user.id);
     if (!member) {
-        const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
+        const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });
         return;
     }
 
     await interaction.deferReply();
-    const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+    const replyEmbed = getReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
     const userInfoEmbeds = await getUserInfoEmbes(interaction, member);
-    interaction.editReply({ embeds: [replyEmbed] });
+    await interaction.editReply({ embeds: [replyEmbed] });
     const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
     embedPage.send({ time: 300_000 });
 }
 
 const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
-    const member = interaction.guild!.members.cache.get(interaction.user.id);
+    const member = await interaction.guild!.members.fetch(interaction.user.id);
     if (!member) {
-        const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: interaction.user.toString() }), ReplyEmbedType.Warn);
+        const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: interaction.user.toString() }), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });
         return;
     }
     if (!member.voice.channel) {
-        const embed = GetReplyEmbed(__t("bot/command/user-info/vc-members/notInVC"), ReplyEmbedType.Warn);
+        const embed = getReplyEmbed(__t("bot/command/user-info/vc-members/notInVC"), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });
         return;
     }
@@ -129,9 +128,9 @@ const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
             return [member.displayName, userInfoPage] as const;
         }))
     );
-    const replyEmbed = GetReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
-    const reply = await interaction.editReply({ embeds: [replyEmbed] });
+    const replyEmbed = getReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
+    await interaction.editReply({ embeds: [replyEmbed] });
     membersInfoPages.forEach(async page => await page.send({ time: 300_000 }));
-}
+};
 
 export default userInfocommand;

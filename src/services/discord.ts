@@ -1,8 +1,32 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, Message, MessageCollectorOptionsParams, MessageComponentType, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
-export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
-    const embedData: { title: string, color: ColorResolvable } = ((type) => {
+export interface Command {
+    data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup" | "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+    autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
+    modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<void>;
+    cooldown?: number // in seconds
+}
+
+export interface BotEvent {
+    name: string;
+    once?: boolean | false;
+    execute: (...args: any[]) => Promise<void>;
+}
+
+declare module "discord.js" {
+    interface Client {
+        commands: Collection<string, Command>;
+        cooldowns: Collection<string, number>;
+    }
+    interface GuildMessageManager {
+        fetchMany(options?: FetchMessagesOptions | undefined): Promise<Collection<string, Message<true>>>;
+    }
+}
+
+export const getReplyEmbed = (description: string, type: ReplyEmbedType) => {
+    const embedData = ((type): { title: string, color: ColorResolvable } => {
         switch (type) {
             case ReplyEmbedType.Success:
                 return { title: `:white_check_mark:${__t("success")}`, color: Colors.Green };
@@ -16,9 +40,9 @@ export const GetReplyEmbed = (message: string, type: ReplyEmbedType) => {
     })(type);
     return new EmbedBuilder()
         .setTitle(embedData.title)
-        .setDescription(message)
+        .setDescription(description)
         .setColor(embedData.color);
-}
+};
 
 export enum ReplyEmbedType {
     Success,
@@ -97,6 +121,8 @@ export class EmbedPage {
     private _pages: Array<EmbedBuilder>;
     private _currentPageIndex: number;
     private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
+    private _message: Message<true> | Message<false> | undefined;
+    private _collector: InteractionCollector<MappedInteractionTypes<boolean>[MessageComponentType]> | undefined;
 
     constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
         this._channel = channel;
@@ -106,77 +132,67 @@ export class EmbedPage {
         });
         this._currentPageIndex = 0;
         this._actionRows = new Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>(
-            new ActionRowBuilder<ButtonBuilder>(
+            new ActionRowBuilder<ButtonBuilder>({
+                components: [{
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toFirst",
+                    label: __t("toFirst"),
+                    emoji: "⏮",
+                    disabled: true,
+                },
                 {
-                    components: [
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toFirst",
-                            label: __t("toFirst"),
-                            emoji: "⏮",
-                            disabled: true,
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toPrevious",
-                            label: __t("toPrevious"),
-                            emoji: "◀",
-                            disabled: true,
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Danger,
-                            customId: "delete",
-                            label: __t("delete"),
-                            emoji: "🗑",
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toNext",
-                            label: __t("toNext"),
-                            emoji: "▶",
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toLast",
-                            label: __t("toLast"),
-                            emoji: "⏭",
-                        }
-                    ]
-                }
-            ),
-            new ActionRowBuilder<StringSelectMenuBuilder>(
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toPrevious",
+                    label: __t("toPrevious"),
+                    emoji: "◀",
+                    disabled: true,
+                },
                 {
-                    components: [
-                        {
-                            type: ComponentType.StringSelect,
-                            customId: "selectPage",
-                            placeholder: __t("selectPage"),
-                            minValues: 1,
-                            maxValues: 1,
-                            options: pages.map((value, index) => {
-                                return {
-                                    label: `${index + 1}`,
-                                    value: index.toString(),
-                                }
-                            })
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Danger,
+                    customId: "delete",
+                    label: __t("delete"),
+                    emoji: "🗑",
+                },
+                {
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toNext",
+                    label: __t("toNext"),
+                    emoji: "▶",
+                },
+                {
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toLast",
+                    label: __t("toLast"),
+                    emoji: "⏭",
+                }]
+            }),
+            new ActionRowBuilder<StringSelectMenuBuilder>({
+                components: [{
+                    type: ComponentType.StringSelect,
+                    customId: "selectPage",
+                    placeholder: __t("selectPage"),
+                    minValues: 1,
+                    maxValues: 1,
+                    options: pages.map((value, index) => {
+                        return {
+                            label: `${index + 1}`,
+                            value: index.toString(),
                         }
-                    ]
-                }
-            ),
+                    })
+                }]
+            }),
         );
     }
 
     public async send(options?: MessageCollectorOptionsParams<MessageComponentType, boolean>) {
-        const message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
-        const collector = message.createMessageComponentCollector({ ...options });
-        collector.on("collect", async interaction => {
-            await interaction.deferUpdate();
-
+        this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
+        this._collector = this._message.createMessageComponentCollector({ ...options }) as any; // HACK: this._collectorの型定義が間違っているのでanyで回避
+        this._collector?.on("collect", async interaction => {
             switch (interaction.customId) {
                 case "toFirst":
                     this._currentPageIndex = 0;
@@ -185,8 +201,8 @@ export class EmbedPage {
                     this._currentPageIndex = (this._currentPageIndex - 1) % this._pages.length;
                     break;
                 case "delete":
-                    await message.delete();
-                    collector.stop("delete");
+                    await this._message?.delete();
+                    this._collector?.stop("delete");
                     return;
                 case "toNext":
                     this._currentPageIndex = (this._currentPageIndex + 1) % this._pages.length;
@@ -215,13 +231,19 @@ export class EmbedPage {
                 this._actionRows[0].components[4].setDisabled(false);
             }
 
-            await interaction.editReply({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
+            await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        collector.once("end", async (interactions, reason) => {
-            if (reason === "time") {
-                const embed = GetReplyEmbed(__t("operationTimeOut", { target: message.url! }), ReplyEmbedType.Info);
-                this._channel.send({ embeds: [embed] });
+        this._collector?.once("end", async (interactions, reeason) => {
+            if (reeason === "time") {
+                await this._message?.edit({ components: [] });
             }
         });
+    }
+
+    public async delete() {
+        if (!this._message) return;
+        await this._message.delete();
+        if (!this._collector) return;
+        this._collector.stop("delete");
     }
 }

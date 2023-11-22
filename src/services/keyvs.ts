@@ -48,9 +48,11 @@ export class Keyvs {
 export enum KeyvKeys {
     DestAfkVC = "destAfkVC",
     VacTriggerVC = "vcAutoCreation/triggerVC",
-    IsValidVac = "vcAutoCreation/isValidVac",
+    IsVacEnabled = "vcAutoCreation/isEnabled",
     VacChannels = "vcAutoCreation/channels",
     ProfChannel = "profChannel",
+    IsBumpReminderEnabled = "rmdBump/isEnabled",
+    BumpReminderMentionRole = "rmdBump/mentionRole",
 }
 
 export class KeyvsError extends Error {

@@ -1,9 +1,8 @@
 import { ChannelType, ChatInputCommandInteraction, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
-import { Command } from "../types/discord";
 
 export const vcAutoCreationCommand: Command = {
     data: new SlashCommandBuilder()
@@ -26,9 +25,9 @@ export const vcAutoCreationCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                const isValidVac: boolean = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsValidVac);
-                if (isValidVac) {
-                    const embed = GetReplyEmbed(__t("bot/command/vac/start/alreadyStarting"), ReplyEmbedType.Warn);
+                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                if (isVacEnabled) {
+                    const embed = getReplyEmbed(__t("bot/command/vac/start/alreadyStarting"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
@@ -38,43 +37,42 @@ export const vcAutoCreationCommand: Command = {
                     parent: (interaction.channel as GuildChannel).parent,
                 })
                 if (!triggerVC) {
-                    const embed = GetReplyEmbed(__t("bot/command/vac/start/faild", { error: __t("bot/command/vac/start/createTriggerVCFaild") }), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/vac/start/faild", { error: __t("bot/command/vac/start/createTriggerVCFaild") }), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 };
                 try {
                     await keyvs.setValue(interaction.guildId!, KeyvKeys.VacTriggerVC, triggerVC)
-                    await keyvs.setValue(interaction.guildId!, KeyvKeys.IsValidVac, true);
+                    await keyvs.setValue(interaction.guildId!, KeyvKeys.IsVacEnabled, true);
                     await keyvs.setValue(interaction.guildId!, KeyvKeys.VacChannels, new Array<VoiceChannel>());
                 } catch (error) {
                     triggerVC.delete();
                 }
-                const embed = GetReplyEmbed(__t("bot/command/vac/start/success"), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/vac/start/success"), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
-                logger.info(__t("bot/vcAutoCreation/start", { guild: interaction.guildId! }));
+                logger.info(__t("log/bot/vcAutoCreation/start", { guild: interaction.guildId! }));
                 break;
             }
             case "stop": {
-                const isValidVac: boolean = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsValidVac);
-                if (!isValidVac) {
-                    const embed = GetReplyEmbed(__t("bot/command/vac/stop/alreadyStoping"), ReplyEmbedType.Warn);
+                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                if (!isVacEnabled) {
+                    const embed = getReplyEmbed(__t("bot/command/vac/stop/alreadyStoping"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const triggerChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
-                const channel = interaction.guild?.channels.cache.get(triggerChannel.id);
-                channel?.delete();
-                await keyvs.setValue(interaction.guildId!, KeyvKeys.IsValidVac, false);
-                await keyvs.deleteValue(interaction.guildId!, KeyvKeys.VacTriggerVC)
-                const embed = GetReplyEmbed(__t("bot/command/vac/stop/success"), ReplyEmbedType.Success);
+                const triggerChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
+                if (!triggerChannel) {
+
+                }
+                const embed = getReplyEmbed(__t("bot/command/vac/stop/success"), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
-                logger.info(__t("bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
+                logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
                 break;
             }
             case "status": {
-                const isValidVac: boolean = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsValidVac);
-                const statusText = isValidVac ? __t("executing") : __t("stoping");
-                const embed = GetReplyEmbed(__t("bot/command/vac/status/success", { status: statusText }), ReplyEmbedType.Success);
+                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                const statusText = isVacEnabled ? __t("executing") : __t("stoping");
+                const embed = getReplyEmbed(__t("bot/command/vac/status/success", { status: statusText }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }

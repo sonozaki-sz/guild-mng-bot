@@ -1,8 +1,7 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const cnfAfkCommand: Command = {
     data: new SlashCommandBuilder()
@@ -30,24 +29,24 @@ export const cnfAfkCommand: Command = {
             case "set-dest": {
                 const channel: VoiceChannel = interaction.options.getChannel("channel")!;
                 await keyvs.setValue(interaction.guildId!, KeyvKeys.DestAfkVC, channel)
-                const embed = GetReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-dest": {
-                const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
+                const afkChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
                 if (!afkChannel) {
-                    const embed = GetReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.get(afkChannel.id);
+                const channel = await interaction.guild?.channels.fetch(afkChannel.id);
                 if (!channel) {
-                    const embed = GetReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const embed = GetReplyEmbed(__t("bot/command/cnf-afk/get-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/cnf-afk/get-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }

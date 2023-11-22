@@ -1,12 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandSubcommandBuilder, VoiceChannel } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import "../services/discord";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const afkCommand: Command = {
-    data: new SlashCommandSubcommandBuilder()
+    data: new SlashCommandBuilder()
         .setName("afk")
         .setDescription(__t("bot/command/afk/description"))
         .addUserOption(option =>
@@ -17,35 +16,35 @@ export const afkCommand: Command = {
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         const user = interaction.options.getUser("user")!;
-        const member = interaction.guild?.members.cache.get(user.id);
+        const member = await interaction.guild?.members.fetch(user.id);
         if (!member) {
-            const embed = GetReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
+            const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
-        const afkChannel: VoiceChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
+        const afkChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
         if (!afkChannel) {
-            const embed = GetReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
+            const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
-        const channel = interaction.guild?.channels.cache.get(afkChannel.id);
+        const channel = await interaction.guild?.channels.fetch(afkChannel.id);
         if (!channel) {
-            const embed = GetReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
+            const embed = getReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
         if (channel.id === member.voice.channel?.id) {
-            const embed = GetReplyEmbed(__t("bot/command/afk/alreadyAfk", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Warn);
+            const embed = getReplyEmbed(__t("bot/command/afk/alreadyAfk", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });
             return;
         }
         member.voice.setChannel(channel.id)
             .then(() => {
-                const embed = GetReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
             }).catch((error) => {
-                const embed = GetReplyEmbed(__t("bot/command/afk/faild", { user: member.toString(), error: error.toString() }), ReplyEmbedType.Warn);
+                const embed = getReplyEmbed(__t("bot/command/afk/faild", { user: member.toString(), error: error.toString() }), ReplyEmbedType.Warn);
                 interaction.reply({ embeds: [embed] });
             });
     }

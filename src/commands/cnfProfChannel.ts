@@ -1,53 +1,52 @@
 import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
-import { GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
-import { Command } from "../types/discord";
 
 export const cnfProfChannelCommand: Command = {
     data: new SlashCommandBuilder()
-        .setName("cnf-prof")
-        .setDescription(__t("bot/command/cnf-prof/description"))
+        .setName("cnf-prof-ch")
+        .setDescription(__t("bot/command/cnf-prof-ch/description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName("set-ch")
-                .setDescription(__t("bot/command/cnf-prof/set-ch/description"))
+                .setDescription(__t("bot/command/cnf-prof-ch/set-ch/description"))
                 .addChannelOption(option =>
                     option
                         .setName("channel")
-                        .setDescription(__t("bot/command/cnf-prof/set-ch/channelOption/description"))
+                        .setDescription(__t("bot/command/cnf-prof-ch/set-ch/channelOption/description"))
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(true)
                 )
         ).addSubcommand(subcommand =>
             subcommand
                 .setName("get-ch")
-                .setDescription(__t("bot/command/cnf-prof/get-ch/description"))
+                .setDescription(__t("bot/command/cnf-prof-ch/get-ch/description"))
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "set-ch": {
                 const channel: TextChannel = interaction.options.getChannel("channel")!;
                 keyvs.setValue(interaction.guildId!, KeyvKeys.ProfChannel, channel);
-                const embed = GetReplyEmbed(__t("bot/command/cnf-prof/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
-                const profChannel: TextChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
+                const profChannel: TextChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
                 if (!profChannel) {
-                    const embed = GetReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.get(profChannel.id);
+                const channel = await interaction.guild?.channels.fetch(profChannel.id);
                 if (!channel) {
-                    const embed = GetReplyEmbed(__t("bot/command/notFoundProfChannel"), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/modal/faild"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const embed = GetReplyEmbed(__t("bot/command/cnf-prof/get-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+                const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/get-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }
