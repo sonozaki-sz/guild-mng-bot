@@ -86,6 +86,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/notFoundDestAfk": msg("移動先に設定されいてる休止チャンネルが見つかりませんでした。\n移動先を設定し直してください。"),
     "bot/command/notFoundUser": msg("{user}が見つかりませんでした。"),
     "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
+    "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),
@@ -135,7 +136,6 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-prof-ch/set-ch/success": msg("プロフィールチャンネルを{channel}に設定しました。"),
     "bot/command/cnf-prof-ch/get-ch/description": msg("プロフィールチャンネルを取得します。"),
     "bot/command/cnf-prof-ch/get-ch/success": msg("プロフィールチャンネルを{channel}に設定しました。"),
-    "bot/command/modal/faild": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/user-info/description": msg("ユーザーの情報を表示します。"),
     "bot/command/user-info/normal/description": msg("指定されたユーザーの情報を表示します。"),
     "bot/command/user-info/normal/userOption/description": msg("情報を表示するユーザーを入力してください。"),

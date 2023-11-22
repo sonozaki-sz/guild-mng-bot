@@ -136,7 +136,7 @@ export type Vocabulary = {
     "bot/command/cnf-prof-ch/set-ch/success": Message<{ channel: string }>,
     "bot/command/cnf-prof-ch/get-ch/description": Message,
     "bot/command/cnf-prof-ch/get-ch/success": Message<{ channel: string }>,
-    "bot/command/modal/faild": Message,
+    "bot/command/notFoundProfChannel": Message,
     "bot/command/user-info/description": Message,
     "bot/command/user-info/normal/description": Message,
     "bot/command/user-info/normal/userOption/description": Message,

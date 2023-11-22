@@ -54,7 +54,4 @@ const botStart = async () => {
         });
 };
 
-botStart().catch((error: Error) => {
-    const errorDesc = error.stack || error.message || "unknown error";
-    logger.error(__t("log/bot/login/faild", { error: errorDesc }));
-});
+botStart();

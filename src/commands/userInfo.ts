@@ -44,7 +44,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
     }
     const channel = await interaction.guild?.channels.fetch(profChannel.id);
     if (!channel?.isTextBased()) {
-        return __t("bot/command/modal/faild");
+        return __t("bot/command/notFoundProfChannel");
     }
     const prof = await (async () => {
         let messageID = channel.lastMessageId || undefined;

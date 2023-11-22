@@ -42,7 +42,7 @@ export const cnfProfChannelCommand: Command = {
                 }
                 const channel = await interaction.guild?.channels.fetch(profChannel.id);
                 if (!channel) {
-                    const embed = getReplyEmbed(__t("bot/command/modal/faild"), ReplyEmbedType.Warn);
+                    const embed = getReplyEmbed(__t("bot/command/notFoundProfChannel"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
