@@ -30,7 +30,7 @@ export const cnfVCCommand: Command = {
                 )
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const member = interaction.guild?.members.cache.get(interaction.user.id);
+        const member = await interaction.guild?.members.fetch(interaction.user.id);
         if (!member?.voice.channel) {
             const embed = getReplyEmbed(__t("bot/command/cnf-vc/notInVC"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });

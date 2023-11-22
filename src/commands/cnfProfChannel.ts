@@ -40,7 +40,7 @@ export const cnfProfChannelCommand: Command = {
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.get(profChannel.id);
+                const channel = await interaction.guild?.channels.fetch(profChannel.id);
                 if (!channel) {
                     const embed = getReplyEmbed(__t("bot/command/modal/faild"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });

@@ -91,9 +91,9 @@ const executeStatus = async (interaction: ChatInputCommandInteraction) => {
     const isEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled);
     const memtionRole: Role | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole);
     const status = isEnabled ? __t("executing") : __t("stoping");
-    const mentionRoleText = (() => {
+    const mentionRoleText = await (async () => {
         if (!memtionRole) return __t("disabled");
-        const role = interaction.guild?.roles.cache.get(memtionRole.id);
+        const role = await interaction.guild?.roles.fetch(memtionRole.id);
         return role?.toString() || __t("disabled");
     })();
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/status/success", { status: status, mentionRole: mentionRoleText }), ReplyEmbedType.Success);

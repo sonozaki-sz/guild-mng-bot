@@ -40,7 +40,7 @@ export const cnfAfkCommand: Command = {
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = interaction.guild?.channels.cache.get(afkChannel.id);
+                const channel = await interaction.guild?.channels.fetch(afkChannel.id);
                 if (!channel) {
                     const embed = getReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });

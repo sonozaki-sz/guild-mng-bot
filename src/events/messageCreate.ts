@@ -53,9 +53,9 @@ const executeBumpReminder = async (message: Message) => {
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
                 setTimeout(async () => {
                     const mentionRole: Role | undefined = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole);
-                    const mentionRoleText = (() => {
+                    const mentionRoleText = await (async () => {
                         if (!mentionRole) return "";
-                        const role = interaction.guild?.roles.cache.get(mentionRole.id);
+                        const role = await interaction.guild?.roles.fetch(mentionRole.id);
                         return role?.toString() || "";
                     })();
                     const user = interaction.user.toString();

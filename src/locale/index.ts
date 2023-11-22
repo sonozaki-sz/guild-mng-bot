@@ -150,6 +150,10 @@ export type Vocabulary = {
     "bot/command/cnf-bump-reminder/set-mention/notMentionable": Message<{ role: string }>,
     "bot/command/cnf-bump-reminder/status/description": Message,
     "bot/command/cnf-bump-reminder/status/success": Message<{ status: string, mentionRole: string }>,
+    "bot/command/send-text/description": Message,
+    "bot/command/send-text/textOption/description": Message,
+    "bot/command/send-text/channelOption/description": Message,
+    "bot/command/send-text/success": Message<{ channel: string }>,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

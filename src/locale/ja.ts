@@ -149,4 +149,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-bump-reminder/set-mention/notMentionable": msg("メンションできないロールは設定できません。"),
     "bot/command/cnf-bump-reminder/status/description": msg("Bumpのリマインド機能の状態を表示します。"),
     "bot/command/cnf-bump-reminder/status/success": msg("Bumpのリマインド機能は{status}です。\nメンションするロールは{mentionRole}に設定されています。"),
+    "bot/command/send-text/description": msg("テキストメッセージを送信します。"),
+    "bot/command/send-text/textOption/description": msg("送信するテキスト、またはテキストが記載されたメッセージのIDを指定してください。"),
+    "bot/command/send-text/channelOption/description": msg("送信するチャンネルを指定してください。"),
+    "bot/command/send-text/success": msg("{channel}にテキストメッセージを送信しました。"),
 });

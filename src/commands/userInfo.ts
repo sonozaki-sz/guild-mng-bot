@@ -42,7 +42,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
-    const channel = interaction.guild?.channels.cache.get(profChannel.id);
+    const channel = await interaction.guild?.channels.fetch(profChannel.id);
     if (!channel?.isTextBased()) {
         return __t("bot/command/modal/faild");
     }
@@ -93,7 +93,7 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
 
 const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     const user = interaction.options.getUser("user")!;
-    const member = interaction.guild!.members.cache.get(user.id);
+    const member = await interaction.guild!.members.fetch(user.id);
     if (!member) {
         const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });
@@ -109,7 +109,7 @@ const executeNormal = async (interaction: ChatInputCommandInteraction) => {
 }
 
 const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
-    const member = interaction.guild!.members.cache.get(interaction.user.id);
+    const member = await interaction.guild!.members.fetch(interaction.user.id);
     if (!member) {
         const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: interaction.user.toString() }), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });

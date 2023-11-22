@@ -1,8 +1,8 @@
-import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, ModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandSubcommandsOnlyBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export interface Command {
-    data: SlashCommandBuilder | SlashCommandSubcommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandSubcommandGroupBuilder;
+    data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup" | "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
     modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<void>;
