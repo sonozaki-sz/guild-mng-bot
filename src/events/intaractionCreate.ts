@@ -1,5 +1,5 @@
 import { Events, Interaction } from "discord.js";
-import { BotEvent, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -12,13 +12,14 @@ export const interactionCreateEvent: BotEvent = {
             const command = interaction.client.commands.get(interaction.commandName);
             const cooldown = interaction.client.cooldowns.get(`${interaction.commandName}-${interaction.user.username}`);
             if (!command) {
-                logger.error(__t("bot/command/notFound", { command: interaction.commandName }));
+                logger.error(__t("log/bot/command/notFound", { command: interaction.commandName }));
                 return;
             }
             if (command.cooldown && cooldown) {
                 if (Date.now() < cooldown) {
                     const cooldownTime = Math.floor(Math.abs(Date.now() - cooldown) / 1000);
-                    interaction.reply(__t("bot/command/cooldown", { cooldown: cooldownTime.toString() }));
+                    const embed = getReplyEmbed(__t("bot/command/cooldown", { cooldown: cooldownTime.toString() }), ReplyEmbedType.Error);
+                    interaction.reply({ embeds: [embed], ephemeral: true });
                     setTimeout(() => interaction.deleteReply(), 5000);
                     return;
                 }
@@ -31,56 +32,56 @@ export const interactionCreateEvent: BotEvent = {
             }
             command.execute(interaction)
                 .then(() => {
-                    logger.info(__t("bot/command/execute/success", { command: interaction.commandName, guild: interaction.guildId! }));
+                    logger.info(__t("log/bot/command/execute/success", { command: interaction.commandName, guild: interaction.guildId! }));
                 }).catch((error: Error) => {
                     const errorDescMsg = error.message || "unknown error";
-                    const replyMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
-                    const embed = GetReplyEmbed(replyMsg, ReplyEmbedType.Error);
+                    const replyMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
+                    const embed = getReplyEmbed(replyMsg, ReplyEmbedType.Error);
                     interaction.reply({ embeds: [embed] });
                     const errorDescLog = error.stack || error.message || "unknown error";
-                    const logMsg = __t("bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
+                    const logMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
                     logger.error(logMsg);
                     interaction
                     if (error instanceof KeyvsError) {
                         keyvs.setkeyv(interaction.guildId!);
-                        logger.info(__t("keyvs/reset", { namespace: interaction.guildId! }));
-                        const embed = GetReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
+                        logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
+                        const embed = getReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
                         interaction.channel?.send({ embeds: [embed] });
                     }
                 });
         } else if (interaction.isAutocomplete()) {
             const command = interaction.client.commands.get(interaction.commandName);
             if (!command) {
-                logger.error(__t("bot/command/notFound", { command: interaction.commandName }));
+                logger.error(__t("log/bot/command/notFound", { command: interaction.commandName }));
                 return;
             }
             if (!command.autocomplete) {
-                logger.error(__t("bot/command/autocomplete/undefined", { command: interaction.commandName }));
+                logger.error(__t("log/bot/command/autocomplete/undefined", { command: interaction.commandName }));
                 return;
             }
             command.autocomplete(interaction)
                 .then(() => {
-                    logger.info(__t("bot/command/autocomplete/success", { command: interaction.commandName, guild: interaction.guildId! }));
+                    logger.info(__t("log/bot/command/autocomplete/success", { command: interaction.commandName, guild: interaction.guildId! }));
                 }).catch((error: Error) => {
                     const errorDesc = error.stack || error.message || "unknown error";
-                    logger.error(__t("bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDesc }));
+                    logger.error(__t("log/bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDesc }));
                 });
         } else if (interaction.isModalSubmit()) {
             const command = interaction.client.commands.get(interaction.customId);
             if (!command) {
-                logger.error(__t("bot/command/notFound", { command: interaction.customId }));
+                logger.error(__t("log/bot/command/notFound", { command: interaction.customId }));
                 return;
             }
             if (!command.modal) {
-                logger.error(__t("bot/command/modal/undefined", { command: interaction.customId }));
+                logger.error(__t("log/bot/command/modal/undefined", { command: interaction.customId }));
                 return;
             }
             command.modal(interaction)
                 .then(() => {
-                    logger.info(__t("bot/command/modal/success", { command: interaction.customId, guild: interaction.guildId! }));
+                    logger.info(__t("log/bot/command/modal/success", { command: interaction.customId, guild: interaction.guildId! }));
                 }).catch((error: Error) => {
                     const errorDesc = error.stack || error.message || "unknown error";
-                    logger.error(__t("bot/command/modal/faild", { command: interaction.customId, guild: interaction.guildId!, error: errorDesc }));
+                    logger.error(__t("log/bot/command/modal/faild", { command: interaction.customId, guild: interaction.guildId!, error: errorDesc }));
                 });
         }
     }

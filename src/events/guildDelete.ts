@@ -8,7 +8,7 @@ export const guildDeleteEvent: BotEvent = {
     name: Events.GuildDelete,
     execute: async (guild) => {
         keyvs.deletekeyv(guild.id);
-        logger.info(__t("keyvs/delete", { namespace: guild.id }));
+        logger.info(__t("log/keyvs/delete", { namespace: guild.id }));
     }
 };
 

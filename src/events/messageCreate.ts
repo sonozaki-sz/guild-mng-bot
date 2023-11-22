@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, Events, Message, Role } from "discord.js";
-import { BotEvent, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -19,11 +19,11 @@ const executeBumpReminder = async (message: Message) => {
     if (!isBumpReminderEnabled) return;
     if (message.author.id !== disboardUserID) return;
     if (message.interaction?.commandName !== bumpCommandName) return;
-    logger.info(__t("bot/bumpReminder/detectBump", { guild: message.guildId! }));
+    logger.info(__t("log/bot/bumpReminder/detectBump", { guild: message.guildId! }));
     const twoHoursLaterMSec = message.createdTimestamp + 2 * 60 * 60 * 1000;
     const twoHoursLaterSec = Math.floor(twoHoursLaterMSec / 1000);
     const embedDesc = __t("bot/bumpReminder/bumpMessage", { time: `<t:${twoHoursLaterSec}:T>`, diffCurTime: `<t:${twoHoursLaterSec}:R>` });
-    const embed = GetReplyEmbed(embedDesc, ReplyEmbedType.Info);
+    const embed = getReplyEmbed(embedDesc, ReplyEmbedType.Info);
     const actionRow = new ActionRowBuilder<ButtonBuilder>({
         components: [
             {
@@ -48,9 +48,9 @@ const executeBumpReminder = async (message: Message) => {
         switch (interaction.customId) {
             case "doRemind": {
                 collector.stop("buttonClicked");
-                const embed = GetReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
+                const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
                 bumpReminderMessage.channel.send({ embeds: [embed] });
-                logger.info(__t("bot/bumpReminder/setRemindLog", { guild: message.guildId! }));
+                logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
                 setTimeout(async () => {
                     const mentionRole: Role | undefined = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole);
                     const mentionRoleText = (() => {
@@ -60,15 +60,15 @@ const executeBumpReminder = async (message: Message) => {
                     })();
                     const user = interaction.user.toString();
                     interaction.channel?.send(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, user: user }));
-                    logger.info(__t("bot/bumpReminder/remindLog", { guild: message.guildId! }));
+                    logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
                 }, 3_000);
                 break;
             }
             case "doNotRemind": {
                 collector.stop("buttonClicked");
-                const embed = GetReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
+                const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
                 bumpReminderMessage.channel.send({ embeds: [embed] });
-                logger.info(__t("bot/bumpReminder/cancelRemindLog", { guild: message.guildId! }));
+                logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
                 break;
             }
         }
@@ -78,9 +78,9 @@ const executeBumpReminder = async (message: Message) => {
             await interaction.update({ embeds: [embed], components: [] });
         });
         if (reason === "time") {
-            const embed = GetReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
+            const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
             bumpReminderMessage.channel.send({ embeds: [embed] });
-            logger.info(__t("bot/bumpReminder/cancelRemindLog", { guild: message.guildId! }));
+            logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
         }
     });
 };

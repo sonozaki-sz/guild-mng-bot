@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Role, SlashCommandBuilder } from "discord.js";
-import { Command, GetReplyEmbed, ReplyEmbedType } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -55,35 +55,35 @@ export const cnfBumpReminderCommand: Command = {
 
 const executeStart = async (interaction: ChatInputCommandInteraction) => {
     await keyvs.setValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled, true);
-    const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/start/success"), ReplyEmbedType.Success);
+    const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/start/success"), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
-    logger.info(__t("bot/bumpReminder/start", { guild: interaction.guildId! }));
+    logger.info(__t("log/bot/bumpReminder/start", { guild: interaction.guildId! }));
 };
 
 const executeStop = async (interaction: ChatInputCommandInteraction) => {
     await keyvs.setValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled, false);
-    const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/stop/success"), ReplyEmbedType.Success);
+    const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/stop/success"), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
-    logger.info(__t("bot/bumpReminder/stop", { guild: interaction.guildId! }));
+    logger.info(__t("log/bot/bumpReminder/stop", { guild: interaction.guildId! }));
 };
 
 const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
     const role = interaction.options.getRole("role", false);
     if (!role) {
         await keyvs.deleteValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole);
-        const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: __t("disabled") }), ReplyEmbedType.Success);
+        const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: __t("disabled") }), ReplyEmbedType.Success);
         interaction.reply({ embeds: [embed] });
         return;
     }
 
     if (!role.mentionable) {
-        const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/notMentionable", { role: role.toString() }), ReplyEmbedType.Warn);
+        const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/notMentionable", { role: role.toString() }), ReplyEmbedType.Warn);
         interaction.reply({ embeds: [embed] });
         return;
     }
 
     await keyvs.setValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole, role);
-    const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: role.toString() }), ReplyEmbedType.Success);
+    const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: role.toString() }), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
 };
 
@@ -96,7 +96,7 @@ const executeStatus = async (interaction: ChatInputCommandInteraction) => {
         const role = interaction.guild?.roles.cache.get(memtionRole.id);
         return role?.toString() || __t("disabled");
     })();
-    const embed = GetReplyEmbed(__t("bot/command/cnf-bump-reminder/status/success", { status: status, mentionRole: mentionRoleText }), ReplyEmbedType.Success);
+    const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/status/success", { status: status, mentionRole: mentionRoleText }), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
 };
 

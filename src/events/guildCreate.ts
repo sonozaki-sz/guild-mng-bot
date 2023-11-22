@@ -8,7 +8,7 @@ export const guildCreateEvent: BotEvent = {
     name: Events.GuildCreate,
     execute: async (guild) => {
         keyvs.setkeyv(guild.id);
-        logger.info(__t("keyvs/set", { namespace: guild.id }));
+        logger.info(__t("log/keyvs/set", { namespace: guild.id }));
     }
 };
 

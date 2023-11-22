@@ -25,7 +25,7 @@ declare module "discord.js" {
     }
 }
 
-export const GetReplyEmbed = (description: string, type: ReplyEmbedType) => {
+export const getReplyEmbed = (description: string, type: ReplyEmbedType) => {
     const embedData: { title: string, color: ColorResolvable } = ((type) => {
         switch (type) {
             case ReplyEmbedType.Success:

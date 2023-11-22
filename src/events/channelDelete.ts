@@ -13,11 +13,11 @@ export const channelDeleteEvent: BotEvent = {
                 stopVCAutoCreation(channel as VoiceChannel)
                     .catch((error: Error) => {
                         const errorDesc = error.stack || error.message || "unknown error";
-                        const logMsg = __t("bot/vcAutoCreation/error/logMessage", { guild: channel.guildId, error: errorDesc });
+                        const logMsg = __t("log/bot/vcAutoCreation/error", { guild: channel.guildId, error: errorDesc });
                         logger.error(logMsg);
                         if (error instanceof KeyvsError) {
                             keyvs.setkeyv(channel.guildId);
-                            logger.info(__t("keyvs/reset", { namespace: channel.guildId }));
+                            logger.info(__t("log/keyvs/reset", { namespace: channel.guildId }));
                         }
                     });
                 break;
@@ -34,7 +34,7 @@ const stopVCAutoCreation = async (channel: VoiceChannel) => {
         if (channel.id === triggerChannel?.id) {
             await keyvs.setValue(channel.guildId!, KeyvKeys.IsVacEnabled, false);
             await keyvs.deleteValue(channel.guildId!, KeyvKeys.VacTriggerVC);
-            logger.info(__t("bot/vcAutoCreation/stop", { guild: channel.guildId }));
+            logger.info(__t("log/bot/vcAutoCreation/stop", { guild: channel.guildId }));
         }
     }
 };
