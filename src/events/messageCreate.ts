@@ -45,11 +45,11 @@ const executeBumpReminder = async (message: Message) => {
     const bumpReminderMessage = await message.channel.send({ embeds: [embed], components: [actionRow] });
     const collector = bumpReminderMessage.createMessageComponentCollector({ time: 60_000 });
     collector.on("collect", async (interaction) => {
+        collector.stop("buttonClicked");
         switch (interaction.customId) {
             case "doRemind": {
-                collector.stop("buttonClicked");
                 const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
-                bumpReminderMessage.channel.send({ embeds: [embed] });
+                await bumpReminderMessage.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
                 setTimeout(async () => {
                     const mentionRole: Role | undefined = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole);
@@ -59,27 +59,24 @@ const executeBumpReminder = async (message: Message) => {
                         return role?.toString() || "";
                     })();
                     const user = interaction.user.toString();
-                    interaction.channel?.send(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, user: user }));
+                    bumpReminderMessage.reply(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, user: user }));
                     logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
-                }, 3_000);
+                }, 2 * 60 * 60 * 1000);
                 break;
             }
             case "doNotRemind": {
-                collector.stop("buttonClicked");
                 const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
-                bumpReminderMessage.channel.send({ embeds: [embed] });
+                bumpReminderMessage.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
                 break;
             }
         }
     });
     collector.once("end", async (interactions, reason) => {
-        interactions.forEach(async (interaction) => {
-            await interaction.update({ embeds: [embed], components: [] });
-        });
+        bumpReminderMessage.edit({ components: [] });
         if (reason === "time") {
             const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
-            bumpReminderMessage.channel.send({ embeds: [embed] });
+            bumpReminderMessage.reply({ embeds: [embed] });
             logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
         }
     });

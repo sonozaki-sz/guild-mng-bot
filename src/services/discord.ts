@@ -26,7 +26,7 @@ declare module "discord.js" {
 }
 
 export const getReplyEmbed = (description: string, type: ReplyEmbedType) => {
-    const embedData: { title: string, color: ColorResolvable } = ((type) => {
+    const embedData = ((type): { title: string, color: ColorResolvable } => {
         switch (type) {
             case ReplyEmbedType.Success:
                 return { title: `:white_check_mark:${__t("success")}`, color: Colors.Green };
@@ -132,68 +132,60 @@ export class EmbedPage {
         });
         this._currentPageIndex = 0;
         this._actionRows = new Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>(
-            new ActionRowBuilder<ButtonBuilder>(
+            new ActionRowBuilder<ButtonBuilder>({
+                components: [{
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toFirst",
+                    label: __t("toFirst"),
+                    emoji: "⏮",
+                    disabled: true,
+                },
                 {
-                    components: [
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toFirst",
-                            label: __t("toFirst"),
-                            emoji: "⏮",
-                            disabled: true,
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toPrevious",
-                            label: __t("toPrevious"),
-                            emoji: "◀",
-                            disabled: true,
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Danger,
-                            customId: "delete",
-                            label: __t("delete"),
-                            emoji: "🗑",
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toNext",
-                            label: __t("toNext"),
-                            emoji: "▶",
-                        },
-                        {
-                            type: ComponentType.Button,
-                            style: ButtonStyle.Primary,
-                            customId: "toLast",
-                            label: __t("toLast"),
-                            emoji: "⏭",
-                        }
-                    ]
-                }
-            ),
-            new ActionRowBuilder<StringSelectMenuBuilder>(
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toPrevious",
+                    label: __t("toPrevious"),
+                    emoji: "◀",
+                    disabled: true,
+                },
                 {
-                    components: [
-                        {
-                            type: ComponentType.StringSelect,
-                            customId: "selectPage",
-                            placeholder: __t("selectPage"),
-                            minValues: 1,
-                            maxValues: 1,
-                            options: pages.map((value, index) => {
-                                return {
-                                    label: `${index + 1}`,
-                                    value: index.toString(),
-                                }
-                            })
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Danger,
+                    customId: "delete",
+                    label: __t("delete"),
+                    emoji: "🗑",
+                },
+                {
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toNext",
+                    label: __t("toNext"),
+                    emoji: "▶",
+                },
+                {
+                    type: ComponentType.Button,
+                    style: ButtonStyle.Primary,
+                    customId: "toLast",
+                    label: __t("toLast"),
+                    emoji: "⏭",
+                }]
+            }),
+            new ActionRowBuilder<StringSelectMenuBuilder>({
+                components: [{
+                    type: ComponentType.StringSelect,
+                    customId: "selectPage",
+                    placeholder: __t("selectPage"),
+                    minValues: 1,
+                    maxValues: 1,
+                    options: pages.map((value, index) => {
+                        return {
+                            label: `${index + 1}`,
+                            value: index.toString(),
                         }
-                    ]
-                }
-            ),
+                    })
+                }]
+            }),
         );
     }
 
@@ -201,8 +193,6 @@ export class EmbedPage {
         this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         this._collector = this._message.createMessageComponentCollector({ ...options }) as any; // HACK: this._collectorの型定義が間違っているのでanyで回避
         this._collector?.on("collect", async interaction => {
-            await interaction.deferUpdate();
-
             switch (interaction.customId) {
                 case "toFirst":
                     this._currentPageIndex = 0;
@@ -243,10 +233,10 @@ export class EmbedPage {
 
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async (interactions) => {
-            interactions.forEach(async interaction => {
-                await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: [] });
-            });
+        this._collector?.once("end", async (interactions, reeason) => {
+            if (reeason === "time") {
+                await this._message?.edit({ components: [] });
+            }
         });
     }
 

@@ -34,6 +34,10 @@ export type Vocabulary = {
     "selectPage": Message,
     "operationTimeOut": Message<{ target: string }>,
     "footer/page": Message<{ page: string }>,
+    "rps/selectMenu/selectHand": Message,
+    "rps/rock": Message,
+    "rps/paper": Message,
+    "rps/scissors": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -154,6 +158,14 @@ export type Vocabulary = {
     "bot/command/send-text/textOption/description": Message,
     "bot/command/send-text/channelOption/description": Message,
     "bot/command/send-text/success": Message<{ channel: string }>,
+    "bot/command/game/description": Message,
+    "bot/command/game/rps/description": Message,
+    "bot/command/game/rps/ready": Message,
+    "bot/command/game/rps/result": Message<{ botHand: string, userHand: string }>,
+    "bot/command/game/rps/botWin": Message,
+    "bot/command/game/rps/botDraw": Message,
+    "bot/command/game/rps/botLose": Message,
+    "bot/command/game/rps/timeOut": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

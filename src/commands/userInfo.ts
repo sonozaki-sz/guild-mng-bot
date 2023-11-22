@@ -103,7 +103,7 @@ const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
     const replyEmbed = getReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
     const userInfoEmbeds = await getUserInfoEmbes(interaction, member);
-    interaction.editReply({ embeds: [replyEmbed] });
+    await interaction.editReply({ embeds: [replyEmbed] });
     const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
     embedPage.send({ time: 300_000 });
 }
@@ -129,7 +129,7 @@ const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
         }))
     );
     const replyEmbed = getReplyEmbed(__t("bot/command/user-info/success"), ReplyEmbedType.Success);
-    const reply = await interaction.editReply({ embeds: [replyEmbed] });
+    await interaction.editReply({ embeds: [replyEmbed] });
     membersInfoPages.forEach(async page => await page.send({ time: 300_000 }));
 };
 

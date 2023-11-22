@@ -33,6 +33,10 @@ export default new Catalog<Vocabulary>("ja", {
     "selectPage": msg("ページを選択してください。"),
     "operationTimeOut": msg("{target}の操作がタイムアウトしました。"),
     "footer/page": msg("ページ：{page}"),
+    "rps/selectMenu/selectHand": msg("出す手を選択してください。"),
+    "rps/rock": msg("グー"),
+    "rps/paper": msg("パー"),
+    "rps/scissors": msg("チョキ"),
 
     // Log
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
@@ -153,4 +157,12 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/send-text/textOption/description": msg("送信するテキスト、またはテキストが記載されたメッセージのIDを指定してください。"),
     "bot/command/send-text/channelOption/description": msg("送信するチャンネルを指定してください。"),
     "bot/command/send-text/success": msg("{channel}にテキストメッセージを送信しました。"),
+    "bot/command/game/description": msg("私とゲームをするコマンドです。"),
+    "bot/command/game/rps/description": msg("じゃんけんをします。"),
+    "bot/command/game/rps/ready": msg("最初はグー！じゃんけん..."),
+    "bot/command/game/rps/result": msg("ぽんっ！\nあなた：{userHand}\n私：{botHand}"),
+    "bot/command/game/rps/botWin": msg("やったー！勝ったよ！\n褒めて褒めてー！！！"),
+    "bot/command/game/rps/botDraw": msg("あいこだね！\nもう一回！"),
+    "bot/command/game/rps/botLose": msg("えーん💦 負けちゃった…\nまた遊ぼうね！"),
+    "bot/command/game/rps/timeOut": msg("待ちくたびれちゃった…\nまたね！👋🏻"),
 });

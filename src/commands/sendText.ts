@@ -7,12 +7,12 @@ export const sendTextCommand: Command = {
         .setName("send-text")
         .setDescription(__t("bot/command/send-text/description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
-        .addStringOption((option) =>
+        .addStringOption(option =>
             option
                 .setName("text")
                 .setDescription(__t("bot/command/send-text/textOption/description"))
                 .setRequired(true)
-        ).addChannelOption((option) =>
+        ).addChannelOption(option =>
             option
                 .setName("channel")
                 .setDescription(__t("bot/command/send-text/channelOption/description"))
