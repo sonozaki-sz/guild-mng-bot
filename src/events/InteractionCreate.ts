@@ -67,21 +67,17 @@ export const interactionCreateEvent: BotEvent = {
                     logger.error(__t("log/bot/command/autocomplete/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDesc }));
                 });
         } else if (interaction.isModalSubmit()) {
-            const command = interaction.client.commands.get(interaction.customId);
-            if (!command) {
-                logger.error(__t("log/bot/command/notFound", { command: interaction.customId }));
+            const modal = interaction.client.modals.get(interaction.customId);
+            if (!modal) {
+                logger.error(__t("log/bot/command/modal/notFound", { modal: interaction.customId }));
                 return;
             }
-            if (!command.modal) {
-                logger.error(__t("log/bot/command/modal/undefined", { command: interaction.customId }));
-                return;
-            }
-            command.modal(interaction)
+            modal.execute(interaction)
                 .then(() => {
-                    logger.info(__t("log/bot/command/modal/success", { command: interaction.customId, guild: interaction.guildId! }));
+                    logger.info(__t("log/bot/command/modal/success", { modal: interaction.customId, guild: interaction.guildId! }));
                 }).catch((error: Error) => {
                     const errorDesc = error.stack || error.message || "unknown error";
-                    logger.error(__t("log/bot/command/modal/faild", { command: interaction.customId, guild: interaction.guildId!, error: errorDesc }));
+                    logger.error(__t("log/bot/command/modal/faild", { modal: interaction.customId, guild: interaction.guildId!, error: errorDesc }));
                 });
         }
     }

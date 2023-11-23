@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Collection, ComponentType, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
+import { ActionRowBuilder, ChatInputCommandInteraction, Collection, ComponentType, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import { Command } from "../services/discord";
 import { __t } from "../services/locale";
 
@@ -47,7 +47,6 @@ const judgeRps = (botHandIndex: number, userHandIndex: number): { result: 0 | 1 
 
 const executeRps = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply(__t("bot/command/game/rps/ready"));
-
     const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>({
         components: [
             {
@@ -65,13 +64,14 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
             }
         ]
     });
-    const message = await interaction.followUp({ components: [actionRow], fetchReply: true });
-    const collector = message.createMessageComponentCollector({ time: 300_000 });
-    collector.on("collect", async (interaction) => {
-        if (interaction.customId === "selectRps") {
+    const message = await interaction.followUp({ components: [actionRow], ephemeral: true });
+    const collector = message.createMessageComponentCollector<ComponentType.StringSelect>({ time: 300_000 });
+    collector.on("collect", async (stringSelectMenuInteraction) => {
+        if (stringSelectMenuInteraction.customId === "selectRps") {
+            collector.stop();
             const botHandIndex = rpsHands.randomKey()!;
-            const userHandIndex = (interaction as StringSelectMenuInteraction).values[0];
-            const rpsResult = judgeRps(botHandIndex, Number(userHandIndex));
+            const userHandIndex = Number(stringSelectMenuInteraction.values[0]);
+            const rpsResult = judgeRps(botHandIndex, userHandIndex);
             const botResponse = ((result) => {
                 switch (result) {
                     case 0: {
@@ -85,17 +85,14 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
                     }
                 }
             })(rpsResult.result);
-            await interaction.update({
-                content: rpsResult.resultText,
-                components: [],
-            });
-            await interaction.followUp(botResponse);
-            collector.stop();
+            await stringSelectMenuInteraction.update({ content: rpsHands.get(userHandIndex)?.handEmoji, components: [] });
+            await (await stringSelectMenuInteraction.followUp(rpsResult.resultText))
+                .reply(botResponse);
         }
     });
     collector.once("end", async (interactions, reason) => {
         if (reason === "time") {
-            await message.edit({ content: __t("bot/command/game/rps/timeOut"), components: [] });
+            interaction.followUp(__t("bot/command/game/rps/timeout"));
         }
     });
 };

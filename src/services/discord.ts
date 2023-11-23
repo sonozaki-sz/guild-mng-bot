@@ -1,12 +1,17 @@
-import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, MessageComponentType, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export interface Command {
     data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup" | "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
     autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
-    modal?: (interaction: ModalSubmitInteraction<CacheType>) => Promise<void>;
     cooldown?: number // in seconds
+}
+
+export interface Modal {
+    modal: ModalBuilder;
+    data?: any;
+    execute: (interaction: ModalSubmitInteraction) => Promise<void>;
 }
 
 export interface BotEvent {
@@ -19,6 +24,7 @@ declare module "discord.js" {
     interface Client {
         commands: Collection<string, Command>;
         cooldowns: Collection<string, number>;
+        modals: Collection<string, Modal>;
     }
     interface GuildMessageManager {
         fetchMany(options?: FetchMessagesOptions | undefined): Promise<Collection<string, Message<true>>>;
@@ -122,7 +128,7 @@ export class EmbedPage {
     private _currentPageIndex: number;
     private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
     private _message: Message<true> | Message<false> | undefined;
-    private _collector: InteractionCollector<MappedInteractionTypes<boolean>[MessageComponentType]> | undefined;
+    private _collector: InteractionCollector<MappedInteractionTypes<boolean>[ComponentType.Button | ComponentType.StringSelect]> | undefined;
 
     constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
         this._channel = channel;
@@ -189,9 +195,9 @@ export class EmbedPage {
         );
     }
 
-    public async send(options?: MessageCollectorOptionsParams<MessageComponentType, boolean>) {
+    public async send(options?: MessageCollectorOptionsParams<ComponentType.Button | ComponentType.StringSelect, boolean>) {
         this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
-        this._collector = this._message.createMessageComponentCollector({ ...options }) as any; // HACK: this._collectorの型定義が間違っているのでanyで回避
+        this._collector = this._message.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({ ...options }) as any; // FIXME: this._collectorの型定義が間違っているのでanyで回避
         this._collector?.on("collect", async interaction => {
             switch (interaction.customId) {
                 case "toFirst":

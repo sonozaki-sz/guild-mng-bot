@@ -66,9 +66,9 @@ export type Vocabulary = {
     "log/bot/command/autocomplete/undefined": Message<{ command: string }>,
     "log/bot/command/autocomplete/success": Message<{ command: string, guild: string }>,
     "log/bot/command/autocomplete/faild": Message<{ command: string, guild: string, error: string }>,
-    "log/bot/command/modal/undefined": Message<{ command: string }>,
-    "log/bot/command/modal/success": Message<{ command: string, guild: string }>,
-    "log/bot/command/modal/faild": Message<{ command: string, guild: string, error: string }>,
+    "log/bot/command/modal/notFound": Message<{ modal: string }>,
+    "log/bot/command/modal/success": Message<{ modal: string, guild: string }>,
+    "log/bot/command/modal/faild": Message<{ modal: string, guild: string, error: string }>,
 
     // Bot
     "bot/config/reset": Message,
@@ -87,6 +87,7 @@ export type Vocabulary = {
     "bot/command/notFoundDestAfk": Message,
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
+    "bot/command/notFoundChannel": Message<{ channelID: string }>,
 
     // コマンド固有
     "bot/command/echo/description": Message,
@@ -136,7 +137,7 @@ export type Vocabulary = {
     "bot/command/cnf-prof-ch/set-ch/success": Message<{ channel: string }>,
     "bot/command/cnf-prof-ch/get-ch/description": Message,
     "bot/command/cnf-prof-ch/get-ch/success": Message<{ channel: string }>,
-    "bot/command/modal/faild": Message,
+    "bot/command/notFoundProfChannel": Message,
     "bot/command/user-info/description": Message,
     "bot/command/user-info/normal/description": Message,
     "bot/command/user-info/normal/userOption/description": Message,
@@ -155,9 +156,11 @@ export type Vocabulary = {
     "bot/command/cnf-bump-reminder/status/description": Message,
     "bot/command/cnf-bump-reminder/status/success": Message<{ status: string, mentionRole: string }>,
     "bot/command/send-text/description": Message,
-    "bot/command/send-text/textOption/description": Message,
-    "bot/command/send-text/channelOption/description": Message,
+    "bot/command/send-text/channelOption/Description": Message,
+    "bot/command/send-text/notFoundChannel": Message,
     "bot/command/send-text/success": Message<{ channel: string }>,
+    "bot/command/send-text/modal/title": Message,
+    "bot/command/send-text/modal/textInput/placeholder": Message,
     "bot/command/game/description": Message,
     "bot/command/game/rps/description": Message,
     "bot/command/game/rps/ready": Message,
@@ -165,7 +168,7 @@ export type Vocabulary = {
     "bot/command/game/rps/botWin": Message,
     "bot/command/game/rps/botDraw": Message,
     "bot/command/game/rps/botLose": Message,
-    "bot/command/game/rps/timeOut": Message,
+    "bot/command/game/rps/timeout": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

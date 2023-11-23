@@ -25,7 +25,7 @@ export const vcAutoCreationCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 if (isVacEnabled) {
                     const embed = getReplyEmbed(__t("bot/command/vac/start/alreadyStarting"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
@@ -54,13 +54,13 @@ export const vcAutoCreationCommand: Command = {
                 break;
             }
             case "stop": {
-                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 if (!isVacEnabled) {
                     const embed = getReplyEmbed(__t("bot/command/vac/stop/alreadyStoping"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const triggerChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
+                const triggerChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
                 if (!triggerChannel) {
 
                 }
@@ -70,7 +70,7 @@ export const vcAutoCreationCommand: Command = {
                 break;
             }
             case "status": {
-                const isVacEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled);
+                const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 const statusText = isVacEnabled ? __t("executing") : __t("stoping");
                 const embed = getReplyEmbed(__t("bot/command/vac/status/success", { status: statusText }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
