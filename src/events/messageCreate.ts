@@ -51,17 +51,23 @@ const executeBumpReminder = async (message: Message) => {
                 const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
                 await bumpReminderMessage.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
-                setTimeout(async () => {    // TODO: keyvに時間を保存して、setIntervalで定期的に確認するようにする。
-                    const mentionRole = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
-                    const mentionRoleText = await (async () => {
-                        if (!mentionRole) return "";
-                        const role = await interaction.guild?.roles.fetch(mentionRole.id);
-                        return role?.toString() || "";
-                    })();
-                    const user = interaction.user.toString();
-                    bumpReminderMessage.reply(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, user: user }));
-                    logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
-                }, 2 * 60 * 60 * 1000);
+                await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderRmdDate, twoHoursLaterMSec);
+                const timerID = setInterval(async () => {
+                    const rmdBumpDate = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderRmdDate) as number | undefined;
+                    if (!rmdBumpDate) return;
+                    if (rmdBumpDate <= Date.now()) {
+                        clearInterval(timerID);
+                        const mentionRole = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
+                        const mentionRoleText = await (async () => {
+                            if (!mentionRole) return "";
+                            const role = await interaction.guild?.roles.fetch(mentionRole.id);
+                            return role?.toString() || "";
+                        })();
+                        const user = interaction.user.toString();
+                        bumpReminderMessage.reply(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, user: user }));
+                        logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
+                    }
+                }, 10)
                 break;
             }
             case "doNotRemind": {
