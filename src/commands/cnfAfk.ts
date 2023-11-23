@@ -27,14 +27,14 @@ export const cnfAfkCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "set-dest": {
-                const channel: VoiceChannel = interaction.options.getChannel("channel")!;
+                const channel = interaction.options.getChannel("channel") as VoiceChannel;
                 await keyvs.setValue(interaction.guildId!, KeyvKeys.DestAfkVC, channel)
                 const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-dest": {
-                const afkChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
+                const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
                 if (!afkChannel) {
                     const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });

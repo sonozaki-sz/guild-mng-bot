@@ -88,8 +88,8 @@ const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const executeStatus = async (interaction: ChatInputCommandInteraction) => {
-    const isEnabled: boolean | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled);
-    const memtionRole: Role | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole);
+    const isEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
+    const memtionRole = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
     const status = isEnabled ? __t("executing") : __t("stoping");
     const mentionRoleText = await (async () => {
         if (!memtionRole) return __t("disabled");

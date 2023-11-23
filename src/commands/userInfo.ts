@@ -38,7 +38,7 @@ export const userInfocommand: Command = {
 };
 
 const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const profChannel: TextChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
+    const profChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel) as TextChannel | undefined;
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }

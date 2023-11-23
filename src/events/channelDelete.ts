@@ -28,9 +28,9 @@ export const channelDeleteEvent: BotEvent = {
 
 // VCの自動作成機能実行中にトリガーチャンネルが消されたとき、自動作成機能を停止する。
 const stopVCAutoCreation = async (channel: VoiceChannel) => {
-    const isVacEnabled: boolean | undefined = await keyvs.getValue(channel.guildId!, KeyvKeys.IsVacEnabled);
+    const isVacEnabled = await keyvs.getValue(channel.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
     if (isVacEnabled) {
-        const triggerChannel: VoiceChannel | undefined = await keyvs.getValue(channel.guildId!, KeyvKeys.VacTriggerVC);
+        const triggerChannel = await keyvs.getValue(channel.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
         if (channel.id === triggerChannel?.id) {
             await keyvs.setValue(channel.guildId!, KeyvKeys.IsVacEnabled, false);
             await keyvs.deleteValue(channel.guildId!, KeyvKeys.VacTriggerVC);

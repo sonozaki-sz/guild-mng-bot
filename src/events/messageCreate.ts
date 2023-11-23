@@ -15,7 +15,7 @@ const disboardUserID = "302050872383242240";
 const bumpCommandName = "bump";
 
 const executeBumpReminder = async (message: Message) => {
-    const isBumpReminderEnabled: boolean | undefined = await keyvs.getValue(message.guildId!, KeyvKeys.IsBumpReminderEnabled);
+    const isBumpReminderEnabled = await keyvs.getValue(message.guildId!, KeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
     if (!isBumpReminderEnabled) return;
     if (message.author.id !== disboardUserID) return;
     if (message.interaction?.commandName !== bumpCommandName) return;
@@ -51,8 +51,8 @@ const executeBumpReminder = async (message: Message) => {
                 const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
                 await bumpReminderMessage.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
-                setTimeout(async () => {
-                    const mentionRole: Role | undefined = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole);
+                setTimeout(async () => {    // TODO: keyvに時間を保存して、setIntervalで定期的に確認するようにする。
+                    const mentionRole = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
                     const mentionRoleText = await (async () => {
                         if (!mentionRole) return "";
                         const role = await interaction.guild?.roles.fetch(mentionRole.id);

@@ -22,7 +22,7 @@ export const afkCommand: Command = {
             interaction.reply({ embeds: [embed] });
             return;
         }
-        const afkChannel: VoiceChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC);
+        const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
         if (!afkChannel) {
             const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
             interaction.reply({ embeds: [embed] });

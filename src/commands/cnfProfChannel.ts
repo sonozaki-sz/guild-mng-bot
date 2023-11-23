@@ -27,14 +27,14 @@ export const cnfProfChannelCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "set-ch": {
-                const channel: TextChannel = interaction.options.getChannel("channel")!;
+                const channel = interaction.options.getChannel("channel") as TextChannel;
                 keyvs.setValue(interaction.guildId!, KeyvKeys.ProfChannel, channel);
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
-                const profChannel: TextChannel | undefined = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel);
+                const profChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel) as TextChannel | undefined;
                 if (!profChannel) {
                     const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
                     interaction.reply({ embeds: [embed] });

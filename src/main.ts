@@ -2,7 +2,7 @@ import { Client, Collection, GatewayIntentBits, Routes } from "discord.js";
 import globalCommands from "./commands";
 import botEvents from "./events";
 import config from "./services/config";
-import { Command } from "./services/discord";
+import { Command, Modal } from "./services/discord";
 import { __t } from "./services/locale";
 import { logger } from "./services/logger";
 
@@ -18,6 +18,7 @@ const botStart = async () => {
     });
     client.commands = new Collection<string, Command>();
     client.cooldowns = new Collection<string, number>();
+    client.modals = new Collection<string, Modal>();
 
     // スラッシュコマンドの登録
     const rest = client.rest;

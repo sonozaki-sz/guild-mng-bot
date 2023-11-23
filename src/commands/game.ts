@@ -65,7 +65,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
         ]
     });
     const message = await interaction.followUp({ components: [actionRow], ephemeral: true });
-    const collector = message.createMessageComponentCollector<ComponentType.StringSelect>({ time: 3_000 });
+    const collector = message.createMessageComponentCollector<ComponentType.StringSelect>({ time: 300_000 });
     collector.on("collect", async (stringSelectMenuInteraction) => {
         if (stringSelectMenuInteraction.customId === "selectRps") {
             collector.stop();
@@ -92,7 +92,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
     });
     collector.once("end", async (interactions, reason) => {
         if (reason === "time") {
-            interaction.followUp(__t("bot/command/game/rps/timeOut"));
+            interaction.followUp(__t("bot/command/game/rps/timeout"));
         }
     });
 };

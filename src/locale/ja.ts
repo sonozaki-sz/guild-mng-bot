@@ -65,9 +65,9 @@ export default new Catalog<Vocabulary>("ja", {
     "log/bot/command/autocomplete/undefined": msg("autocomplateが未定義です。\nコマンド：{command}"),
     "log/bot/command/autocomplete/success": msg("autocomplateの実行に成功しました。コマンド：{command}\nサーバー：{guild}"),
     "log/bot/command/autocomplete/faild": msg("autocomplateの実行に失敗しました。コマンド：{command}\nサーバー：{guild}\n詳細：\n{error}"),
-    "log/bot/command/modal/undefined": msg("modalが未定義です。コマンド：{command}"),
-    "log/bot/command/modal/success": msg("modalの実行に成功しました。コマンド：{command}\nサーバー：{guild}"),
-    "log/bot/command/modal/faild": msg("modalの実行に失敗しました。コマンド：{command}\nサーバー：{guild}\n詳細：\n{error}"),
+    "log/bot/command/modal/notFound": msg("一致するmodalが見つかりませんでした。modal：{modal}"),
+    "log/bot/command/modal/success": msg("modalの実行に成功しました。modal：{modal}\nサーバー：{guild}"),
+    "log/bot/command/modal/faild": msg("modalの実行に失敗しました。modal：{modal}\nサーバー：{guild}\n詳細：\n{error}"),
 
     // Bot
     "bot/config/reset": msg("Botの設定をリセットしました。"),
@@ -87,6 +87,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/notFoundUser": msg("{user}が見つかりませんでした。"),
     "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
+    "bot/command/notFoundChannel": msg("チャンネルが見つかりませんでした。\nチャンネルID：{channelID}"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),
@@ -154,9 +155,11 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-bump-reminder/status/description": msg("Bumpのリマインド機能の状態を表示します。"),
     "bot/command/cnf-bump-reminder/status/success": msg("Bumpのリマインド機能は{status}です。\nメンションするロールは{mentionRole}に設定されています。"),
     "bot/command/send-text/description": msg("テキストメッセージを送信します。"),
-    "bot/command/send-text/textOption/description": msg("送信するテキスト、またはテキストが記載されたメッセージのIDを指定してください。"),
-    "bot/command/send-text/channelOption/description": msg("送信するチャンネルを指定してください。"),
+    "bot/command/send-text/modal/title": msg("テキストメッセージを送信"),
+    "bot/command/send-text/notFoundChannel": msg("送信するチャンネルが見つかりませんでした。"),
     "bot/command/send-text/success": msg("{channel}にテキストメッセージを送信しました。"),
+    "bot/command/send-text/channelOption/Description": msg("送信するチャンネルを指定してください。(未指定時は現在のチャンネルに送信)"),
+    "bot/command/send-text/modal/textInput/placeholder": msg("送信するテキストを入力してください。"),
     "bot/command/game/description": msg("私とゲームをするコマンドです。"),
     "bot/command/game/rps/description": msg("じゃんけんをします。"),
     "bot/command/game/rps/ready": msg("最初はグー！じゃんけん..."),
@@ -164,5 +167,5 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/game/rps/botWin": msg("やったー！勝ったよ！\n褒めて褒めてー！！！"),
     "bot/command/game/rps/botDraw": msg("あいこだね！\nもう一回！"),
     "bot/command/game/rps/botLose": msg("えーん💦 負けちゃった…\nまた遊ぼうね！"),
-    "bot/command/game/rps/timeOut": msg("待ちくたびれちゃった…\nまたね！👋🏻"),
+    "bot/command/game/rps/timeout": msg("待ちくたびれちゃった…\nまたね！👋🏻"),
 });
