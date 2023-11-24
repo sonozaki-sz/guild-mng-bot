@@ -44,7 +44,7 @@ const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState)
             parent: newState.channel?.parent,
             userLimit: 99,
         })
-        const vacChannels: Array<VoiceChannel> = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels) || new Array<VoiceChannel>();
+        const vacChannels = await keyvs.getValue(newState.guild.id, KeyvKeys.VacChannels) as Array<VoiceChannel> | undefined || new Array<VoiceChannel>();
         vacChannels.push(newChannel);
         await keyvs.setValue(newState.guild.id, KeyvKeys.VacChannels, vacChannels);
         await oldState.member?.voice.setChannel(newChannel);

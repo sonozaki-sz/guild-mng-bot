@@ -3,17 +3,17 @@ import cnfAfkCommand from "./cnfAfk";
 import cnfBumpReminderCommand from "./cnfBumpReminder";
 import cnfProfChannelCommand from "./cnfProfChannel";
 import cnfVCCommand from "./cnfVC";
+import cnfVacCommand from "./cnfVac";
 import echoCommand from "./echo";
 import gameCommand from "./game";
 import sendTextCommand from "./sendText";
 import userInfocommand from "./userInfo";
-import vcAutoCreationCommand from "./vcAutoCreation";
 
 export const globalCommands = [
     echoCommand,
     afkCommand,
     cnfAfkCommand,
-    vcAutoCreationCommand,
+    cnfVacCommand,
     cnfVCCommand,
     cnfProfChannelCommand,
     userInfocommand,
