@@ -4,9 +4,9 @@ import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
-export const vcAutoCreationCommand: Command = {
+export const cnfVacCommand: Command = {
     data: new SlashCommandBuilder()
-        .setName("vac")
+        .setName("cnf-vac")
         .setDescription(__t("bot/command/vac/description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .addSubcommand(subcommand =>
@@ -60,10 +60,13 @@ export const vcAutoCreationCommand: Command = {
                     interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const triggerChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
-                if (!triggerChannel) {
-
+                const triggerVC = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
+                if (triggerVC) {
+                    const fetchedTriggerVC = await interaction.guild?.channels.fetch(triggerVC.id);
+                    if (fetchedTriggerVC) fetchedTriggerVC.delete();
+                    await keyvs.deleteValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
                 }
+                await keyvs.setValue(interaction.guildId!, KeyvKeys.IsVacEnabled, false);
                 const embed = getReplyEmbed(__t("bot/command/vac/stop/success"), ReplyEmbedType.Success);
                 interaction.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
@@ -80,4 +83,4 @@ export const vcAutoCreationCommand: Command = {
     }
 };
 
-export default vcAutoCreationCommand;
+export default cnfVacCommand;
