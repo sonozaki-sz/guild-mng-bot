@@ -127,8 +127,8 @@ export class EmbedPage {
     private _pages: Array<EmbedBuilder>;
     private _currentPageIndex: number;
     private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
-    private _message: Message<true> | Message<false> | undefined;
-    private _collector: InteractionCollector<MappedInteractionTypes<boolean>[ComponentType.Button | ComponentType.StringSelect]> | undefined;
+    private _message: Message | undefined;
+    private _collector: InteractionCollector<MappedInteractionTypes[ComponentType.Button | ComponentType.StringSelect]> | undefined;
 
     constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
         this._channel = channel;
@@ -195,9 +195,9 @@ export class EmbedPage {
         );
     }
 
-    public async send(options?: MessageCollectorOptionsParams<ComponentType.Button | ComponentType.StringSelect, boolean>) {
+    public async send(options?: MessageCollectorOptionsParams<ComponentType.Button | ComponentType.StringSelect>) {
         this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
-        this._collector = this._message.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({ ...options }) as any; // FIXME: this._collectorの型定義が間違っているのでanyで回避
+        this._collector = this._message.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({ ...options });
         this._collector?.on("collect", async interaction => {
             switch (interaction.customId) {
                 case "toFirst":
