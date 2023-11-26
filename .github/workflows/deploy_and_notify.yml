@@ -44,11 +44,11 @@ jobs:
         run: |
           # Embedメッセージの内容を作成
           if [ ${{ job.status }} == "success" ]; then
-            "EMBED_TITLE=✅デプロイに成功しました"
-            "EMBED_COLOR=5763719
+            EMBED_TITLE="✅デプロイに成功しました"
+            EMBED_COLOR=5763719
           else
-            "EMBED_TITLE=🚫デプロイに失敗しました"
-            "EMBED_COLOR=15548997"
+            EMBED_TITLE="🚫デプロイに失敗しました"
+            EMBED_COLOR=15548997"
           fi
           PORTAINER_URL="https://portainer.worldcell.yagloud.com/#!/home"
           REPO_URL="https://github.com/${{ github.repository }}"
