@@ -48,7 +48,7 @@ jobs:
             EMBED_COLOR=5763719
           else
             EMBED_TITLE="🚫デプロイに失敗しました"
-            EMBED_COLOR=15548997"
+            EMBED_COLOR=15548997
           fi
           PORTAINER_URL="https://portainer.worldcell.yagloud.com/#!/home"
           REPO_URL="https://github.com/${{ github.repository }}"
