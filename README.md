@@ -7,14 +7,14 @@
 ## 環境構築
 ### テスト環境
 ```bash
-$ pnpm install
+$ pnpm i --frozen-lockfile
 ```
 
 ### 本番環境
 ```bash
-$ pnpm install
+$ pnpm i --frozen-lockfile
 $ pnpm run build
-$ pnpm install -P
+$ pnpm i --frozen-lockfile -P
 ```
 
 ## 実行
