@@ -4,7 +4,7 @@ on:
   push: 
     branches: [ main ]
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       # レポジトリのチェックアウト
@@ -35,3 +35,34 @@ jobs:
       - name: Send Webhook to Portainer
         run: |
           curl -X POST -H "Content-Type: application/json" -d '{"repository": "${{ github.repository }}", "branch": "${{ github.ref }}", "commit": "${{ github.sha }}", "actor": "${{ github.actor }}", "workflow": "${{ github.workflow }}"}' ${{ secrets.PORTAINER_WEBHOOK_URL }}
+
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      # Discordに通知する
+      - name: Notify Discord
+        run: |
+          # Embedメッセージの内容を作成
+          if [ ${{ job.status }} == "success" ]; then
+            echo "EMBED_TITLE=✅デプロイに成功しました" >> $GITHUB_ENV
+            echo "EMBED_COLOR=5763719" >> $GITHUB_ENV
+          else
+            echo "EMBED_TITLE=🚫デプロイに失敗しました" >> $GITHUB_ENV
+            echo "EMBED_COLOR=15548997" >> $GITHUB_ENV
+          fi
+          PORTAINER_URL="https://portainer.worldcell.yagloud.com/#!/home"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          DEPLOY_WORKFLOW_URL=$REPO_URL/actions/runs/${{ github.run_id }}
+          PAYLOAD='{
+            "content": "テスト:",
+            "embeds": [
+              {
+                "title": "'${{ env.EMBED_TITLE }}'",
+                "description": "[デプロイ先]('${PORTAINER_URL}')\n[リポジトリ]('${REPO_URL}')\n[ワークフロー]('${DEPLOY_WORKFLOW_URL}')",
+                "color": '${{ env.EMBED_COLOR }}'
+              }
+            ]
+          }'
+
+          # WebhookにPOSTリクエストを送信
+          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.DISCORD_WEBHOOK_URL }}"
