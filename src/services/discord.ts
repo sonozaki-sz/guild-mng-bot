@@ -137,61 +137,53 @@ export class EmbedPage {
             page.setFooter({ text: __t("footer/page", { page: `${index + 1}/${pages.length}` }) });
         });
         this._currentPageIndex = 0;
+
         this._actionRows = new Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>(
-            new ActionRowBuilder<ButtonBuilder>({
-                components: [{
-                    type: ComponentType.Button,
-                    style: ButtonStyle.Primary,
-                    customId: "toFirst",
-                    label: __t("toFirst"),
-                    emoji: "⏮",
-                    disabled: true,
-                },
-                {
-                    type: ComponentType.Button,
-                    style: ButtonStyle.Primary,
-                    customId: "toPrevious",
-                    label: __t("toPrevious"),
-                    emoji: "◀",
-                    disabled: true,
-                },
-                {
-                    type: ComponentType.Button,
-                    style: ButtonStyle.Danger,
-                    customId: "delete",
-                    label: __t("delete"),
-                    emoji: "🗑",
-                },
-                {
-                    type: ComponentType.Button,
-                    style: ButtonStyle.Primary,
-                    customId: "toNext",
-                    label: __t("toNext"),
-                    emoji: "▶",
-                },
-                {
-                    type: ComponentType.Button,
-                    style: ButtonStyle.Primary,
-                    customId: "toLast",
-                    label: __t("toLast"),
-                    emoji: "⏭",
-                }]
-            }),
-            new ActionRowBuilder<StringSelectMenuBuilder>({
-                components: [{
-                    type: ComponentType.StringSelect,
-                    customId: "selectPage",
-                    placeholder: __t("selectPage"),
-                    minValues: 1,
-                    maxValues: 1,
-                    options: pages.map((value, index) => {
-                        return {
-                            label: `${index + 1}`,
-                            value: index.toString(),
-                        }
-                    })
-                }]
-            }),
+            new ActionRowBuilder<ButtonBuilder>()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("toFirst")
+                        .setLabel(__t("toFirst"))
+                        .setEmoji("⏮")
+                        .setStyle(ButtonStyle.Primary)
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId("toPrevious")
+                        .setLabel(__t("toPrevious"))
+                        .setEmoji("◀")
+                        .setStyle(ButtonStyle.Primary)
+                        .setDisabled(true),
+                    new ButtonBuilder()
+                        .setCustomId("delete")
+                        .setLabel(__t("delete"))
+                        .setEmoji("🗑")
+                        .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                        .setCustomId("toNext")
+                        .setLabel(__t("toNext"))
+                        .setEmoji("▶")
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId("toLast")
+                        .setLabel(__t("toLast"))
+                        .setEmoji("⏭")
+                        .setStyle(ButtonStyle.Primary)
+
+                ),
+            new ActionRowBuilder<StringSelectMenuBuilder>()
+                .addComponents(
+                    new StringSelectMenuBuilder()
+                        .setCustomId("selectPage")
+                        .setPlaceholder(__t("selectPage"))
+                        .setMinValues(1)
+                        .setMaxValues(1)
+                        .addOptions(pages.map((value, index) => {
+                            return {
+                                label: `${index + 1}`,
+                                value: index.toString(),
+                            } as const;
+                        }))
+                )
         );
     }
 
@@ -239,7 +231,7 @@ export class EmbedPage {
 
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async (interactions, reeason) => {
+        this._collector?.once("end", async (_, reeason) => {
             if (reeason === "time") {
                 await this._message?.edit({ components: [] });
             }

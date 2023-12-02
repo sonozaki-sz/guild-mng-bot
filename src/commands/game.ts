@@ -47,23 +47,20 @@ const judgeRps = (botHandIndex: number, userHandIndex: number): { result: 0 | 1 
 
 const executeRps = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply(__t("bot/command/game/rps/ready"));
-    const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>({
-        components: [
-            {
-                type: ComponentType.StringSelect,
-                customId: "selectRps",
-                placeholder: __t("rps/selectMenu/selectHand"),
-                minValues: 1,
-                maxValues: 1,
-                options: rpsHands.map((value, key) => {
+    const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>()
+        .addComponents(
+            new StringSelectMenuBuilder()
+                .setCustomId("selectRps")
+                .setPlaceholder(__t("rps/selectMenu/selectHand"))
+                .setMinValues(1)
+                .setMaxValues(1)
+                .addOptions(rpsHands.map((value, key) => {
                     return {
                         label: `${value.handName}:${value.handEmoji}`,
                         value: key.toString(),
-                    };
-                })
-            }
-        ]
-    });
+                    } as const;
+                }))
+        );
     const message = await interaction.followUp({ components: [actionRow], ephemeral: true });
     const collector = message.createMessageComponentCollector<ComponentType.StringSelect>({ time: 300_000 });
     collector.on("collect", async (stringSelectMenuInteraction) => {
@@ -90,7 +87,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
                 .reply(botResponse);
         }
     });
-    collector.once("end", async (interactions, reason) => {
+    collector.once("end", async (_, reason) => {
         if (reason === "time") {
             interaction.followUp(__t("bot/command/game/rps/timeout"));
         }

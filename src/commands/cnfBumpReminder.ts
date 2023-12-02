@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Role, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, Role, SlashCommandBuilder, User } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -55,6 +55,7 @@ export const cnfBumpReminderCommand: Command = {
 
 const executeStart = async (interaction: ChatInputCommandInteraction) => {
     await keyvs.setValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled, true);
+    await keyvs.setValue(interaction.guildId!, KeyvKeys.BumpReminderMentionUsers, new Array<User>());
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/start/success"), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/bumpReminder/start", { guild: interaction.guildId! }));
@@ -62,6 +63,7 @@ const executeStart = async (interaction: ChatInputCommandInteraction) => {
 
 const executeStop = async (interaction: ChatInputCommandInteraction) => {
     await keyvs.setValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled, false);
+    await keyvs.deleteValue(interaction.guildId!, KeyvKeys.BumpReminderMentionUsers);
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/stop/success"), ReplyEmbedType.Success);
     interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/bumpReminder/stop", { guild: interaction.guildId! }));

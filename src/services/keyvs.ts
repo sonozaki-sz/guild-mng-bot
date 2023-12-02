@@ -54,6 +54,7 @@ export enum KeyvKeys {
     IsBumpReminderEnabled = "bumpReminder/isEnabled",
     BumpReminderMentionRole = "bumpReminder/mentionRole",
     BumpReminderRmdDate = "bumpReminder/rmdDate",
+    BumpReminderMentionUsers = "bumpReminder/mentionUsers",
 }
 
 export class KeyvsError extends Error {
