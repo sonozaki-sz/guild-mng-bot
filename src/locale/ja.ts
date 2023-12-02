@@ -91,6 +91,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/notFoundChannel": msg("チャンネルが見つかりませんでした。\nチャンネルID：{channelID}"),
+    "bot/command/status": msg("設定のステータスを取得しました。"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),

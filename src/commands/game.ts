@@ -89,7 +89,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
     });
     collector.once("end", async (_, reason) => {
         if (reason === "time") {
-            interaction.followUp(__t("bot/command/game/rps/timeout"));
+            await interaction.followUp(__t("bot/command/game/rps/timeout"));
         }
     });
 };

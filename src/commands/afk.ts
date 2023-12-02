@@ -19,13 +19,13 @@ export const afkCommand: Command = {
         const member = await interaction.guild?.members.fetch(user.id);
         if (!member) {
             const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
         if (!afkChannel) {
             const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         const fetchedAfkChannel = await interaction.guild?.channels.fetch(afkChannel.id)
@@ -37,21 +37,21 @@ export const afkCommand: Command = {
             });
         if (!fetchedAfkChannel) {
             const embed = getReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         if (fetchedAfkChannel.id === member.voice.channel?.id) {
             const embed = getReplyEmbed(__t("bot/command/afk/alreadyAfk", { user: member.toString(), channel: fetchedAfkChannel.toString() }), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         member.voice.setChannel(fetchedAfkChannel.id)
-            .then(() => {
+            .then(async () => {
                 const embed = getReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: fetchedAfkChannel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
-            }).catch((error) => {
+                await interaction.reply({ embeds: [embed] });
+            }).catch(async (error) => {
                 const embed = getReplyEmbed(__t("bot/command/afk/faild", { user: member.toString(), error: error.toString() }), ReplyEmbedType.Warn);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
             });
     }
 };

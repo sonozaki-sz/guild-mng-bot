@@ -28,7 +28,7 @@ export const cnfVacCommand: Command = {
                 const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 if (isVacEnabled) {
                     const embed = getReplyEmbed(__t("bot/command/vac/start/alreadyStarting"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
                 const triggerVC = await interaction.guild?.channels.create({
@@ -38,7 +38,7 @@ export const cnfVacCommand: Command = {
                 })
                 if (!triggerVC) {
                     const embed = getReplyEmbed(__t("bot/command/vac/start/faild", { error: __t("bot/command/vac/start/createTriggerVCFaild") }), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 };
                 try {
@@ -49,7 +49,7 @@ export const cnfVacCommand: Command = {
                     triggerVC.delete();
                 }
                 const embed = getReplyEmbed(__t("bot/command/vac/start/success"), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/vcAutoCreation/start", { guild: interaction.guildId! }));
                 break;
             }
@@ -57,7 +57,7 @@ export const cnfVacCommand: Command = {
                 const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 if (!isVacEnabled) {
                     const embed = getReplyEmbed(__t("bot/command/vac/stop/alreadyStoping"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
                 const triggerVC = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
@@ -74,7 +74,7 @@ export const cnfVacCommand: Command = {
                 }
                 await keyvs.setValue(interaction.guildId!, KeyvKeys.IsVacEnabled, false);
                 const embed = getReplyEmbed(__t("bot/command/vac/stop/success"), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
                 break;
             }
@@ -82,7 +82,7 @@ export const cnfVacCommand: Command = {
                 const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
                 const statusText = isVacEnabled ? __t("executing") : __t("stoping");
                 const embed = getReplyEmbed(__t("bot/command/vac/status/success", { status: statusText }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
         }

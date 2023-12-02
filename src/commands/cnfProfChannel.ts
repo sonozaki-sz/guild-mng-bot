@@ -30,14 +30,14 @@ export const cnfProfChannelCommand: Command = {
                 const channel = interaction.options.getChannel("channel") as TextChannel;
                 keyvs.setValue(interaction.guildId!, KeyvKeys.ProfChannel, channel);
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
                 const profChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel) as TextChannel | undefined;
                 if (!profChannel) {
                     const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
                 const channel = await interaction.guild?.channels.fetch(profChannel.id)
@@ -49,11 +49,11 @@ export const cnfProfChannelCommand: Command = {
                     });
                 if (!channel) {
                     const embed = getReplyEmbed(__t("bot/command/notFoundProfChannel"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/get-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
         }

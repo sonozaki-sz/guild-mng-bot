@@ -33,19 +33,19 @@ export const cnfVCCommand: Command = {
         const member = await interaction.guild?.members.fetch(interaction.user.id);
         if (!member?.voice.channel) {
             const embed = getReplyEmbed(__t("bot/command/cnf-vc/notInVC"), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         switch (interaction.options.getSubcommand()) {
             case "rename": {
                 const name = interaction.options.getString("name")!;
                 member.voice.channel.setName(name)
-                    .then(channel => {
+                    .then(async (channel) => {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/rename/success", { channel: channel.toString(), name: channel.name }), ReplyEmbedType.Success);
-                        interaction.reply({ embeds: [embed] });
-                    }).catch((error) => {
+                        await interaction.reply({ embeds: [embed] });
+                    }).catch(async (error) => {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/rename/faild", { error: error.toString() }), ReplyEmbedType.Warn);
-                        interaction.reply({ embeds: [embed] });
+                        await interaction.reply({ embeds: [embed] });
                     });
                 break;
             }
@@ -53,12 +53,12 @@ export const cnfVCCommand: Command = {
                 const userLimit = interaction.options.getNumber("user-limit")!;
                 const userLimitText = userLimit ? `${userLimit}${__t("peaple")}` : __t("unlimited");
                 member.voice.channel.setUserLimit(userLimit)
-                    .then(channel => {
+                    .then(async (channel) => {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/user-limit/success", { channel: channel.toString(), userLimit: userLimitText }), ReplyEmbedType.Success);
-                        interaction.reply({ embeds: [embed] });
-                    }).catch((error) => {
+                        await interaction.reply({ embeds: [embed] });
+                    }).catch(async (error) => {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/user-limit/faild", { channel: member.voice.channel?.toString()!, error: error.toString() }), ReplyEmbedType.Warn);
-                        interaction.reply({ embeds: [embed] });
+                        await interaction.reply({ embeds: [embed] });
                     });
                 break;
             }

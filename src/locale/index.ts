@@ -91,6 +91,7 @@ export type Vocabulary = {
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
     "bot/command/notFoundChannel": Message<{ channelID: string }>,
+    "bot/command/status": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,

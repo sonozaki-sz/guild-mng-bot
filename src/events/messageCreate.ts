@@ -66,7 +66,7 @@ const executeBumpReminder = async (message: Message) => {
                     await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers, newMentionUsers);
                 }
                 const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
-                interaction.reply({ embeds: [embed], ephemeral: true });
+                await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
                 break;
             }

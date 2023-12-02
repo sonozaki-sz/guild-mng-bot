@@ -19,7 +19,7 @@ export const interactionCreateEvent: BotEvent = {
                 if (Date.now() < cooldown) {
                     const cooldownTime = Math.floor(Math.abs(Date.now() - cooldown) / 1000);
                     const embed = getReplyEmbed(__t("bot/command/cooldown", { cooldown: cooldownTime.toString() }), ReplyEmbedType.Error);
-                    interaction.reply({ embeds: [embed], ephemeral: true });
+                    await interaction.reply({ embeds: [embed], ephemeral: true });
                     setTimeout(() => interaction.deleteReply(), 5000);
                     return;
                 }
@@ -33,11 +33,11 @@ export const interactionCreateEvent: BotEvent = {
             command.execute(interaction)
                 .then(() => {
                     logger.info(__t("log/bot/command/execute/success", { command: interaction.commandName, guild: interaction.guildId! }));
-                }).catch((error: Error) => {
+                }).catch(async (error: Error) => {
                     const errorDescMsg = error.message || "unknown error";
                     const replyMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
                     const embed = getReplyEmbed(replyMsg, ReplyEmbedType.Error);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     const errorDescLog = error.stack || error.message || "unknown error";
                     const logMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
                     logger.error(logMsg);
@@ -46,7 +46,7 @@ export const interactionCreateEvent: BotEvent = {
                         keyvs.setkeyv(interaction.guildId!);
                         logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
                         const embed = getReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
-                        interaction.channel?.send({ embeds: [embed] });
+                        await interaction.channel?.send({ embeds: [embed] });
                     }
                 });
         } else if (interaction.isAutocomplete()) {
