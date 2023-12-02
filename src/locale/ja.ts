@@ -78,7 +78,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/bumpReminder/button/doNotRemind": msg("リマインドしない"),
     "bot/bumpReminder/setRemind": msg("Bumpのリマインドを設定しました。"),
     "bot/bumpReminder/cancelRemind": msg("Bumpのリマインドをキャンセルしました。"),
-    "bot/bumpReminder/remindMessage": msg("{mentionRole}{user}\nBump出来るよ！"),
+    "bot/bumpReminder/remindMessage": msg("{mentionRole}{mentionUsers}\nBump出来るよ！"),
 
     // コマンド共通
     "bot/command/cooldown": msg("このコマンドは{cooldown}秒後に使用可能です。"),

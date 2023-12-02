@@ -79,7 +79,7 @@ export type Vocabulary = {
     "bot/bumpReminder/button/doNotRemind": Message,
     "bot/bumpReminder/setRemind": Message,
     "bot/bumpReminder/cancelRemind": Message,
-    "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, user: string }>,
+    "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, mentionUsers: string }>,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
