@@ -55,7 +55,7 @@ const executeBumpReminder = async (message: Message) => {
                 }
                 mentionUsers.push(interaction.user);
                 await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers, mentionUsers);
-                const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
+                const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
                 break;
@@ -70,7 +70,7 @@ const executeBumpReminder = async (message: Message) => {
                     const newMentionUsers = mentionUsers.filter(user => user.id !== interaction.user.id);
                     await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers, newMentionUsers);
                 }
-                const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
+                const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
                 break;
