@@ -80,6 +80,7 @@ export type Vocabulary = {
     "bot/bumpReminder/setRemind": Message,
     "bot/bumpReminder/cancelRemind": Message,
     "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, mentionUsers: string }>,
+    "bot/bumpReminder/alreadySetRemind": Message,
     "bot/afk/statusEmbed/title": Message,
     "bot/afk/statusEmbed/description/status": Message<{ status: string }>,
     "bot/afk/statusEmbed/description/destChannel": Message<{ channel: string }>,
