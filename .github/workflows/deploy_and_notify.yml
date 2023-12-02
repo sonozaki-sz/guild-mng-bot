@@ -37,13 +37,14 @@ jobs:
           curl -X POST -H "Content-Type: application/json" -d '{"repository": "${{ github.repository }}", "branch": "${{ github.ref }}", "commit": "${{ github.sha }}", "actor": "${{ github.actor }}", "workflow": "${{ github.workflow }}"}' ${{ secrets.PORTAINER_WEBHOOK_URL }}
 
   notify-discord:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       # Discordに通知する
       - name: Notify Discord
         run: |
           # Embedメッセージの内容を作成
-          if: success()
+          if [ ${{ needs.deploy.result }} = "success" ]; then
             EMBED_TITLE="✅デプロイに成功しました"
             EMBED_COLOR=5763719
           else
