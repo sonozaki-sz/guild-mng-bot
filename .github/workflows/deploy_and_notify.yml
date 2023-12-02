@@ -43,7 +43,7 @@ jobs:
       - name: Notify Discord
         run: |
           # Embedメッセージの内容を作成
-          if [ ${{ success() }} ]; then
+          if: success()
             EMBED_TITLE="✅デプロイに成功しました"
             EMBED_COLOR=5763719
           else
