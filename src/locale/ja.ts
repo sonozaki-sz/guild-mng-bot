@@ -79,7 +79,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/bumpReminder/setRemind": msg("Bumpのリマインドを設定しました。"),
     "bot/bumpReminder/cancelRemind": msg("Bumpのリマインドをキャンセルしました。"),
     "bot/bumpReminder/remindMessage": msg("{mentionRole}{mentionUsers}\nBump出来るよ！"),
-    "bot/bumpReminder/alreadySetRemind": msg("既にリマインドが設定済みです"),
+    "bot/bumpReminder/alreadySetRemind": msg("既にBumpのリマインドが設定済みです"),
     "bot/afk/statusEmbed/title": msg("AFK機能"),
     "bot/afk/statusEmbed/description/status": msg("ステータス：{status}"),
     "bot/afk/statusEmbed/description/destChannel": msg("移動先：{channel}"),
