@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, DiscordAPIError, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
 import { Command, Modal, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
@@ -36,7 +36,13 @@ const sendTextModal: Modal = {
         await interaction.deferReply();
         const text = interaction.fields.getTextInputValue("textInput");
         const channel = sendTextModal.data as TextChannel;
-        const sentChannel = await interaction.guild!.channels.fetch(channel.id) as TextChannel | undefined;
+        const sentChannel = await interaction.guild!.channels.fetch(channel.id)
+            .catch((reason: DiscordAPIError) => {
+                if (reason.code === 10003) {
+                    return undefined;
+                }
+                throw reason;
+            }) as TextChannel | undefined;
         if (!sentChannel) {
             await interaction.editReply(__t("bot/command/send-text/notFoundChannel"));
             return;

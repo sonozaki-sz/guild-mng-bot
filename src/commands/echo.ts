@@ -13,7 +13,7 @@ export const echoCommand: Command = {
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         const text = interaction.options.getString("text")!;
-        interaction.reply(text);
+        await interaction.reply(text);
     }
 };
 

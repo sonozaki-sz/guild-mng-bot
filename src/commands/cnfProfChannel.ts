@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -30,24 +30,30 @@ export const cnfProfChannelCommand: Command = {
                 const channel = interaction.options.getChannel("channel") as TextChannel;
                 keyvs.setValue(interaction.guildId!, KeyvKeys.ProfChannel, channel);
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
                 const profChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel) as TextChannel | undefined;
                 if (!profChannel) {
                     const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = await interaction.guild?.channels.fetch(profChannel.id);
+                const channel = await interaction.guild?.channels.fetch(profChannel.id)
+                    .catch((reason: DiscordAPIError) => {
+                        if (reason.code === 10003) {
+                            return undefined;
+                        }
+                        throw reason;
+                    });
                 if (!channel) {
                     const embed = getReplyEmbed(__t("bot/command/notFoundProfChannel"), ReplyEmbedType.Warn);
-                    interaction.reply({ embeds: [embed] });
+                    await interaction.reply({ embeds: [embed] });
                     return;
                 }
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/get-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
         }

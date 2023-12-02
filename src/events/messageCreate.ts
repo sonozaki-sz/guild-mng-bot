@@ -48,9 +48,14 @@ const executeBumpReminder = async (message: Message) => {
                     if (!mentionUsers) return new Array<User>();
                     return mentionUsers;
                 })();
+                if (mentionUsers.some(user => user.id === interaction.user.id)) {
+                    const embed = getReplyEmbed(__t("bot/bumpReminder/alreadySetRemind"), ReplyEmbedType.Warn);
+                    await interaction.reply({ embeds: [embed], ephemeral: true });
+                    return;
+                }
                 mentionUsers.push(interaction.user);
                 await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers, mentionUsers);
-                const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Info);
+                const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId! }));
                 break;
@@ -65,8 +70,8 @@ const executeBumpReminder = async (message: Message) => {
                     const newMentionUsers = mentionUsers.filter(user => user.id !== interaction.user.id);
                     await keyvs.setValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers, newMentionUsers);
                 }
-                const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
-                interaction.reply({ embeds: [embed], ephemeral: true });
+                const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Success);
+                await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
                 break;
             }
@@ -74,11 +79,6 @@ const executeBumpReminder = async (message: Message) => {
     });
     collector.once("end", async (_, reason) => {
         bumpReminderMessage.edit({ components: [] });
-        if (reason === "time") {
-            const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
-            bumpReminderMessage.reply({ embeds: [embed] });
-            logger.info(__t("log/bot/bumpReminder/cancelRemind", { guild: message.guildId! }));
-        }
     });
 
     const timerID = setInterval(async () => {

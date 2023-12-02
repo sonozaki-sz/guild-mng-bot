@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChatInputCommandInteraction, DiscordAPIError, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import "../services/discord";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
@@ -19,33 +19,39 @@ export const afkCommand: Command = {
         const member = await interaction.guild?.members.fetch(user.id);
         if (!member) {
             const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
         const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
         if (!afkChannel) {
             const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
-        const channel = await interaction.guild?.channels.fetch(afkChannel.id);
-        if (!channel) {
+        const fetchedAfkChannel = await interaction.guild?.channels.fetch(afkChannel.id)
+            .catch((reason: DiscordAPIError) => {
+                if (reason.code === 10003) {
+                    return undefined;
+                }
+                throw reason;
+            });
+        if (!fetchedAfkChannel) {
             const embed = getReplyEmbed(__t("bot/command/notFoundDestAfk"), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
             return;
         }
-        if (channel.id === member.voice.channel?.id) {
-            const embed = getReplyEmbed(__t("bot/command/afk/alreadyAfk", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Warn);
-            interaction.reply({ embeds: [embed] });
+        if (fetchedAfkChannel.id === member.voice.channel?.id) {
+            const embed = getReplyEmbed(__t("bot/command/afk/alreadyAfk", { user: member.toString(), channel: fetchedAfkChannel.toString() }), ReplyEmbedType.Warn);
+            await interaction.reply({ embeds: [embed] });
             return;
         }
-        member.voice.setChannel(channel.id)
-            .then(() => {
-                const embed = getReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: channel.toString() }), ReplyEmbedType.Success);
-                interaction.reply({ embeds: [embed] });
-            }).catch((error) => {
+        member.voice.setChannel(fetchedAfkChannel.id)
+            .then(async () => {
+                const embed = getReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: fetchedAfkChannel.toString() }), ReplyEmbedType.Success);
+                await interaction.reply({ embeds: [embed] });
+            }).catch(async (error) => {
                 const embed = getReplyEmbed(__t("bot/command/afk/faild", { user: member.toString(), error: error.toString() }), ReplyEmbedType.Warn);
-                interaction.reply({ embeds: [embed] });
+                await interaction.reply({ embeds: [embed] });
             });
     }
 };

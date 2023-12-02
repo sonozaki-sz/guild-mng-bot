@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Collection, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
 import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
@@ -42,7 +42,13 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
-    const channel = await interaction.guild?.channels.fetch(profChannel.id);
+    const channel = await interaction.guild?.channels.fetch(profChannel.id)
+        .catch((reason: DiscordAPIError) => {
+            if (reason.code === 10003) {
+                return undefined;
+            }
+            throw reason;
+        });
     if (!channel?.isTextBased()) {
         return __t("bot/command/notFoundProfChannel");
     }
@@ -96,7 +102,7 @@ const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     const member = await interaction.guild!.members.fetch(user.id);
     if (!member) {
         const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: user.toString() }), ReplyEmbedType.Warn);
-        interaction.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
         return;
     }
 
@@ -105,19 +111,19 @@ const executeNormal = async (interaction: ChatInputCommandInteraction) => {
     const userInfoEmbeds = await getUserInfoEmbes(interaction, member);
     await interaction.editReply({ embeds: [replyEmbed] });
     const embedPage = new EmbedPage(interaction.channel!, userInfoEmbeds);
-    embedPage.send({ time: 300_000 });
+    await embedPage.send({ time: 300_000 });
 }
 
 const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
     const member = await interaction.guild!.members.fetch(interaction.user.id);
     if (!member) {
         const embed = getReplyEmbed(__t("bot/command/notFoundUser", { user: interaction.user.toString() }), ReplyEmbedType.Warn);
-        interaction.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
         return;
     }
     if (!member.voice.channel) {
         const embed = getReplyEmbed(__t("bot/command/user-info/vc-members/notInVC"), ReplyEmbedType.Warn);
-        interaction.reply({ embeds: [embed] });
+        await interaction.reply({ embeds: [embed] });
         return;
     }
     await interaction.deferReply();

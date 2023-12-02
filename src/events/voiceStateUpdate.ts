@@ -8,11 +8,11 @@ export const voiceStateUpdateEvent: BotEvent = {
     name: Events.VoiceStateUpdate,
     execute: async (oldState: VoiceState, newState: VoiceState) => {
         executeVCAutoCreation(oldState, newState)
-            .catch((error: Error) => {
+            .catch(async (error: Error) => {
                 const errorDescUser = error.message || "unknown error";
                 const userMsg = __t("bot/vcAutoCreation/error", { error: errorDescUser });
                 const embed = getReplyEmbed(userMsg, ReplyEmbedType.Error);
-                newState.channel?.send({ embeds: [embed] });
+                await newState.channel?.send({ embeds: [embed] });
                 const errorDescLog = error.stack || error.message || "unknown error";
                 const logMsg = __t("log/bot/vcAutoCreation/error", { guild: newState.guild.id, error: errorDescLog });
                 logger.error(logMsg);
@@ -20,7 +20,7 @@ export const voiceStateUpdateEvent: BotEvent = {
                     keyvs.setkeyv(newState.guild.id);
                     logger.info(__t("log/keyvs/reset", { namespace: newState.guild.id }));
                     const embed = getReplyEmbed(__t("bot/config/reset", { namespace: newState.guild.id }), ReplyEmbedType.Info);
-                    newState.channel?.send({ embeds: [embed] });
+                    await newState.channel?.send({ embeds: [embed] });
                 }
             });
     }
@@ -34,7 +34,7 @@ const executeVCAutoCreation = async (oldState: VoiceState, newState: VoiceState)
     const triggerVC = await keyvs.getValue(newState.guild.id, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
     if (!triggerVC) {
         const embed = getReplyEmbed(__t("bot/vcAutoCreation/notSetTriggerVC"), ReplyEmbedType.Warn);
-        newState.channel?.send({ embeds: [embed] });
+        await newState.channel?.send({ embeds: [embed] });
         return;
     }
     if (oldState.member && oldState.member.voice.channelId === triggerVC.id) {
