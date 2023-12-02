@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, Events, Message, Role } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, Message, Role } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -24,24 +24,19 @@ const executeBumpReminder = async (message: Message) => {
     const twoHoursLaterSec = Math.floor(twoHoursLaterMSec / 1000);
     const embedDesc = __t("bot/bumpReminder/bumpMessage", { time: `<t:${twoHoursLaterSec}:T>`, diffCurTime: `<t:${twoHoursLaterSec}:R>` });
     const embed = getReplyEmbed(embedDesc, ReplyEmbedType.Info);
-    const actionRow = new ActionRowBuilder<ButtonBuilder>({
-        components: [
-            {
-                type: ComponentType.Button,
-                style: ButtonStyle.Primary,
-                customId: "doRemind",
-                label: __t("bot/bumpReminder/button/doRemind"),
-                emoji: "🔔",
-            },
-            {
-                type: ComponentType.Button,
-                style: ButtonStyle.Danger,
-                customId: "doNotRemind",
-                label: __t("bot/bumpReminder/button/doNotRemind"),
-                emoji: "🔕",
-            }
-        ]
-    });
+    const actionRow = new ActionRowBuilder<ButtonBuilder>()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId("doRemind")
+                .setLabel(__t("bot/bumpReminder/button/doRemind"))
+                .setStyle(ButtonStyle.Primary)
+                .setEmoji("🔔"),
+            new ButtonBuilder()
+                .setCustomId("doNotRemind")
+                .setLabel(__t("bot/bumpReminder/button/doNotRemind"))
+                .setStyle(ButtonStyle.Danger)
+                .setEmoji("🔕")
+        );
     const bumpReminderMessage = await message.channel.send({ embeds: [embed], components: [actionRow] });
     const collector = bumpReminderMessage.createMessageComponentCollector({ time: 60_000 });
     collector.on("collect", async (interaction) => {
@@ -78,7 +73,7 @@ const executeBumpReminder = async (message: Message) => {
             }
         }
     });
-    collector.once("end", async (interactions, reason) => {
+    collector.once("end", async (_, reason) => {
         bumpReminderMessage.edit({ components: [] });
         if (reason === "time") {
             const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Info);
