@@ -80,6 +80,9 @@ export type Vocabulary = {
     "bot/bumpReminder/setRemind": Message,
     "bot/bumpReminder/cancelRemind": Message,
     "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, mentionUsers: string }>,
+    "bot/afk/statusEmbed/title": Message,
+    "bot/afk/statusEmbed/description/status": Message<{ status: string }>,
+    "bot/afk/statusEmbed/description/destChannel": Message<{ channel: string }>,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -105,6 +108,7 @@ export type Vocabulary = {
     "bot/command/cnf-afk/get-dest/description": Message,
     "bot/command/cnf-afk/get-dest/success": Message<{ channel: string }>,
     "bot/command/cnf-afk/get-dest/faild": Message<{ error: string }>,
+    "bot/command/cnf-afk/status/description": Message,
     "bot/command/vac/description": Message,
     "bot/command/vac/start/description": Message,
     "bot/command/vac/start/success": Message,
@@ -169,6 +173,7 @@ export type Vocabulary = {
     "bot/command/game/rps/botDraw": Message,
     "bot/command/game/rps/botLose": Message,
     "bot/command/game/rps/timeout": Message,
+    "bot/command/cnf-list/description": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

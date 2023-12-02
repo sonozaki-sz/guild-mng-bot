@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, GuildChannel, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -62,7 +62,13 @@ export const cnfVacCommand: Command = {
                 }
                 const triggerVC = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
                 if (triggerVC) {
-                    const fetchedTriggerVC = await interaction.guild?.channels.fetch(triggerVC.id);
+                    const fetchedTriggerVC = await interaction.guild?.channels.fetch(triggerVC.id)
+                        .catch((reason: DiscordAPIError) => {
+                            if (reason.code === 10003) {
+                                return undefined;
+                            }
+                            throw reason;
+                        });
                     if (fetchedTriggerVC) fetchedTriggerVC.delete();
                     await keyvs.deleteValue(interaction.guildId!, KeyvKeys.VacTriggerVC);
                 }

@@ -179,7 +179,7 @@ export class EmbedPage {
                         .setMaxValues(1)
                         .addOptions(pages.map((value, index) => {
                             return {
-                                label: `${index + 1}`,
+                                label: `タイトル：${value.data.title}/ページ：${index + 1}`,
                                 value: index.toString(),
                             } as const;
                         }))
@@ -231,8 +231,8 @@ export class EmbedPage {
 
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async (_, reeason) => {
-            if (reeason === "time") {
+        this._collector?.once("end", async (_, reason) => {
+            if (reason === "time") {
                 await this._message?.edit({ components: [] });
             }
         });

@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Collection, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
 import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
@@ -42,7 +42,13 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
-    const channel = await interaction.guild?.channels.fetch(profChannel.id);
+    const channel = await interaction.guild?.channels.fetch(profChannel.id)
+        .catch((reason: DiscordAPIError) => {
+            if (reason.code === 10003) {
+                return undefined;
+            }
+            throw reason;
+        });
     if (!channel?.isTextBased()) {
         return __t("bot/command/notFoundProfChannel");
     }
