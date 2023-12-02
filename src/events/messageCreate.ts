@@ -102,6 +102,7 @@ const executeBumpReminder = async (message: Message) => {
             })();
             await keyvs.deleteValue(message.guildId!, KeyvKeys.BumpReminderRmdDate);
             await keyvs.deleteValue(message.guildId!, KeyvKeys.BumpReminderMentionUsers);
+            if (!mentionRoleText && !mentionUsersText) return;
             bumpReminderMessage.reply(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, mentionUsers: mentionUsersText }));
             logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
         }
