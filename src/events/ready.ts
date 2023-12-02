@@ -8,7 +8,7 @@ export const readyEvent: BotEvent = {
     name: Events.ClientReady,
     once: true,
     execute: async (client: Client) => {
-        logger.info(__t("log/bot/ready", { name: client.user?.tag! }));
+        logger.info(__t("log/bot/login", { name: client.user?.tag! }));
         client.user?.setActivity({ name: __t("grouwing"), type: ActivityType.Playing });
         client.guilds.cache.forEach(guild => {
             keyvs.setkeyv(guild.id);

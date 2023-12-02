@@ -42,7 +42,7 @@ export default new Catalog<Vocabulary>("ja", {
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
     "log/keyvs/reset": msg("keyvをリセットしました。namespace：{namespace}"),
     "log/keyvs/delete": msg("keyvを削除しました。namespace：{namespace}"),
-    "log/bot/ready": msg("{name}が起動しました。"),
+    "log/bot/login": msg("{name}がログインしました。"),
     "log/bot/login/faild": msg("ログインに失敗しました。\n詳細：\n{error}"),
     "log/bot/vcAutoCreation/start": msg("VCの自動作成機能を開始しました。サーバー：{guild}"),
     "log/bot/vcAutoCreation/stop": msg("VCの自動作成機能を停止しました。サーバー：{guild}"),

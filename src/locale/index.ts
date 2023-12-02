@@ -43,7 +43,7 @@ export type Vocabulary = {
     "log/keyvs/set": Message<{ namespace: string }>,
     "log/keyvs/reset": Message<{ namespace: string }>,
     "log/keyvs/delete": Message<{ namespace: string }>,
-    "log/bot/ready": Message<{ name: string }>,
+    "log/bot/login": Message<{ name: string }>,
     "log/bot/login/faild": Message<{ error: string }>,
     "log/bot/vcAutoCreation/start": Message<{ guild: string }>,
     "log/bot/vcAutoCreation/stop": Message<{ guild: string }>,
