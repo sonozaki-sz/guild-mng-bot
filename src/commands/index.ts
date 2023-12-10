@@ -6,7 +6,7 @@ import cnfStatusListCommand from "./cnfStatusList";
 import cnfVCCommand from "./cnfVC";
 import cnfVacCommand from "./cnfVac";
 import echoCommand from "./echo";
-import gameCommand from "./game";
+import playCommand from "./game";
 import sendTextCommand from "./sendText";
 import userInfocommand from "./userInfo";
 
@@ -20,7 +20,7 @@ export const globalCommands = [
     userInfocommand,
     cnfBumpReminderCommand,
     sendTextCommand,
-    gameCommand,
+    playCommand,
     cnfStatusListCommand,
 ];
 

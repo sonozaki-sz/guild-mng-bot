@@ -2,14 +2,14 @@ import { ActionRowBuilder, ChatInputCommandInteraction, Collection, ComponentTyp
 import { Command } from "../services/discord";
 import { __t } from "../services/locale";
 
-export const gameCommand: Command = {
+export const playCommand: Command = {
     data: new SlashCommandBuilder()
-        .setName("game")
-        .setDescription(__t("bot/command/game/description"))
+        .setName("play")
+        .setDescription(__t("bot/command/play/description"))
         .addSubcommand(subcommand =>
             subcommand
                 .setName("rps")
-                .setDescription(__t("bot/command/game/rps/description"))
+                .setDescription(__t("bot/command/play/rps/description"))
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
@@ -41,12 +41,12 @@ const judgeRps = (botHandIndex: number, userHandIndex: number): { result: 0 | 1 
             return 2; // 相手の勝ち
         }
     })(botHandIndex, userHandIndex);
-    const resultText = __t("bot/command/game/rps/result", { botHand: rpsHands.get(botHandIndex)?.handEmoji!, userHand: rpsHands.get(userHandIndex)?.handEmoji! });
+    const resultText = __t("bot/command/play/rps/result", { botHand: rpsHands.get(botHandIndex)?.handEmoji!, userHand: rpsHands.get(userHandIndex)?.handEmoji! });
     return { result: result, resultText: resultText }
 };
 
 const executeRps = async (interaction: ChatInputCommandInteraction) => {
-    await interaction.reply(__t("bot/command/game/rps/ready"));
+    await interaction.reply(__t("bot/command/play/rps/ready"));
     const actionRow = new ActionRowBuilder<StringSelectMenuBuilder>()
         .addComponents(
             new StringSelectMenuBuilder()
@@ -72,13 +72,13 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
             const botResponse = ((result) => {
                 switch (result) {
                     case 0: {
-                        return __t("bot/command/game/rps/botDraw");
+                        return __t("bot/command/play/rps/botDraw");
                     }
                     case 1: {
-                        return __t("bot/command/game/rps/botWin");
+                        return __t("bot/command/play/rps/botWin");
                     }
                     case 2: {
-                        return __t("bot/command/game/rps/botLose");
+                        return __t("bot/command/play/rps/botLose");
                     }
                 }
             })(rpsResult.result);
@@ -89,9 +89,10 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
     });
     collector.once("end", async (_, reason) => {
         if (reason === "time") {
-            await interaction.followUp(__t("bot/command/game/rps/timeout"));
+            await interaction.followUp(__t("bot/command/play/rps/timeout"));
         }
+        message.edit({ components: [] });
     });
 };
 
-export default gameCommand;
+export default playCommand;
