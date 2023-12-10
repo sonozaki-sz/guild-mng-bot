@@ -38,6 +38,9 @@ export type Vocabulary = {
     "rps/rock": Message,
     "rps/paper": Message,
     "rps/scissors": Message,
+    "notting": Message,
+    "status": Message,
+    "destChannel": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -81,9 +84,8 @@ export type Vocabulary = {
     "bot/bumpReminder/cancelRemind": Message,
     "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, mentionUsers: string }>,
     "bot/bumpReminder/alreadySetRemind": Message,
-    "bot/afk/statusEmbed/title": Message,
-    "bot/afk/statusEmbed/description/status": Message<{ status: string }>,
-    "bot/afk/statusEmbed/description/destChannel": Message<{ channel: string }>,
+    "bot/afk": Message,
+    "bot/vac": Message,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -92,7 +94,7 @@ export type Vocabulary = {
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
     "bot/command/notFoundChannel": Message<{ channelID: string }>,
-    "bot/command/status": Message,
+    "bot/command/getCnfStatus": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,
@@ -175,7 +177,7 @@ export type Vocabulary = {
     "bot/command/game/rps/botDraw": Message,
     "bot/command/game/rps/botLose": Message,
     "bot/command/game/rps/timeout": Message,
-    "bot/command/cnf-list/description": Message,
+    "bot/command/cnf-status-list/description": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

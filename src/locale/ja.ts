@@ -37,6 +37,9 @@ export default new Catalog<Vocabulary>("ja", {
     "rps/rock": msg("グー"),
     "rps/paper": msg("パー"),
     "rps/scissors": msg("チョキ"),
+    "notting": msg("なし"),
+    "status": msg("状態"),
+    "destChannel": msg("移動先チャンネル"),
 
     // Log
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
@@ -80,9 +83,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/bumpReminder/cancelRemind": msg("Bumpのリマインドをキャンセルしました。"),
     "bot/bumpReminder/remindMessage": msg("{mentionRole}{mentionUsers}\nBump出来るよ！"),
     "bot/bumpReminder/alreadySetRemind": msg("既にBumpのリマインドが設定済みです"),
-    "bot/afk/statusEmbed/title": msg("AFK機能"),
-    "bot/afk/statusEmbed/description/status": msg("ステータス：{status}"),
-    "bot/afk/statusEmbed/description/destChannel": msg("移動先：{channel}"),
+    "bot/afk": msg("AFK機能"),
+    "bot/vac": msg("VC自動作成機能"),
 
     // コマンド共通
     "bot/command/cooldown": msg("このコマンドは{cooldown}秒後に使用可能です。"),
@@ -92,7 +94,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/notFoundChannel": msg("チャンネルが見つかりませんでした。\nチャンネルID：{channelID}"),
-    "bot/command/status": msg("設定のステータスを取得しました。"),
+    "bot/command/getCnfStatus": msg("設定状態の取得に成功しました。"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),
@@ -174,5 +176,5 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/game/rps/botDraw": msg("あいこだね！\nもう一回！"),
     "bot/command/game/rps/botLose": msg("えーん💦 負けちゃった…\nまた遊ぼうね！"),
     "bot/command/game/rps/timeout": msg("待ちくたびれちゃった…\nまたね！👋🏻"),
-    "bot/command/cnf-list/description": msg("設定の一覧を表示します。"),
+    "bot/command/cnf-status-list/description": msg("各機能の設定状態をを表示します。"),
 });

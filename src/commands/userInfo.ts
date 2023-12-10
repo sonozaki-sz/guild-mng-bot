@@ -73,7 +73,7 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
             .setTitle(member.user.tag)
             .setThumbnail(member.displayAvatarURL())
             .setColor(member.user.accentColor || member.displayColor)
-            .addFields(
+            .setFields(
                 { name: __t("userID"), value: member.id, inline: true },
                 { name: __t("displayName"), value: member.user.displayName, inline: true },
                 { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
@@ -85,7 +85,7 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
             .setTitle(member.user.tag)
             .setThumbnail(member.displayAvatarURL())
             .setColor(member.user.accentColor || member.displayColor)
-            .addFields(
+            .setFields(
                 { name: __t("role"), value: member.roles.cache.sort((a, b) => b.position - a.position).map(role => role.toString()).join(", ") },
                 { name: __t("authority"), value: member.permissions.toArray().join(", ") },
             )

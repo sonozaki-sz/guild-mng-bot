@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -76,7 +76,7 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply({ embeds: [embed] });
 };
 
-const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
+export const getCnfStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
     const fetchedAfkChannel = await (async () => {
         if (!afkChannel) {
@@ -91,18 +91,20 @@ const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
             });
     })();
     const status = fetchedAfkChannel ? __t("enabled") : __t("disabled");
-    const description = __t("bot/afk/statusEmbed/description/status", { status })
-        + "\n" + __t("bot/afk/statusEmbed/description/destChannel", { channel: fetchedAfkChannel?.toString() || __t("unset") });
     const statusEmbed = new EmbedBuilder()
-        .setTitle(__t("bot/afk/statusEmbed/title"))
-        .setDescription(description);
+        .setTitle(__t("bot/afk"))
+        .setColor(Colors.Blue)
+        .setFields(
+            { name: __t("status"), value: status },
+            { name: __t("destChannel"), value: fetchedAfkChannel?.toString() || __t("unset") }
+        );
     return statusEmbed;
 };
 
 const executeStatus = async (interaction: ChatInputCommandInteraction) => {
-    const replyEmbed = getReplyEmbed(__t("bot/command/status"), ReplyEmbedType.Success);
+    const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatus"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [replyEmbed] });
-    const statusEmbed = await getStatusEmbed(interaction);
+    const statusEmbed = await getCnfStatusEmbed(interaction);
     await interaction.followUp({ embeds: [statusEmbed] });
 };
 
