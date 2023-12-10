@@ -40,6 +40,8 @@ export default new Catalog<Vocabulary>("ja", {
     "notting": msg("なし"),
     "status": msg("状態"),
     "destChannel": msg("移動先チャンネル"),
+    "triggerVC": msg("トリガーVC"),
+    "createdVC": msg("作成済みVC"),
 
     // Log
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
@@ -71,6 +73,8 @@ export default new Catalog<Vocabulary>("ja", {
     "log/bot/command/modal/notFound": msg("一致するmodalが見つかりませんでした。modal：{modal}"),
     "log/bot/command/modal/success": msg("modalの実行に成功しました。modal：{modal}\nサーバー：{guild}"),
     "log/bot/command/modal/faild": msg("modalの実行に失敗しました。modal：{modal}\nサーバー：{guild}\n詳細：\n{error}"),
+    "log/bot/guildEntry": msg("{guild}に参加しました。"),
+    "log/bot/guildLeaving": msg("{guild}から退出しました。"),
 
     // Bot
     "bot/config/reset": msg("Botの設定をリセットしました。"),

@@ -41,6 +41,8 @@ export type Vocabulary = {
     "notting": Message,
     "status": Message,
     "destChannel": Message,
+    "triggerVC": Message,
+    "createdVC": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -72,6 +74,8 @@ export type Vocabulary = {
     "log/bot/command/modal/notFound": Message<{ modal: string }>,
     "log/bot/command/modal/success": Message<{ modal: string, guild: string }>,
     "log/bot/command/modal/faild": Message<{ modal: string, guild: string, error: string }>,
+    "log/bot/guildEntry": Message<{ guild: string }>,
+    "log/bot/guildLeaving": Message<{ guild: string }>,
 
     // Bot
     "bot/config/reset": Message,
