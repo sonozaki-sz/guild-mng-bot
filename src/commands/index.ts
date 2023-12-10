@@ -2,6 +2,7 @@ import afkCommand from "./afk";
 import cnfAfkCommand from "./cnfAfk";
 import cnfBumpReminderCommand from "./cnfBumpReminder";
 import cnfProfChannelCommand from "./cnfProfChannel";
+import cnfStatusListCommand from "./cnfStatusList";
 import cnfVCCommand from "./cnfVC";
 import cnfVacCommand from "./cnfVac";
 import echoCommand from "./echo";
@@ -20,6 +21,7 @@ export const globalCommands = [
     cnfBumpReminderCommand,
     sendTextCommand,
     gameCommand,
+    cnfStatusListCommand,
 ];
 
 export default globalCommands;

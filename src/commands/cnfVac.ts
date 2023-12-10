@@ -94,7 +94,7 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
     logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
 };
 
-export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
+export const getCnfStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
         const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
         return isVacEnabled ? __t("executing") : __t("stoping");
@@ -144,7 +144,7 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
 const excuteStatus = async (interaction: ChatInputCommandInteraction) => {
     const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatus"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [replyEmbed] });
-    const statusEmbed = await getStatusEmbed(interaction);
+    const statusEmbed = await getCnfStatusEmbed(interaction);
     await interaction.followUp({ embeds: [statusEmbed] });
 };
 

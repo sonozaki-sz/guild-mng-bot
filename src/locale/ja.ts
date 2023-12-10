@@ -103,6 +103,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/notFoundChannel": msg("チャンネルが見つかりませんでした。\nチャンネルID：{channelID}"),
     "bot/command/getCnfStatus": msg("設定状態の取得に成功しました。"),
+    "bot/command/getCnfStatusList": msg("設定状態の一覧の取得に成功しました。"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),

@@ -89,7 +89,7 @@ const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply({ embeds: [embed] });
 };
 
-export const getCnfStatus = async (interaction: ChatInputCommandInteraction) => {
+export const getCnfStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
         const isEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
         return isEnabled ? __t("executing") : __t("stoping");
@@ -123,7 +123,7 @@ export const getCnfStatus = async (interaction: ChatInputCommandInteraction) => 
 const executeStatus = async (interaction: ChatInputCommandInteraction) => {
     const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatus"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [replyEmbed] });
-    const statusEmbed = await getCnfStatus(interaction);
+    const statusEmbed = await getCnfStatusEmbed(interaction);
     await interaction.followUp({ embeds: [statusEmbed] });
 };
 

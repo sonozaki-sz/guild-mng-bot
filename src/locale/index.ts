@@ -103,6 +103,7 @@ export type Vocabulary = {
     "bot/command/unsetProfChannel": Message,
     "bot/command/notFoundChannel": Message<{ channelID: string }>,
     "bot/command/getCnfStatus": Message,
+    "bot/command/getCnfStatusList": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,
