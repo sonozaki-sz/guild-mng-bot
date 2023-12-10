@@ -231,10 +231,8 @@ export class EmbedPage {
 
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async (_, reason) => {
-            if (reason === "time") {
-                await this._message?.edit({ components: [] });
-            }
+        this._collector?.once("end", async () => {
+            await this._message?.edit({ components: [] });
         });
     }
 
