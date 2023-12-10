@@ -5,7 +5,7 @@
 1. .env.exampleを参考にBotのトークンなどを記載した.envファイルをプロジェクトルートディレクトリに作成する。
 
 ## 環境構築
-### テスト環境
+### 開発環境
 ```bash
 $ pnpm i --frozen-lockfile
 ```
@@ -18,7 +18,7 @@ $ pnpm i --frozen-lockfile -P
 ```
 
 ## 実行
-### テスト環境
+### 開発環境
 ```bash
 $ pnpm run dev
 ```
