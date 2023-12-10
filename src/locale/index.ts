@@ -38,6 +38,14 @@ export type Vocabulary = {
     "rps/rock": Message,
     "rps/paper": Message,
     "rps/scissors": Message,
+    "notting": Message,
+    "status": Message,
+    "destChannel": Message,
+    "triggerVC": Message,
+    "createdVC": Message,
+    "mentionRole": Message,
+    "mentionUsers": Message,
+    "notFoundUser": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -69,6 +77,8 @@ export type Vocabulary = {
     "log/bot/command/modal/notFound": Message<{ modal: string }>,
     "log/bot/command/modal/success": Message<{ modal: string, guild: string }>,
     "log/bot/command/modal/faild": Message<{ modal: string, guild: string, error: string }>,
+    "log/bot/guildEntry": Message<{ guild: string }>,
+    "log/bot/guildLeaving": Message<{ guild: string }>,
 
     // Bot
     "bot/config/reset": Message,
@@ -81,9 +91,9 @@ export type Vocabulary = {
     "bot/bumpReminder/cancelRemind": Message,
     "bot/bumpReminder/remindMessage": Message<{ mentionRole: string, mentionUsers: string }>,
     "bot/bumpReminder/alreadySetRemind": Message,
-    "bot/afk/statusEmbed/title": Message,
-    "bot/afk/statusEmbed/description/status": Message<{ status: string }>,
-    "bot/afk/statusEmbed/description/destChannel": Message<{ channel: string }>,
+    "bot/afk": Message,
+    "bot/vac": Message,
+    "bot/bumpReminder": Message,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -92,7 +102,8 @@ export type Vocabulary = {
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
     "bot/command/notFoundChannel": Message<{ channelID: string }>,
-    "bot/command/status": Message,
+    "bot/command/getCnfStatus": Message,
+    "bot/command/getCnfStatusList": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,
@@ -125,8 +136,6 @@ export type Vocabulary = {
     "bot/command/cnf-vac/stop/triggerVCNotFound": Message,
     "bot/command/cnf-vac/stop/alreadyStoping": Message,
     "bot/command/cnf-vac/status/description": Message,
-    "bot/command/cnf-vac/status/success": Message<{ status: string }>,
-    "bot/command/cnf-vac/status/faild": Message<{ error: string }>,
     "bot/command/cnf-vc/description": Message,
     "bot/command/cnf-vc/notInVC": Message,
     "bot/command/cnf-vc/rename/description": Message,
@@ -175,7 +184,7 @@ export type Vocabulary = {
     "bot/command/game/rps/botDraw": Message,
     "bot/command/game/rps/botLose": Message,
     "bot/command/game/rps/timeout": Message,
-    "bot/command/cnf-list/description": Message,
+    "bot/command/cnf-status-list/description": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

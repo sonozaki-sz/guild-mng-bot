@@ -77,7 +77,7 @@ const executeBumpReminder = async (message: Message) => {
             }
         }
     });
-    collector.once("end", async (_, reason) => {
+    collector.once("end", async () => {
         bumpReminderMessage.edit({ components: [] });
     });
 
@@ -89,7 +89,7 @@ const executeBumpReminder = async (message: Message) => {
             const mentionRole = await keyvs.getValue(message.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
             const mentionRoleText = await (async () => {
                 if (!mentionRole) return "";
-                const role = await bumpReminderMessage.guild?.roles.fetch(mentionRole.id);
+                const role = await message.guild?.roles.fetch(mentionRole.id);
                 return role?.toString() || "";
             })();
             const mentionUsersText = await (async () => {
