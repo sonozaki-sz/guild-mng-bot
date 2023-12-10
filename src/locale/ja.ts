@@ -42,6 +42,9 @@ export default new Catalog<Vocabulary>("ja", {
     "destChannel": msg("移動先チャンネル"),
     "triggerVC": msg("トリガーVC"),
     "createdVC": msg("作成済みVC"),
+    "mentionRole": msg("メンションするロール"),
+    "mentionUsers": msg("メンションするユーザー"),
+    "notFoundUser": msg("見つからないユーザー"),
 
     // Log
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
@@ -89,6 +92,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/bumpReminder/alreadySetRemind": msg("既にBumpのリマインドが設定済みです"),
     "bot/afk": msg("AFK機能"),
     "bot/vac": msg("VC自動作成機能"),
+    "bot/bumpReminder": msg("Bumpリマインド機能"),
 
     // コマンド共通
     "bot/command/cooldown": msg("このコマンドは{cooldown}秒後に使用可能です。"),
@@ -131,8 +135,6 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-vac/stop/triggerVCNotFound": msg("自動作成用のトリガーチャンネルが見つかりませんでした。"),
     "bot/command/cnf-vac/stop/alreadyStoping": msg("VCの自動作成機能は既に停止しています。"),
     "bot/command/cnf-vac/status/description": msg("VCの自動作成機能の状態を表示します。"),
-    "bot/command/cnf-vac/status/success": msg("VCの自動作成機能は{status}です。"),
-    "bot/command/cnf-vac/status/faild": msg("VCの自動作成機能の状態の取得に失敗しました。\n詳細：\n{error}"),
     "bot/command/cnf-vc/description": msg("VCの設定をします。"),
     "bot/command/cnf-vc/notInVC": msg("設定するVCに入室中に実行してください。"),
     "bot/command/cnf-vc/rename/description": msg("VCの名前を変更します。"),

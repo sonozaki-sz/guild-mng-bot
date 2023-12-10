@@ -94,14 +94,10 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
     logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
 };
 
-const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
+export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
         const isVacEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsVacEnabled) as boolean | undefined;
-        if (isVacEnabled) {
-            return __t("executing");
-        } else {
-            return __t("stoping");
-        }
+        return isVacEnabled ? __t("executing") : __t("stoping");
     })();
     const tiggerVcText = await (async () => {
         const triggerVC = await keyvs.getValue(interaction.guildId!, KeyvKeys.VacTriggerVC) as VoiceChannel | undefined;
@@ -141,7 +137,7 @@ const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
             { name: __t("status"), value: statusText },
             { name: __t("triggerVC"), value: tiggerVcText },
             { name: __t("createdVC"), value: createdVCs },
-        )
+        );
     return statusEmbed;
 };
 

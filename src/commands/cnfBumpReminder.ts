@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Role, SlashCommandBuilder, User } from "discord.js";
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, Role, SlashCommandBuilder, User } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import keyvs, { KeyvKeys } from "../services/keyvs";
 import { __t } from "../services/locale";
@@ -89,17 +89,42 @@ const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply({ embeds: [embed] });
 };
 
-const executeStatus = async (interaction: ChatInputCommandInteraction) => {
-    const isEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
-    const memtionRole = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
-    const status = isEnabled ? __t("executing") : __t("stoping");
-    const mentionRoleText = await (async () => {
-        if (!memtionRole) return __t("disabled");
-        const role = await interaction.guild?.roles.fetch(memtionRole.id);
-        return role?.toString() || __t("disabled");
+export const getCnfStatus = async (interaction: ChatInputCommandInteraction) => {
+    const statusText = await (async () => {
+        const isEnabled = await keyvs.getValue(interaction.guildId!, KeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
+        return isEnabled ? __t("executing") : __t("stoping");
     })();
-    const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/status/success", { status: status, mentionRole: mentionRoleText }), ReplyEmbedType.Success);
-    await interaction.reply({ embeds: [embed] });
+    const mentionRoleText = await (async () => {
+        const memtionRole = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionRole) as Role | undefined;
+        if (!memtionRole) return __t("unset");
+        const role = await interaction.guild?.roles.fetch(memtionRole.id);
+        return role?.toString() || __t("unset");
+    })();
+    const mentionUsersText = await (async () => {
+        const mentionUsers = await keyvs.getValue(interaction.guildId!, KeyvKeys.BumpReminderMentionUsers) as Array<User> | undefined;
+        if (!mentionUsers) return __t("notting");
+        return await Promise.all(mentionUsers.map(async user => {
+            const member = await interaction.guild?.members.fetch(user.id)
+                .catch(() => undefined);
+            return member?.toString() || __t("notFoundUser");
+        })).then(members => members.toString());
+    })();
+    const statusEmbed = new EmbedBuilder()
+        .setTitle(__t("bot/bumpReminder"))
+        .setColor(Colors.Blue)
+        .setFields(
+            { name: __t("status"), value: statusText },
+            { name: __t("mentionRole"), value: mentionRoleText },
+            { name: __t("mentionUsers"), value: mentionUsersText },
+        );
+    return statusEmbed;
+};
+
+const executeStatus = async (interaction: ChatInputCommandInteraction) => {
+    const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatus"), ReplyEmbedType.Success);
+    await interaction.reply({ embeds: [replyEmbed] });
+    const statusEmbed = await getCnfStatus(interaction);
+    await interaction.followUp({ embeds: [statusEmbed] });
 };
 
 export default cnfBumpReminderCommand;

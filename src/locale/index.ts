@@ -43,6 +43,9 @@ export type Vocabulary = {
     "destChannel": Message,
     "triggerVC": Message,
     "createdVC": Message,
+    "mentionRole": Message,
+    "mentionUsers": Message,
+    "notFoundUser": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -90,6 +93,7 @@ export type Vocabulary = {
     "bot/bumpReminder/alreadySetRemind": Message,
     "bot/afk": Message,
     "bot/vac": Message,
+    "bot/bumpReminder": Message,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -131,8 +135,6 @@ export type Vocabulary = {
     "bot/command/cnf-vac/stop/triggerVCNotFound": Message,
     "bot/command/cnf-vac/stop/alreadyStoping": Message,
     "bot/command/cnf-vac/status/description": Message,
-    "bot/command/cnf-vac/status/success": Message<{ status: string }>,
-    "bot/command/cnf-vac/status/faild": Message<{ error: string }>,
     "bot/command/cnf-vc/description": Message,
     "bot/command/cnf-vc/notInVC": Message,
     "bot/command/cnf-vc/rename/description": Message,
