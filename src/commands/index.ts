@@ -6,7 +6,7 @@ import cnfStatusListCommand from "./cnfStatusList";
 import cnfVCCommand from "./cnfVC";
 import cnfVacCommand from "./cnfVac";
 import echoCommand from "./echo";
-import playCommand from "./game";
+import playCommand from "./play";
 import sendTextCommand from "./sendText";
 import userInfocommand from "./userInfo";
 
