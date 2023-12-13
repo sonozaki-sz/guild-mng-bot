@@ -175,7 +175,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/send-text/success": msg("{channel}にテキストメッセージを送信しました。"),
     "bot/command/send-text/channelOption/Description": msg("送信するチャンネルを指定してください。(未指定時は現在のチャンネルに送信)"),
     "bot/command/send-text/modal/textInput/placeholder": msg("送信するテキストを入力してください。"),
-    "bot/command/play/description": msg("ミニゲーム等をまとめたコマンドです。"),
+    "bot/command/play/description": msg("レクリエーションをまとめたコマンドです。"),
     "bot/command/play/rps/description": msg("じゃんけんをします。"),
     "bot/command/play/rps/ready": msg("最初はグー！じゃんけん..."),
     "bot/command/play/rps/result": msg("ぽんっ！\nあなた：{userHand}\n私：{botHand}"),
