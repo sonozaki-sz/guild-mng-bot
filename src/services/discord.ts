@@ -181,7 +181,7 @@ export class EmbedPage {
                             return {
                                 label: `タイトル：${value.data.title}/ページ：${index + 1}`,
                                 value: index.toString(),
-                            } as const;
+                            };
                         }))
                 )
         );
