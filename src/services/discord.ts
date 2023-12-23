@@ -232,7 +232,7 @@ export class EmbedPage {
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
         this._collector?.once("end", async (_, reason) => {
-            if (reason === "delete") return;
+            if (reason === "delete") { return };
             await this._message?.edit({ components: [] });
         });
     }
