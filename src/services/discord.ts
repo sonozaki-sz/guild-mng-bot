@@ -199,8 +199,8 @@ export class EmbedPage {
                     this._currentPageIndex = (this._currentPageIndex - 1) % this._pages.length;
                     break;
                 case "delete":
-                    await this._message?.delete();
                     this._collector?.stop("delete");
+                    await this._message?.delete();
                     return;
                 case "toNext":
                     this._currentPageIndex = (this._currentPageIndex + 1) % this._pages.length;
