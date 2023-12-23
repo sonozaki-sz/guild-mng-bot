@@ -70,26 +70,26 @@ GuildMessageManager.prototype.fetchMany = async function (
         return new Collection<string, Message<true>>();
     }
 
-    const fetchMessagesBefore = async (limit: number, targetMessageID: string): Promise<Collection<string, Message<true>>> => {
+    const fetchMessagesBefore = async (limit: number, targetMessageId: string): Promise<Collection<string, Message<true>>> => {
         let messages = new Collection<string, Message<true>>();
-        let messageID = targetMessageID || undefined;
-        for (let remainingCount = limit; remainingCount > 0 && messageID; remainingCount -= 100) {
+        let messageId = targetMessageId || undefined;
+        for (let remainingCount = limit; remainingCount > 0 && messageId; remainingCount -= 100) {
             const limit = (remainingCount <= 100) ? remainingCount : 100;
-            const msgs = await this.fetch({ limit: limit, before: messageID, cache: options?.cache });
+            const msgs = await this.fetch({ limit: limit, before: messageId, cache: options?.cache });
             messages = messages.concat(msgs);
-            messageID = msgs.last()?.id;
+            messageId = msgs.last()?.id;
         }
         return messages;
     };
 
-    const fetchMessagesAfter = async (limit: number, targetMessageID: string): Promise<Collection<string, Message<true>>> => {
+    const fetchMessagesAfter = async (limit: number, targetMessageId: string): Promise<Collection<string, Message<true>>> => {
         let messages = new Collection<string, Message<true>>();
-        let messageID = targetMessageID || undefined;
-        for (let remainingCount = limit; remainingCount > 0 && messageID; remainingCount -= 100) {
+        let messageId = targetMessageId || undefined;
+        for (let remainingCount = limit; remainingCount > 0 && messageId; remainingCount -= 100) {
             const limit = (remainingCount <= 100) ? remainingCount : 100;
-            const msgs = await this.fetch({ limit: limit, after: messageID, cache: options?.cache });
+            const msgs = await this.fetch({ limit: limit, after: messageId, cache: options?.cache });
             messages = messages.concat(msgs.reverse());
-            messageID = msgs.last()?.id;
+            messageId = msgs.last()?.id;
         }
         return messages.reverse();
     };
@@ -181,7 +181,7 @@ export class EmbedPage {
                             return {
                                 label: `タイトル：${value.data.title}/ページ：${index + 1}`,
                                 value: index.toString(),
-                            } as const;
+                            };
                         }))
                 )
         );
@@ -231,7 +231,8 @@ export class EmbedPage {
 
             await interaction.update({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         });
-        this._collector?.once("end", async () => {
+        this._collector?.once("end", async (_, reason) => {
+            if (reason === "delete") return;
             await this._message?.edit({ components: [] });
         });
     }
