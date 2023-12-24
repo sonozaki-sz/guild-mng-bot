@@ -47,7 +47,7 @@ const excuteStart = async (interaction: ChatInputCommandInteraction) => {
         return;
     }
     const triggerVc = await interaction.guild?.channels.create({
-        name: "CreateVc",
+        name: "CreateVC",
         type: ChannelType.GuildVoice,
         parent: (interaction.channel as GuildChannel).parent,
     })
