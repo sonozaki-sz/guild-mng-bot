@@ -4,23 +4,25 @@ import { __t } from "../services/locale";
 import * as cnfAfk from "./cnfAfk";
 import * as cnfBumpReminder from "./cnfBumpReminder";
 import * as cnfVac from "./cnfVac";
+import * as stickMessage from "./stickMessage";
 
-export const cnfStatusListCommand: Command = {
+export const statusListCommand: Command = {
     data: new SlashCommandBuilder()
-        .setName("cnf-status-list")
-        .setDescription(__t("bot/command/cnf-status-list/description"))
+        .setName("status-list")
+        .setDescription(__t("bot/command/status-list/description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatusList"), ReplyEmbedType.Success);
+        const replyEmbed = getReplyEmbed(__t("bot/command/getStatusList"), ReplyEmbedType.Success);
         await interaction.reply({ embeds: [replyEmbed] });
-        const cnfStatusEmbedList = [
-            await cnfBumpReminder.getCnfStatusEmbed(interaction),
-            await cnfAfk.getCnfStatusEmbed(interaction),
-            await cnfVac.getCnfStatusEmbed(interaction),
+        const statusEmbedList = [
+            await cnfBumpReminder.getStatusEmbed(interaction),
+            await cnfAfk.getStatusEmbed(interaction),
+            await cnfVac.getStatusEmbed(interaction),
+            await stickMessage.getStatusEmbed(interaction),
         ];
-        const cnfStatusEmbedsPage = new EmbedPage(interaction.channel!, cnfStatusEmbedList);
-        await cnfStatusEmbedsPage.send({ time: 300_000 });
+        const statusEmbedsPage = new EmbedPage(interaction.channel!, statusEmbedList);
+        await statusEmbedsPage.send({ time: 300_000 });
     }
 };
 
-export default cnfStatusListCommand;
+export default statusListCommand;

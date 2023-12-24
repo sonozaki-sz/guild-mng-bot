@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, DiscordAPIError, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import "../services/discord";
-import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import keyvs, { KeyvKeys } from "../services/keyvs";
+import { BotKeyvKeys, Command, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
 export const afkCommand: Command = {
@@ -22,7 +21,7 @@ export const afkCommand: Command = {
             await interaction.reply({ embeds: [embed] });
             return;
         }
-        const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
+        const afkChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
         if (!afkChannel) {
             const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
             await interaction.reply({ embeds: [embed] });

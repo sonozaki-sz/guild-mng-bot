@@ -1,6 +1,5 @@
 import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import keyvs, { KeyvKeys } from "../services/keyvs";
+import { BotKeyvKeys, Command, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
 export const cnfAfkCommand: Command = {
@@ -48,13 +47,13 @@ export const cnfAfkCommand: Command = {
 
 const executeSetDest = async (interaction: ChatInputCommandInteraction) => {
     const channel = interaction.options.getChannel("channel") as VoiceChannel;
-    await keyvs.setValue(interaction.guildId!, KeyvKeys.DestAfkVC, channel)
+    await botKeyvs.setValue(interaction.guildId!, BotKeyvKeys.DestAfkVc, channel)
     const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
+    const afkChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
     if (!afkChannel) {
         const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
@@ -76,8 +75,8 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply({ embeds: [embed] });
 };
 
-export const getCnfStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.DestAfkVC) as VoiceChannel | undefined;
+export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
+    const afkChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
     const fetchedAfkChannel = await (async () => {
         if (!afkChannel) {
             return undefined;
@@ -102,9 +101,9 @@ export const getCnfStatusEmbed = async (interaction: ChatInputCommandInteraction
 };
 
 const executeStatus = async (interaction: ChatInputCommandInteraction) => {
-    const replyEmbed = getReplyEmbed(__t("bot/command/getCnfStatus"), ReplyEmbedType.Success);
+    const replyEmbed = getReplyEmbed(__t("bot/command/getStatus"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [replyEmbed] });
-    const statusEmbed = await getCnfStatusEmbed(interaction);
+    const statusEmbed = await getStatusEmbed(interaction);
     await interaction.followUp({ embeds: [statusEmbed] });
 };
 

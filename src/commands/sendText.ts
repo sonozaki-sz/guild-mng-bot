@@ -8,16 +8,18 @@ export const sendTextCommand: Command = {
         .setDescription(__t("bot/command/send-text/description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
         .addChannelOption(option =>
-            option.setName("channel")
+            option
+                .setName("channel")
                 .setDescription(__t("bot/command/send-text/channelOption/Description"))
                 .addChannelTypes(ChannelType.GuildText)
         ),
     execute: async (interaction: ChatInputCommandInteraction) => {
-        const channel = interaction.options.getChannel("channel") as TextChannel | undefined;
-        const sentChannel = channel || interaction.channel!;
-        sendTextModal.data = sentChannel;
-        interaction.client.modals.set(sendTextModal.modal.data.custom_id!, sendTextModal);
-        await interaction.showModal(sendTextModal.modal);
+        const channel = interaction.options.getChannel("channel") || interaction.channel!;
+        if (channel.type === ChannelType.GuildText) {
+            sendTextModal.data = channel;
+            interaction.client.modals.set(sendTextModal.modal.data.custom_id!, sendTextModal);
+            await interaction.showModal(sendTextModal.modal);
+        }
     }
 };
 
@@ -27,8 +29,8 @@ const sendTextModal: Modal = {
         .setTitle(__t("bot/command/send-text/modal/title"))
         .setComponents(new ActionRowBuilder<ModalActionRowComponentBuilder>()
             .setComponents(new TextInputBuilder()
-                .setCustomId("textInput")
-                .setLabel(__t("bot/command/send-text/modal/textInput/placeholder"))
+                .setCustomId("inputTextInput")
+                .setLabel(__t("bot/command/send-text/modal/inputSendText/label"))
                 .setStyle(TextInputStyle.Paragraph)
             )
         ),
