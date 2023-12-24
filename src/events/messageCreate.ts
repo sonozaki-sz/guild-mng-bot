@@ -1,14 +1,32 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, DiscordAPIError, Events, Message, Role, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPIError, Events, Message, Role, User } from "discord.js";
 import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
-import { BotEvent, BotKeyvKeys, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
+import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
 export const messageCreateEvent: BotEvent = {
     name: Events.MessageCreate,
     execute: async (message: Message) => {
-        await executeBumpReminder(message);
-        await executeStickMessage(message);
+        await executeBumpReminder(message)
+            .catch((error: Error) => {
+                const errorDesc = error.stack || error.message || "unknown error";
+                logger.error(__t("log/bot/bumpReminder/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
+                if (error instanceof KeyvsError) {
+                    discordBotKeyvs.setkeyv(message.guildId!);
+                    logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
+                }
+            });
+        await executeStickMessage(message)
+            .catch((error: Error) => {
+                const errorDesc = error.stack || error.message || "unknown error";
+                logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
+                if (error instanceof KeyvsError) {
+                    discordBotKeyvs.setkeyv(message.guildId!);
+                    logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
+                }
+            });
     }
 };
 
@@ -16,7 +34,7 @@ const disboardUserId = "302050872383242240";
 const bumpCommandName = "bump";
 
 const executeBumpReminder = async (message: Message) => {
-    const isBumpReminderEnabled = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
+    const isBumpReminderEnabled = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
     if (!isBumpReminderEnabled) return;
     if (message.author.id !== disboardUserId) return;
     if (message.interaction?.commandName !== bumpCommandName) return;
@@ -39,29 +57,29 @@ const executeBumpReminder = async (message: Message) => {
                 .setEmoji("🔕")
         );
     const bumpReminderMessage = await message.channel.send({ embeds: [embed], components: [actionRow] });
-    const collector = bumpReminderMessage.createMessageComponentCollector({ time: 2 * 60 * 60 * 1000 });
-    await botKeyvs.setValue(message.guildId!, BotKeyvKeys.BumpReminderRmdDate, twoHoursLaterMSec);
+    const collector = bumpReminderMessage.createMessageComponentCollector<ComponentType.Button>({ time: 2 * 60 * 60 * 1000 });
+    await discordBotKeyvs.setValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderRmdDate, twoHoursLaterMSec);
     collector.on("collect", async (interaction) => {
         switch (interaction.customId) {
             case "doRemind": {
-                const mentionUsers = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
                 if (mentionUsers.some(user => user.id === interaction.user.id)) {
                     const embed = getReplyEmbed(__t("bot/bumpReminder/alreadySetRemind"), ReplyEmbedType.Warn);
                     await interaction.reply({ embeds: [embed], ephemeral: true });
                     return;
                 }
                 mentionUsers.push(interaction.user);
-                await botKeyvs.setValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers, mentionUsers);
+                await discordBotKeyvs.setValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers, mentionUsers);
                 const embed = getReplyEmbed(__t("bot/bumpReminder/setRemind"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed], ephemeral: true });
                 logger.info(__t("log/bot/bumpReminder/setRemind", { guild: message.guildId!, user: interaction.user.toString() }));
                 break;
             }
             case "doNotRemind": {
-                const mentionUsers = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
                 if (mentionUsers.some(user => user.id === interaction.user.id)) {
                     const newMentionUsers = mentionUsers.filter(user => user.id !== interaction.user.id);
-                    await botKeyvs.setValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers, newMentionUsers);
+                    await discordBotKeyvs.setValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers, newMentionUsers);
                 }
                 const embed = getReplyEmbed(__t("bot/bumpReminder/cancelRemind"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed], ephemeral: true });
@@ -75,26 +93,26 @@ const executeBumpReminder = async (message: Message) => {
     });
 
     const timerId = setInterval(async () => {
-        const rmdBumpDate = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.BumpReminderRmdDate) as number | undefined;
+        const rmdBumpDate = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderRmdDate) as number | undefined;
         if (!rmdBumpDate) return;
         if (rmdBumpDate <= Date.now()) {
             clearInterval(timerId);
-            const mentionRole = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.BumpReminderMentionRole) as Role | undefined;
+            const mentionRole = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionRole) as Role | undefined;
             const mentionRoleText = await (async () => {
                 if (!mentionRole) return "";
                 const role = await message.guild?.roles.fetch(mentionRole.id);
                 return role?.toString() || "";
             })();
             const mentionUsersText = await (async () => {
-                const mentionUsers = await botKeyvs.getValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers) as Array<User> | undefined;
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> | undefined;
                 if (!mentionUsers) return "";
                 return await Promise.all(mentionUsers.map(async user => {
                     const member = await bumpReminderMessage.guild?.members.fetch(user.id);
                     return member?.toString() || "";
                 })).then(members => members.toString());
             })();
-            await botKeyvs.deleteValue(message.guildId!, BotKeyvKeys.BumpReminderRmdDate);
-            await botKeyvs.deleteValue(message.guildId!, BotKeyvKeys.BumpReminderMentionUsers);
+            await discordBotKeyvs.deleteValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderRmdDate);
+            await discordBotKeyvs.deleteValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers);
             if (!mentionRoleText && !mentionUsersText) return;
             bumpReminderMessage.reply(__t("bot/bumpReminder/remindMessage", { mentionRole: mentionRoleText, mentionUsers: mentionUsersText }));
             logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
@@ -125,6 +143,7 @@ const executeStickMessage = async (message: Message) => {
     const newStickMessage = await message.channel.send({ content, embeds });
     stickedMessages.set(message.channel.id, newStickMessage.id);
     await setStickedMessages(message.guildId!, stickedMessages);
+    logger.info(__t("log/bot/stickMessage/execute", { guild: message.guildId!, channel: message.channel.id }));
 };
 
 export default messageCreateEvent;

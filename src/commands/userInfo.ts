@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
-import { BotKeyvKeys, Command, EmbedPage, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
+import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
 
 export const userInfocommand: Command = {
@@ -37,7 +38,7 @@ export const userInfocommand: Command = {
 };
 
 const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const profChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.ProfChannel) as TextChannel | undefined;
+    const profChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannel) as TextChannel | undefined;
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
