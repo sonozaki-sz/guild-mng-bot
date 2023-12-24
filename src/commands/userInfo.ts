@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
-import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import keyvs, { KeyvKeys } from "../services/keyvs";
+import { BotKeyvKeys, Command, EmbedPage, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
 export const userInfocommand: Command = {
@@ -38,7 +37,7 @@ export const userInfocommand: Command = {
 };
 
 const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const profChannel = await keyvs.getValue(interaction.guildId!, KeyvKeys.ProfChannel) as TextChannel | undefined;
+    const profChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.ProfChannel) as TextChannel | undefined;
     if (!profChannel) {
         return __t("bot/command/unsetProfChannel");
     }
@@ -53,14 +52,14 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
         return __t("bot/command/notFoundProfChannel");
     }
     const prof = await (async () => {
-        let messageID = channel.lastMessageId || undefined;
-        while (messageID) {
-            const messages = await channel.messages.fetch({ limit: 100, before: messageID });
+        let messageId = channel.lastMessageId || undefined;
+        while (messageId) {
+            const messages = await channel.messages.fetch({ limit: 100, before: messageId });
             const message = messages.find(message => message.author.id === member.id)?.content;
             if (message) {
                 return message;
             }
-            messageID = messages.last()?.id;
+            messageId = messages.last()?.id;
         };
     })();
     return prof || __t("blank");
@@ -74,7 +73,7 @@ const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member
             .setThumbnail(member.displayAvatarURL())
             .setColor(member.user.accentColor || member.displayColor)
             .setFields(
-                { name: __t("userID"), value: member.id, inline: true },
+                { name: __t("userId"), value: member.id, inline: true },
                 { name: __t("displayName"), value: member.user.displayName, inline: true },
                 { name: __t("nickname"), value: member.nickname || __t("unset"), inline: true },
                 { name: __t("accountCreationDateTime"), value: `<t:${Math.round(member.user.createdTimestamp / 1000)}>`, inline: true },
@@ -119,7 +118,7 @@ const executeVcMembers = async (interaction: ChatInputCommandInteraction) => {
         return;
     }
     if (!member.voice.channel) {
-        const embed = getReplyEmbed(__t("bot/command/user-info/vc-members/notInVC"), ReplyEmbedType.Warn);
+        const embed = getReplyEmbed(__t("bot/command/user-info/vc-members/notInVc"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
         return;
     }

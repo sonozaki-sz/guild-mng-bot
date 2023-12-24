@@ -83,8 +83,7 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
                 }
             })(rpsResult.result);
             await stringSelectMenuInteraction.update({ content: rpsHands.get(userHandIndex)?.handEmoji, components: [] });
-            await (await stringSelectMenuInteraction.followUp(rpsResult.resultText))
-                .reply(botResponse);
+            await (await stringSelectMenuInteraction.followUp(rpsResult.resultText)).reply(botResponse);
         }
     });
     collector.once("end", async (_, reason) => {

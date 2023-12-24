@@ -3,7 +3,7 @@ import catalogJa from "./ja";
 // import catalogEn from "./en";
 
 export type Vocabulary = {
-    // 凡例: "翻訳ID": Message<{ 引数 }>; (引数がないときは単に Message でOK)
+    // 凡例: "翻訳Id": Message<{ 引数 }>; (引数がないときは単に Message でOK)
     // 共通
     "success": Message,
     "info": Message,
@@ -15,7 +15,7 @@ export type Vocabulary = {
     "unlimited": Message,
     "executing": Message,
     "stoping": Message,
-    "userID": Message,
+    "userId": Message,
     "displayName": Message,
     "nickname": Message,
     "unset": Message,
@@ -32,7 +32,6 @@ export type Vocabulary = {
     "toNext": Message,
     "toLast": Message,
     "selectPage": Message,
-    "operationTimeOut": Message<{ target: string }>,
     "footer/page": Message<{ page: string }>,
     "rps/selectMenu/selectHand": Message,
     "rps/rock": Message,
@@ -41,11 +40,15 @@ export type Vocabulary = {
     "notting": Message,
     "status": Message,
     "destChannel": Message,
-    "triggerVC": Message,
-    "createdVC": Message,
+    "triggerVc": Message,
+    "createdVc": Message,
     "mentionRole": Message,
     "mentionUsers": Message,
     "notFoundUser": Message,
+    "doDelete": Message,
+    "cancel": Message,
+    "operationTimeedOut": Message,
+    "stickedMessageChannel": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -82,7 +85,7 @@ export type Vocabulary = {
 
     // Bot
     "bot/config/reset": Message,
-    "bot/vcAutoCreation/notSetTriggerVC": Message,
+    "bot/vcAutoCreation/notSetTriggerVc": Message,
     "bot/vcAutoCreation/error": Message<{ error: string }>,
     "bot/bumpReminder/bumpMessage": Message<{ time: string, diffCurTime: string }>,
     "bot/bumpReminder/button/doRemind": Message,
@@ -94,6 +97,7 @@ export type Vocabulary = {
     "bot/afk": Message,
     "bot/vac": Message,
     "bot/bumpReminder": Message,
+    "bot/stickMessage": Message,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -101,9 +105,9 @@ export type Vocabulary = {
     "bot/command/notFoundDestAfk": Message,
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
-    "bot/command/notFoundChannel": Message<{ channelID: string }>,
-    "bot/command/getCnfStatus": Message,
-    "bot/command/getCnfStatusList": Message,
+    "bot/command/notFoundChannel": Message<{ channelId: string }>,
+    "bot/command/getStatus": Message,
+    "bot/command/getStatusList": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,
@@ -126,18 +130,18 @@ export type Vocabulary = {
     "bot/command/cnf-vac/start/description": Message,
     "bot/command/cnf-vac/start/success": Message,
     "bot/command/cnf-vac/start/faild": Message<{ error: string }>,
-    "bot/command/cnf-vac/start/createTriggerVCFaild": Message,
-    "bot/command/cnf-vac/start/setTriggerVCFaild": Message<{ error: string }>,
+    "bot/command/cnf-vac/start/createTriggerVcFaild": Message,
+    "bot/command/cnf-vac/start/setTriggerVcFaild": Message<{ error: string }>,
     "bot/command/cnf-vac/start/alreadyStarting": Message,
     "bot/command/cnf-vac/stop/description": Message,
     "bot/command/cnf-vac/stop/success": Message,
     "bot/command/cnf-vac/stop/faild": Message<{ error: string }>,
-    "bot/command/cnf-vac/stop/getTriggerVCFaild": Message<{ error: string }>,
-    "bot/command/cnf-vac/stop/triggerVCNotFound": Message,
+    "bot/command/cnf-vac/stop/getTriggerVcFaild": Message<{ error: string }>,
+    "bot/command/cnf-vac/stop/triggerVcNotFound": Message,
     "bot/command/cnf-vac/stop/alreadyStoping": Message,
     "bot/command/cnf-vac/status/description": Message,
     "bot/command/cnf-vc/description": Message,
-    "bot/command/cnf-vc/notInVC": Message,
+    "bot/command/cnf-vc/notInVc": Message,
     "bot/command/cnf-vc/rename/description": Message,
     "bot/command/cnf-vc/rename/nameOption/description": Message,
     "bot/command/cnf-vc/rename/success": Message<{ channel: string, name: string }>,
@@ -158,7 +162,7 @@ export type Vocabulary = {
     "bot/command/user-info/normal/userOption/description": Message,
     "bot/command/user-info/success": Message,
     "bot/command/user-info/vc-members/description": Message,
-    "bot/command/user-info/vc-members/notInVC": Message,
+    "bot/command/user-info/vc-members/notInVc": Message,
     "bot/command/cnf-bump-reminder/description": Message,
     "bot/command/cnf-bump-reminder/start/description": Message,
     "bot/command/cnf-bump-reminder/start/success": Message,
@@ -175,7 +179,7 @@ export type Vocabulary = {
     "bot/command/send-text/notFoundChannel": Message,
     "bot/command/send-text/success": Message<{ channel: string }>,
     "bot/command/send-text/modal/title": Message,
-    "bot/command/send-text/modal/textInput/placeholder": Message,
+    "bot/command/send-text/modal/inputSendText/label": Message,
     "bot/command/play/description": Message,
     "bot/command/play/rps/description": Message,
     "bot/command/play/rps/ready": Message,
@@ -184,7 +188,21 @@ export type Vocabulary = {
     "bot/command/play/rps/botDraw": Message,
     "bot/command/play/rps/botLose": Message,
     "bot/command/play/rps/timeout": Message,
-    "bot/command/cnf-status-list/description": Message,
+    "bot/command/status-list/description": Message,
+    "bot/command/stick-msg/description": Message,
+    "bot/command/stick-msg/start/description": Message,
+    "bot/command/stick-msg/start/channelOption/description": Message,
+    "bot/command/stick-msg/start/notFoundChannel": Message,
+    "bot/command/stick-msg/start/alreadySticked": Message,
+    "bot/command/stick-msg/start/cancel": Message,
+    "bot/command/stick-msg/start/success": Message<{ channel: string }>,
+    "bot/command/stick-msg/start/success/restick": Message<{ channel: string }>,
+    "bot/command/stick-msg/delete/description": Message,
+    "bot/command/stick-msg/delete/channelOption/description": Message,
+    "bot/command/stick-msg/delete/success": Message<{ channel: string }>,
+    "bot/command/stick-msg/status/description": Message,
+    "bot/command/stick-msg/modal/title": Message,
+    "bot/command/stick-msg/modal/inputStickText/label": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

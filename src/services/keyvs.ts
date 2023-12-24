@@ -45,18 +45,6 @@ export class Keyvs {
     }
 }
 
-export enum KeyvKeys {
-    DestAfkVC = "destAfkVC",
-    VacTriggerVC = "vcAutoCreation/triggerVC",
-    IsVacEnabled = "vcAutoCreation/isEnabled",
-    VacChannels = "vcAutoCreation/channels",
-    ProfChannel = "profChannel",
-    IsBumpReminderEnabled = "bumpReminder/isEnabled",
-    BumpReminderMentionRole = "bumpReminder/mentionRole",
-    BumpReminderRmdDate = "bumpReminder/rmdDate",
-    BumpReminderMentionUsers = "bumpReminder/mentionUsers",
-}
-
 export class KeyvsError extends Error {
     constructor(message?: string) {
         super(message);
@@ -64,7 +52,3 @@ export class KeyvsError extends Error {
         Object.setPrototypeOf(this, new.target.prototype);
     }
 }
-
-export const keyvs = new Keyvs();
-
-export default keyvs;

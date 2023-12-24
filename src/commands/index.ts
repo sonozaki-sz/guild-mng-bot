@@ -2,26 +2,28 @@ import afkCommand from "./afk";
 import cnfAfkCommand from "./cnfAfk";
 import cnfBumpReminderCommand from "./cnfBumpReminder";
 import cnfProfChannelCommand from "./cnfProfChannel";
-import cnfStatusListCommand from "./cnfStatusList";
-import cnfVCCommand from "./cnfVC";
+import statusListCommand from "./cnfStatusList";
 import cnfVacCommand from "./cnfVac";
+import cnfVcCommand from "./cnfVc";
 import echoCommand from "./echo";
 import playCommand from "./play";
 import sendTextCommand from "./sendText";
-import userInfocommand from "./userInfo";
+import stickMessageCommand from "./stickMessage";
+import userInfoCommand from "./userInfo";
 
 export const globalCommands = [
     echoCommand,
     afkCommand,
     cnfAfkCommand,
     cnfVacCommand,
-    cnfVCCommand,
+    cnfVcCommand,
     cnfProfChannelCommand,
-    userInfocommand,
+    userInfoCommand,
     cnfBumpReminderCommand,
     sendTextCommand,
     playCommand,
-    cnfStatusListCommand,
+    statusListCommand,
+    stickMessageCommand,
 ];
 
 export default globalCommands;

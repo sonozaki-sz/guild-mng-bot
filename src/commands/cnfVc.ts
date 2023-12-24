@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
-export const cnfVCCommand: Command = {
+export const cnfVcCommand: Command = {
     data: new SlashCommandBuilder()
         .setName("cnf-vc")
         .setDescription(__t("bot/command/cnf-vc/description"))
@@ -32,7 +32,7 @@ export const cnfVCCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         const member = await interaction.guild?.members.fetch(interaction.user.id);
         if (!member?.voice.channel) {
-            const embed = getReplyEmbed(__t("bot/command/cnf-vc/notInVC"), ReplyEmbedType.Warn);
+            const embed = getReplyEmbed(__t("bot/command/cnf-vc/notInVc"), ReplyEmbedType.Warn);
             await interaction.reply({ embeds: [embed] });
             return;
         }
@@ -66,4 +66,4 @@ export const cnfVCCommand: Command = {
     }
 };
 
-export default cnfVCCommand;
+export default cnfVcCommand;

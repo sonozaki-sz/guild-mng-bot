@@ -1,4 +1,5 @@
 import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { Keyvs } from "./keyvs";
 import { __t } from "./locale";
 
 export interface Command {
@@ -30,6 +31,21 @@ declare module "discord.js" {
         fetchMany(options?: FetchMessagesOptions | undefined): Promise<Collection<string, Message<true>>>;
     }
 }
+
+export enum BotKeyvKeys {
+    DestAfkVc = "destAfkVc",
+    VacTriggerVc = "vcAutoCreation/triggerVc",
+    IsVacEnabled = "vcAutoCreation/isEnabled",
+    VacChannels = "vcAutoCreation/channels",
+    ProfChannel = "profChannel",
+    IsBumpReminderEnabled = "bumpReminder/isEnabled",
+    BumpReminderMentionRole = "bumpReminder/mentionRole",
+    BumpReminderRmdDate = "bumpReminder/rmdDate",
+    BumpReminderMentionUsers = "bumpReminder/mentionUsers",
+    StickedMessages = "stickMessage/stickedMessages",
+}
+
+export const botKeyvs = new Keyvs();
 
 export const getReplyEmbed = (description: string, type: ReplyEmbedType) => {
     const embedData = ((type): { title: string, color: ColorResolvable } => {
