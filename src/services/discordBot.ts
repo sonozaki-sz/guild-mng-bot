@@ -3,6 +3,7 @@ import globalCommands from "../commands";
 import botEvents from "../events";
 import config from "./config";
 import { Command, Modal } from "./discord";
+import { Keyvs } from "./keyvs";
 import { __t } from "./locale";
 import { logger } from "./logger";
 
@@ -62,3 +63,18 @@ class DiscordBot {
 }
 
 export const discordBot = new DiscordBot();
+
+export enum DiscordBotKeyvKeys {
+    DestAfkVc = "destAfkVc",
+    VacTriggerVc = "vcAutoCreation/triggerVc",
+    IsVacEnabled = "vcAutoCreation/isEnabled",
+    VacChannels = "vcAutoCreation/channels",
+    ProfChannel = "profChannel",
+    IsBumpReminderEnabled = "bumpReminder/isEnabled",
+    BumpReminderMentionRole = "bumpReminder/mentionRole",
+    BumpReminderRmdDate = "bumpReminder/rmdDate",
+    BumpReminderMentionUsers = "bumpReminder/mentionUsers",
+    StickedMessages = "stickMessage/stickedMessages",
+}
+
+export const discordBotKeyvs = new Keyvs();

@@ -1,5 +1,6 @@
 import { ChannelType, Events, VoiceChannel, VoiceState } from "discord.js";
-import { BotEvent, BotKeyvKeys, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
+import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -17,7 +18,7 @@ export const voiceStateUpdateEvent: BotEvent = {
                 const logMsg = __t("log/bot/vcAutoCreation/error", { guild: newState.guild.id, error: errorDescLog });
                 logger.error(logMsg);
                 if (error instanceof KeyvsError) {
-                    botKeyvs.setkeyv(newState.guild.id);
+                    discordBotKeyvs.setkeyv(newState.guild.id);
                     logger.info(__t("log/keyvs/reset", { namespace: newState.guild.id }));
                     const embed = getReplyEmbed(__t("bot/config/reset", { namespace: newState.guild.id }), ReplyEmbedType.Info);
                     await newState.channel?.send({ embeds: [embed] });
@@ -26,12 +27,12 @@ export const voiceStateUpdateEvent: BotEvent = {
     }
 };
 
-// Vcの自動作成機能を実行する
+// Cの自動作成機能を実行する
 const executeVcAutoCreation = async (oldState: VoiceState, newState: VoiceState) => {
-    const isVacEnabled = await botKeyvs.getValue(newState.guild.id, BotKeyvKeys.IsVacEnabled) as boolean | undefined;
+    const isVacEnabled = await discordBotKeyvs.getValue(newState.guild.id, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
     if (!isVacEnabled) return;
-    // トリガーVcに入室時に新しいVcを作成する
-    const triggerVc = await botKeyvs.getValue(newState.guild.id, BotKeyvKeys.VacTriggerVc) as VoiceChannel | undefined;
+    // トリガーVCに入室時に新しいVCを作成する
+    const triggerVc = await discordBotKeyvs.getValue(newState.guild.id, DiscordBotKeyvKeys.VacTriggerVc) as VoiceChannel | undefined;
     if (!triggerVc) {
         const embed = getReplyEmbed(__t("bot/vcAutoCreation/notSetTriggerVc"), ReplyEmbedType.Warn);
         await newState.channel?.send({ embeds: [embed] });
@@ -44,20 +45,20 @@ const executeVcAutoCreation = async (oldState: VoiceState, newState: VoiceState)
             parent: newState.channel?.parent,
             userLimit: 99,
         })
-        const vacChannels = await botKeyvs.getValue(newState.guild.id, BotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined || new Array<VoiceChannel>();
+        const vacChannels = await discordBotKeyvs.getValue(newState.guild.id, DiscordBotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined || new Array<VoiceChannel>();
         vacChannels.push(newChannel);
-        await botKeyvs.setValue(newState.guild.id, BotKeyvKeys.VacChannels, vacChannels);
+        await discordBotKeyvs.setValue(newState.guild.id, DiscordBotKeyvKeys.VacChannels, vacChannels);
         await oldState.member?.voice.setChannel(newChannel);
         logger.info(__t("log/bot/vcAutoCreation/channelCreate", { guild: newState.guild.id, channel: newChannel.id }));
     }
 
-    // 自動作成したVcを全員が退出時に削除する
-    const vacChannels = await botKeyvs.getValue(newState.guild.id, BotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined;
+    // 自動作成したVCを全員が退出時に削除する
+    const vacChannels = await discordBotKeyvs.getValue(newState.guild.id, DiscordBotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined;
     if (!vacChannels) return;
     if (!vacChannels.some(channel => channel.id === oldState.channelId)) return;
     if (oldState.channel?.members.size !== 0) return;
     oldState.channel?.delete();
-    botKeyvs.setValue(newState.guild.id, BotKeyvKeys.VacChannels, vacChannels.filter(channel => channel.id !== oldState.channelId));
+    discordBotKeyvs.setValue(newState.guild.id, DiscordBotKeyvKeys.VacChannels, vacChannels.filter(channel => channel.id !== oldState.channelId));
     logger.info(__t("log/bot/vcAutoCreation/channelDelete", { guild: oldState.guild.id, channel: oldState.channelId! }));
 };
 

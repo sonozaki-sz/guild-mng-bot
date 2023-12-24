@@ -1,5 +1,6 @@
 import { ActivityType, Client, Events } from "discord.js";
-import { BotEvent, botKeyvs } from "../services/discord";
+import { BotEvent } from "../services/discord";
+import { discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -10,7 +11,7 @@ export const readyEvent: BotEvent = {
         logger.info(__t("log/bot/login", { name: client.user?.tag! }));
         client.user?.setActivity({ name: __t("grouwing"), type: ActivityType.Playing });
         client.guilds.cache.forEach(guild => {
-            botKeyvs.setkeyv(guild.id);
+            discordBotKeyvs.setkeyv(guild.id);
             logger.info(__t("log/keyvs/set", { namespace: guild.id }));
         });
     }

@@ -1,5 +1,6 @@
 import { Events, Interaction } from "discord.js";
-import { BotEvent, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
+import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { discordBotKeyvs } from "../services/discordBot";
 import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -43,7 +44,7 @@ export const interactionCreateEvent: BotEvent = {
                     logger.error(logMsg);
                     interaction
                     if (error instanceof KeyvsError) {
-                        botKeyvs.setkeyv(interaction.guildId!);
+                        discordBotKeyvs.setkeyv(interaction.guildId!);
                         logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
                         const embed = getReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
                         await interaction.channel?.send({ embeds: [embed] });

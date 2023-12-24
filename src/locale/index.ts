@@ -3,7 +3,7 @@ import catalogJa from "./ja";
 // import catalogEn from "./en";
 
 export type Vocabulary = {
-    // 凡例: "翻訳Id": Message<{ 引数 }>; (引数がないときは単に Message でOK)
+    // 凡例: "翻訳ID": Message<{ 引数 }>; (引数がないときは単に Message でOK)
     // 共通
     "success": Message,
     "info": Message,
@@ -56,6 +56,7 @@ export type Vocabulary = {
     "log/keyvs/delete": Message<{ namespace: string }>,
     "log/bot/login": Message<{ name: string }>,
     "log/bot/login/faild": Message<{ error: string }>,
+    "log/bot/keyvs/delete/faild": Message<{ guild: string, error: string }>,
     "log/bot/vcAutoCreation/start": Message<{ guild: string }>,
     "log/bot/vcAutoCreation/stop": Message<{ guild: string }>,
     "log/bot/vcAutoCreation/error": Message<{ guild: string, error: string }>,
@@ -67,6 +68,9 @@ export type Vocabulary = {
     "log/bot/bumpReminder/cancelRemind": Message<{ guild: string, user: string }>,
     "log/bot/bumpReminder/remind": Message<{ guild: string }>,
     "log/bot/bumpReminder/detectBump": Message<{ guild: string }>,
+    "log/bot/bumpReminder/error": Message<{ guild: string, channel: string, error: string }>,
+    "log/bot/stickMessage/execute": Message<{ guild: string, channel: string }>,
+    "log/bot/stickMessage/error": Message<{ guild: string, channel: string, error: string }>,
     "log/bot/event/set": Message<{ name: string }>,
     "log/bot/command/register/pre": Message,
     "log/bot/command/register/complated": Message,

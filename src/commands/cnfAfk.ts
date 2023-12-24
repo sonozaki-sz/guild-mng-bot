@@ -1,5 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
-import { BotKeyvKeys, Command, ReplyEmbedType, botKeyvs, getReplyEmbed } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
 
 export const cnfAfkCommand: Command = {
@@ -47,13 +48,13 @@ export const cnfAfkCommand: Command = {
 
 const executeSetDest = async (interaction: ChatInputCommandInteraction) => {
     const channel = interaction.options.getChannel("channel") as VoiceChannel;
-    await botKeyvs.setValue(interaction.guildId!, BotKeyvKeys.DestAfkVc, channel)
+    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc, channel)
     const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
+    const afkChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
     if (!afkChannel) {
         const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
@@ -76,7 +77,7 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await botKeyvs.getValue(interaction.guildId!, BotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
+    const afkChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
     const fetchedAfkChannel = await (async () => {
         if (!afkChannel) {
             return undefined;
