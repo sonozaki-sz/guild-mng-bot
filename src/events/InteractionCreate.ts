@@ -19,9 +19,9 @@ export const interactionCreateEvent: BotEvent = {
             if (command.cooldown && cooldown) {
                 if (Date.now() < cooldown) {
                     const cooldownTime = Math.floor(Math.abs(Date.now() - cooldown) / 1000);
-                    const embed = getReplyEmbed(__t("bot/command/cooldown", { cooldown: cooldownTime.toString() }), ReplyEmbedType.Error);
+                    const embed = getReplyEmbed(__t("bot/command/cooldown", { cooldown: cooldownTime.toString() }), ReplyEmbedType.Info);
                     await interaction.reply({ embeds: [embed], ephemeral: true });
-                    setTimeout(() => interaction.deleteReply(), 5000);
+                    setTimeout(() => interaction.deleteReply(), 10_000);
                     return;
                 }
                 interaction.client.cooldowns.set(`${interaction.commandName}-${interaction.user.username}`, Date.now() + command.cooldown * 1000);
@@ -38,7 +38,7 @@ export const interactionCreateEvent: BotEvent = {
                     const errorDescMsg = error.message || "unknown error";
                     const replyMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
                     const embed = getReplyEmbed(replyMsg, ReplyEmbedType.Error);
-                    await interaction.reply({ embeds: [embed] });
+                    await interaction.channel?.send({ embeds: [embed] });
                     const errorDescLog = error.stack || error.message || "unknown error";
                     const logMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
                     logger.error(logMsg);
