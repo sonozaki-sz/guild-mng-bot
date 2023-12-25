@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPIError, Events, Message, Role, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPIError, Events, Message, RESTJSONErrorCodes, Role, User } from "discord.js";
 import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
@@ -128,7 +128,7 @@ const executeStickMessage = async (message: Message) => {
     // FIXME: send()したあとにもう一度fetch()が呼ばれる問題を回避するために例外を握り潰している。
     const stickedMessage = await message.channel.messages.fetch(stickedMessageId!)
         .catch(async (error: DiscordAPIError) => {
-            if (error.code === 10008) return undefined;
+            if (error.code === RESTJSONErrorCodes.UnknownMessage) return undefined;
             throw error;
         });
     if (!stickedMessage) return;
@@ -136,7 +136,7 @@ const executeStickMessage = async (message: Message) => {
     const embeds = stickedMessage.embeds;
     await stickedMessage.delete()
         .catch(async (error: DiscordAPIError) => {
-            if (error.code === 10008) return;
+            if (error.code === RESTJSONErrorCodes.UnknownMessage) return;
             throw error;
         });
     stickedMessages.delete(message.channel.id);
