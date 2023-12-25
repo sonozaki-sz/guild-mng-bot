@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
@@ -42,7 +42,7 @@ export const cnfProfChannelCommand: Command = {
                 }
                 const channel = await interaction.guild?.channels.fetch(profChannel.id)
                     .catch((reason: DiscordAPIError) => {
-                        if (reason.code === 10003) {
+                        if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                             return undefined;
                         }
                         throw reason;

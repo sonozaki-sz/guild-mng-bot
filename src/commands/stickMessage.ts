@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, Collection, Colors, ComponentType, DiscordAPIError, EmbedBuilder, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, Collection, Colors, ComponentType, DiscordAPIError, EmbedBuilder, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
 import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
 
 
@@ -72,7 +72,7 @@ const stickTextModal: Modal = {
         const channel = stickTextModal.data as TextChannel;
         const stickChannel = await interaction.guild!.channels.fetch(channel.id)
             .catch((reason: DiscordAPIError) => {
-                if (reason.code === 10003) {
+                if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;
                 }
                 throw reason;

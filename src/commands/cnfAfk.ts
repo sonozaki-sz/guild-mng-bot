@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
@@ -62,7 +62,7 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
     }
     const channel = await interaction.guild?.channels.fetch(afkChannel.id)
         .catch((reason: DiscordAPIError) => {
-            if (reason.code === 10003) {
+            if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                 return undefined;
             }
             throw reason;
@@ -84,7 +84,7 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         }
         return await interaction.guild?.channels.fetch(afkChannel.id)
             .catch((reason: DiscordAPIError) => {
-                if (reason.code === 10003) {
+                if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;
                 }
                 throw reason;

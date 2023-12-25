@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel } from "discord.js";
 import "../services/discord";
 import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
@@ -44,7 +44,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
     }
     const channel = await interaction.guild?.channels.fetch(profChannel.id)
         .catch((reason: DiscordAPIError) => {
-            if (reason.code === 10003) {
+            if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                 return undefined;
             }
             throw reason;

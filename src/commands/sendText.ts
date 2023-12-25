@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, DiscordAPIError, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, DiscordAPIError, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
 import { Command, Modal, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { __t } from "../services/locale";
 
@@ -40,7 +40,7 @@ const sendTextModal: Modal = {
         const channel = sendTextModal.data as TextChannel;
         const sentChannel = await interaction.guild!.channels.fetch(channel.id)
             .catch((reason: DiscordAPIError) => {
-                if (reason.code === 10003) {
+                if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;
                 }
                 throw reason;
