@@ -50,6 +50,7 @@ export const afkCommand: Command = {
             .then(async () => {
                 const embed = getReplyEmbed(__t("bot/command/afk/success", { user: member.toString(), channel: fetchedAfkChannel.toString() }), ReplyEmbedType.Success);
                 await interaction.editReply({ embeds: [embed] });
+                await interaction.followUp(__t("bot/command/afk/success/followup"));
             }).catch(async (error) => {
                 const embed = getReplyEmbed(__t("bot/command/afk/faild", { user: member.toString(), error: error.toString() }), ReplyEmbedType.Warn);
                 await interaction.editReply({ embeds: [embed] });
