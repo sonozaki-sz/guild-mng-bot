@@ -56,7 +56,7 @@ const executeBumpReminder = async (message: Message) => {
                 .setStyle(ButtonStyle.Danger)
                 .setEmoji("🔕")
         );
-    const bumpReminderMessage = await message.channel.send({ embeds: [embed], components: [actionRow] });
+    const bumpReminderMessage = await message.reply({ embeds: [embed], components: [actionRow] });
     const collector = bumpReminderMessage.createMessageComponentCollector<ComponentType.Button>({ time: 2 * 60 * 60 * 1000 });
     await discordBotKeyvs.setValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderRmdDate, twoHoursLaterMSec);
     collector.on("collect", async (interaction) => {
