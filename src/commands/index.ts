@@ -6,6 +6,7 @@ import statusListCommand from "./cnfStatusList";
 import cnfVacCommand from "./cnfVac";
 import cnfVcCommand from "./cnfVc";
 import echoCommand from "./echo";
+import LeaveMemberLogCommand from "./leaveMemberLog";
 import playCommand from "./play";
 import sendTextCommand from "./sendText";
 import stickMessageCommand from "./stickMessage";
@@ -24,6 +25,7 @@ export const globalCommands = [
     playCommand,
     statusListCommand,
     stickMessageCommand,
+    LeaveMemberLogCommand,
 ];
 
 export default globalCommands;

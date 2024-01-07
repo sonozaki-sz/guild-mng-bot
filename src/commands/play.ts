@@ -22,9 +22,9 @@ export const playCommand: Command = {
 };
 
 const rpsHands = new Collection<number, { handName: string, handEmoji: string }>([
-    [0, { handName: `${__t("rps/rock")}`, handEmoji: "✊🏻" }],
-    [1, { handName: `${__t("rps/scissors")}`, handEmoji: "✌🏻" }],
-    [2, { handName: `${__t("rps/paper")}`, handEmoji: "🖐🏻" }],
+    [0, { handName: __t("rps/rock"), handEmoji: "✊🏻" }],
+    [1, { handName: __t("rps/scissors"), handEmoji: "✌🏻" }],
+    [2, { handName: __t("rps/paper"), handEmoji: "🖐🏻" }],
 ]);
 
 const judgeRps = (botHandIndex: number, userHandIndex: number): { result: 0 | 1 | 2, resultText: string } => {
