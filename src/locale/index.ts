@@ -102,6 +102,7 @@ export type Vocabulary = {
     "bot/vac": Message,
     "bot/bumpReminder": Message,
     "bot/stickMessage": Message,
+    "bot/memberLeaveLog/Message": Message<{ user: string }>,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -210,6 +211,11 @@ export type Vocabulary = {
     "bot/command/stick-msg/status/description": Message,
     "bot/command/stick-msg/modal/title": Message,
     "bot/command/stick-msg/modal/inputStickText/label": Message,
+    "bot/command/leaveMemberLog/description": Message,
+    "bot/command/leaveMemberLog/start/description": Message,
+    "bot/command/leaveMemberLog/start/success": Message,
+    "bot/command/leaveMemberLog/stop/description": Message,
+    "bot/command/leaveMemberLog/stop/success": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト

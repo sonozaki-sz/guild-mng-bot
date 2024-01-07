@@ -101,6 +101,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/vac": msg("VC自動作成機能"),
     "bot/bumpReminder": msg("Bumpリマインド機能"),
     "bot/stickMessage": msg("メッセージ固定機能"),
+    "bot/memberLeaveLog/Message": msg("{user}が脱退しました。"),
 
     // コマンド共通
     "bot/command/cooldown": msg("このコマンドは{cooldown}秒後に使用可能です。"),
@@ -209,4 +210,9 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/stick-msg/status/description": msg("メッセージの固定状態を表示します。"),
     "bot/command/stick-msg/modal/title": msg("固定メッセージの入力"),
     "bot/command/stick-msg/modal/inputStickText/label": msg("固定するテキストを入力してください。"),
+    "bot/command/leaveMemberLog/description": msg("メンバーの脱退ログを開始/停止します。"),
+    "bot/command/leaveMemberLog/start/description": msg("メンバーの脱退ログを開始します。"),
+    "bot/command/leaveMemberLog/start/success": msg("メンバーの脱退ログを開始しました。"),
+    "bot/command/leaveMemberLog/stop/description": msg("サメンバーの脱退ログを停止します。"),
+    "bot/command/leaveMemberLog/stop/success": msg("ログを停止しました。"),
 });

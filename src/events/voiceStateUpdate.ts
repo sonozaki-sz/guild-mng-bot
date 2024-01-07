@@ -40,7 +40,7 @@ const executeVcAutoCreation = async (oldState: VoiceState, newState: VoiceState)
     }
     if (oldState.member && oldState.member.voice.channelId === triggerVc.id) {
         const newChannel = await newState.guild.channels.create({
-            name: `${oldState.member.displayName}'s room`,
+            name: `${oldState.member.displayName}'s Room`,
             type: ChannelType.GuildVoice,
             parent: newState.channel?.parent,
             userLimit: 99,
