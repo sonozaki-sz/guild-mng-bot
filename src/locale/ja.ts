@@ -85,6 +85,7 @@ export default new Catalog<Vocabulary>("ja", {
     "log/bot/command/modal/faild": msg("modalの実行に失敗しました。modal：{modal}\nサーバー：{guild}\n詳細：\n{error}"),
     "log/bot/guildEntry": msg("{guild}に参加しました。"),
     "log/bot/guildLeaving": msg("{guild}から退出しました。"),
+    "log/bot/memberLeaveLog": msg("メンバーが脱退しました。\nサーバー：{guild}\nユーザー：{user}"),
 
     // Bot
     "bot/config/reset": msg("Botの設定をリセットしました。"),
