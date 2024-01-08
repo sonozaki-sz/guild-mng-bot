@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { Command } from "../services/discord";
+import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
 
@@ -21,12 +21,14 @@ export const LeaveMemberLogCommand: Command = {
         switch (interaction.options.getSubcommand()) {
             case "start": {
                 await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.LeaveMemberLogChannel, interaction.channelId!);
-                await interaction.reply(__t("bot/command/leaveMemberLog/start/success"));
+                const embed = getReplyEmbed(__t("bot/command/leaveMemberLog/start/success"), ReplyEmbedType.Success);
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "stop": {
                 await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.LeaveMemberLogChannel);
-                await interaction.reply(__t("bot/command/leaveMemberLog/stop/success"));
+                const embed = getReplyEmbed(__t("bot/command/leaveMemberLog/stop/success"), ReplyEmbedType.Success);
+                await interaction.reply({ embeds: [embed] });
                 break;
             }
         }

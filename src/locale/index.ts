@@ -86,6 +86,7 @@ export type Vocabulary = {
     "log/bot/command/modal/faild": Message<{ modal: string, guild: string, error: string }>,
     "log/bot/guildEntry": Message<{ guild: string }>,
     "log/bot/guildLeaving": Message<{ guild: string }>,
+    "log/bot/memberLeaveLog": Message<{ guild: string, user: string }>,
 
     // Bot
     "bot/config/reset": Message,
