@@ -35,7 +35,7 @@ const sendTextModal: Modal = {
             )
         ),
     execute: async (interaction: ModalSubmitInteraction) => {
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
         const text = interaction.fields.getTextInputValue("textInput");
         const channel = sendTextModal.data as TextChannel;
         const sentChannel = await interaction.guild!.channels.fetch(channel.id)
@@ -49,13 +49,10 @@ const sendTextModal: Modal = {
             await interaction.editReply(__t("bot/command/send-text/notFoundChannel"));
             return;
         }
-        if (interaction.channel!.id === sentChannel.id) {
-            await interaction.editReply(text);
-        } else {
-            await sentChannel?.send(text);
-            const embed = getReplyEmbed(__t("bot/command/send-text/success", { channel: sentChannel.toString() }), ReplyEmbedType.Success);
-            await interaction.editReply({ embeds: [embed] });
-        }
+
+        await sentChannel?.send(text);
+        const embed = getReplyEmbed(__t("bot/command/send-text/success", { channel: sentChannel.toString() }), ReplyEmbedType.Success);
+        await interaction.editReply({ embeds: [embed] });
     }
 }
 
