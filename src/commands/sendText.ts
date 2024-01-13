@@ -29,7 +29,7 @@ const sendTextModal: Modal = {
         .setTitle(__t("bot/command/send-text/modal/title"))
         .setComponents(new ActionRowBuilder<ModalActionRowComponentBuilder>()
             .setComponents(new TextInputBuilder()
-                .setCustomId("inputTextInput")
+                .setCustomId("textInput")
                 .setLabel(__t("bot/command/send-text/modal/inputSendText/label"))
                 .setStyle(TextInputStyle.Paragraph)
             )
