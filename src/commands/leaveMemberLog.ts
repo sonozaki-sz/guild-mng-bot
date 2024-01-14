@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
@@ -7,6 +7,7 @@ export const LeaveMemberLogCommand: Command = {
     data: new SlashCommandBuilder()
         .setName("leave-member-log")
         .setDescription(__t("bot/command/leaveMemberLog/description"))
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand(subcommand =>
             subcommand
                 .setName("start")
