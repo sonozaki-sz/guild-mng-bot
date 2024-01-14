@@ -1,4 +1,4 @@
-import { Events, GuildMember, PartialGuildMember, TextChannel } from "discord.js";
+import { DiscordAPIError, Events, GuildMember, PartialGuildMember, RESTJSONErrorCodes, TextChannel } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed as getBotEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
@@ -13,13 +13,19 @@ export const guildMemberRemoveEvent: BotEvent = {
 
 const executeMemberLeaveLog = async (member: GuildMember | PartialGuildMember) => {
     if (!member.guild.available) return;
-    const memberLogChannelId = await discordBotKeyvs.getValue(member.guild.id, DiscordBotKeyvKeys.LeaveMemberLogChannelId) as string | undefined;
-    if (!memberLogChannelId) return;
-    const memberLogChannel = await member.guild.channels.fetch(memberLogChannelId) as TextChannel | undefined;
-    if (!memberLogChannel) return;
+    const leaveMemberLogChannelId = await discordBotKeyvs.getValue(member.guild.id, DiscordBotKeyvKeys.LeaveMemberLogChannelId) as string | undefined;
+    if (!leaveMemberLogChannelId) return;
+    const leaveMemberLogChannel = await member.guild.channels.fetch(leaveMemberLogChannelId)
+        .catch((reason: DiscordAPIError) => {
+            if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
+                return undefined;
+            }
+            throw reason;
+        }) as TextChannel | null | undefined;
+    if (!leaveMemberLogChannel) return;
     const embed = getBotEmbed(__t("bot/memberLeaveLog/message", { user: member.toString() }), ReplyEmbedType.Info);
-    await memberLogChannel.send({ embeds: [embed] });
-    logger.info(__t("log/bot/memberLeaveLog", { guild: member.guild.id, user: member.user.tag }));
+    await leaveMemberLogChannel.send({ embeds: [embed] });
+    logger.info(__t("log/bot/sendMemberLeaveLog", { guild: member.guild.id, channel: leaveMemberLogChannelId, user: member.user.tag }));
 }
 
 export default guildMemberRemoveEvent;
