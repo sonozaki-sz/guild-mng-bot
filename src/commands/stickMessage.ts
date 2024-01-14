@@ -190,7 +190,7 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
 };
 
 const executeStatus = async (interaction: ChatInputCommandInteraction) => {
-    const replyEmbed = getReplyEmbed(__t("bot/command/getStatus"), ReplyEmbedType.Success);
+    const replyEmbed = getReplyEmbed(__t("bot/command/getStatus/success"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [replyEmbed] });
     const statusEmbed = await getStatusEmbed(interaction);
     await interaction.followUp({ embeds: [statusEmbed] });

@@ -48,6 +48,7 @@ export default new Catalog<Vocabulary>("ja", {
     "cancel": msg("キャンセル"),
     "operationTimeedOut": msg("操作がタイムアウトしました。"),
     "stickedMessageChannel": msg("メッセージを固定したチャンネル"),
+    "leaveMemberLogSendChannel": msg("脱退メンバーログの送信チャンネル"),
 
     // Log
     "log/keyvs/set": msg("keyvを設定しました。namespace：{namespace}"),
@@ -102,7 +103,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/vac": msg("VC自動作成機能"),
     "bot/bumpReminder": msg("Bumpリマインド機能"),
     "bot/stickMessage": msg("メッセージ固定機能"),
-    "bot/memberLeaveLog/Message": msg("{user}が脱退しました。"),
+    "bot/leaveMemberLog": msg("メンバー脱退ログ機能"),
+    "bot/memberLeaveLog/message": msg("{user}が脱退しました。"),
 
     // コマンド共通
     "bot/command/cooldown": msg("このコマンドは{cooldown}秒後に使用可能です。"),
@@ -112,8 +114,8 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/unsetProfChannel": msg("プロフィールチャンネルが設定されていません。"),
     "bot/command/notFoundProfChannel": msg("設定されたプロフィールチャンネルが見つかりませんでした。\nプロフィールチャンネルを設定し直してください。"),
     "bot/command/notFoundChannel": msg("チャンネルが見つかりませんでした。\nチャンネルID：{channelId}"),
-    "bot/command/getStatus": msg("Botの状態の取得に成功しました。"),
-    "bot/command/getStatusList": msg("Botの状態の一覧の取得に成功しました。"),
+    "bot/command/getStatus/success": msg("Botの状態の取得に成功しました。"),
+    "bot/command/getStatusList/success": msg("Botの状態の一覧の取得に成功しました。"),
 
     // コマンド固有
     "bot/command/echo/description": msg("入力したテキストをそのまま返します。"),
@@ -216,4 +218,5 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/leaveMemberLog/start/success": msg("メンバーの脱退ログを開始しました。"),
     "bot/command/leaveMemberLog/stop/description": msg("サメンバーの脱退ログを停止します。"),
     "bot/command/leaveMemberLog/stop/success": msg("ログを停止しました。"),
+    "bot/command/leaveMemberLog/status/description": msg("メンバーの脱退ログの状態を表示します。"),
 });

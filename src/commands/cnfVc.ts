@@ -49,7 +49,7 @@ export const cnfVcCommand: Command = {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/rename/faild", { error: error.message }), ReplyEmbedType.Error);
                         await interaction.editReply({ embeds: [embed] });
                     });
-                return;
+                break;
             }
             case "user-limit": {
                 const userLimit = interaction.options.getNumber("user-limit")!;
@@ -62,7 +62,7 @@ export const cnfVcCommand: Command = {
                         const embed = getReplyEmbed(__t("bot/command/cnf-vc/user-limit/faild", { channel: member.voice.channel?.toString()!, error: error.toString() }), ReplyEmbedType.Warn);
                         await interaction.editReply({ embeds: [embed] });
                     });
-                return;
+                break;
             }
         }
     }
