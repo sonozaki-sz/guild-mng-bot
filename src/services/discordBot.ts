@@ -75,7 +75,7 @@ export enum DiscordBotKeyvKeys {
     BumpReminderRmdDate = "bumpReminder/rmdDate",
     BumpReminderMentionUsers = "bumpReminder/mentionUsers",
     StickedMessages = "stickMessage/stickedMessages",
-    LeaveMemberLogChannel = "leaveMemberLog/channel",
+    LeaveMemberLogChannelId = "leaveMemberLog/channel",
 }
 
 export const discordBotKeyvs = new Keyvs();

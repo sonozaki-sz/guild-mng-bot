@@ -49,6 +49,7 @@ export type Vocabulary = {
     "cancel": Message,
     "operationTimeedOut": Message,
     "stickedMessageChannel": Message,
+    "leaveMemberLogSendChannel": Message,
 
     // log
     "log/keyvs/set": Message<{ namespace: string }>,
@@ -103,7 +104,8 @@ export type Vocabulary = {
     "bot/vac": Message,
     "bot/bumpReminder": Message,
     "bot/stickMessage": Message,
-    "bot/memberLeaveLog/Message": Message<{ user: string }>,
+    "bot/leaveMemberLog": Message,
+    "bot/memberLeaveLog/message": Message<{ user: string }>,
 
     // コマンド共通
     "bot/command/cooldown": Message<{ cooldown: string }>,
@@ -112,8 +114,8 @@ export type Vocabulary = {
     "bot/command/notFoundUser": Message<{ user: string }>,
     "bot/command/unsetProfChannel": Message,
     "bot/command/notFoundChannel": Message<{ channelId: string }>,
-    "bot/command/getStatus": Message,
-    "bot/command/getStatusList": Message,
+    "bot/command/getStatus/success": Message,
+    "bot/command/getStatusList/success": Message,
 
     // コマンド固有
     "bot/command/echo/description": Message,
@@ -217,6 +219,7 @@ export type Vocabulary = {
     "bot/command/leaveMemberLog/start/success": Message,
     "bot/command/leaveMemberLog/stop/description": Message,
     "bot/command/leaveMemberLog/stop/success": Message,
+    "bot/command/leaveMemberLog/status/description": Message,
 };
 
 // 各言語の翻訳データをまとめたオブジェクト
