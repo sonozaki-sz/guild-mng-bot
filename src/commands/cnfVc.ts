@@ -1,5 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
 
 export const cnfVcCommand: Command = {
@@ -35,6 +36,12 @@ export const cnfVcCommand: Command = {
         const member = await interaction.guild?.members.fetch(interaction.user.id);
         if (!member?.voice.channel) {
             const embed = getReplyEmbed(__t("bot/command/cnf-vc/notInVc"), ReplyEmbedType.Warn);
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+        const vacChannels = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined
+        if (!vacChannels?.some(channel => channel.id === member.voice.channelId)) {
+            const embed = getReplyEmbed(__t("bot/command/cnf-vc/notVacChannel"), ReplyEmbedType.Warn);
             await interaction.editReply({ embeds: [embed] });
             return;
         }

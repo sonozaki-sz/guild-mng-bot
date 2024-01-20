@@ -151,6 +151,7 @@ export type Vocabulary = {
     "bot/command/cnf-vac/status/description": Message,
     "bot/command/cnf-vc/description": Message,
     "bot/command/cnf-vc/notInVc": Message,
+    "bot/command/cnf-vc/notVacChannel": Message,
     "bot/command/cnf-vc/rename/description": Message,
     "bot/command/cnf-vc/rename/nameOption/description": Message,
     "bot/command/cnf-vc/rename/success": Message<{ channel: string, name: string }>,

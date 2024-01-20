@@ -151,6 +151,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/cnf-vac/status/description": msg("VCの自動作成機能の状態を表示します。"),
     "bot/command/cnf-vc/description": msg("VCの設定をします。"),
     "bot/command/cnf-vc/notInVc": msg("設定するVCに入室中に実行してください。"),
+    "bot/command/cnf-vc/notVacChannel": msg("VCの自動作成機能で作成されたVC以外は設定を変更できません。"),
     "bot/command/cnf-vc/rename/description": msg("VCの名前を変更します。"),
     "bot/command/cnf-vc/rename/nameOption/description": msg("変更する名前を入力してください。"),
     "bot/command/cnf-vc/rename/success": msg("{channel}の名前を「{name}」に変更しました。"),
