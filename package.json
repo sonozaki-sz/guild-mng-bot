@@ -11,8 +11,8 @@
     "dev": "ts-node-dev --respawn ./src/main.ts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "sonozaki",
+  "license": "Apache-2.0",
   "dependencies": {
     "@hi18n/core": "^0.1.10",
     "@keyv/sqlite": "^3.6.7",
