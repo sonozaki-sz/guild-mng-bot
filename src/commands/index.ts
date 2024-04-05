@@ -9,7 +9,6 @@ import echoCommand from "./echo";
 import LeaveMemberLogCommand from "./leaveMemberLog";
 import playCommand from "./play";
 import sendTextCommand from "./sendText";
-import stickMessageCommand from "./stickMessage";
 import userInfoCommand from "./userInfo";
 
 export const globalCommands = [
@@ -24,7 +23,6 @@ export const globalCommands = [
     sendTextCommand,
     playCommand,
     statusListCommand,
-    stickMessageCommand,
     LeaveMemberLogCommand,
 ];
 
