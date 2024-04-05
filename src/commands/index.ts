@@ -24,6 +24,7 @@ export const globalCommands = [
     playCommand,
     statusListCommand,
     LeaveMemberLogCommand,
+    // stickMessageCommand,　// HACK: メッセージ固定機能が修正されるまで機能を塞ぐ
 ];
 
 export default globalCommands;
