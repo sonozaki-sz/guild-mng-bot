@@ -1,6 +1,8 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, Events, Message, Role, User } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPIError, Events, Message, RESTJSONErrorCodes, Role, User } from "discord.js";
+import { debounce } from "lodash";
+import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { DiscordBotKeyvKeys, discordBot, discordBotKeyvs } from "../services/discordBot";
 import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -17,6 +19,28 @@ export const messageCreateEvent: BotEvent = {
                     logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
                 }
             });
+
+        await debounce(async () => {
+            await executeStickMessage(message)
+                .catch((error: Error) => {
+                    const errorDesc = error.stack || error.message || "unknown error";
+                    logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
+                    if (error instanceof KeyvsError) {
+                        discordBotKeyvs.setkeyv(message.guildId!);
+                        logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
+                    }
+                });
+        }, 1000 * 5)();
+
+        // await executeStickMessage(message)
+        //     .catch((error: Error) => {
+        //         const errorDesc = error.stack || error.message || "unknown error";
+        //         logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
+        //         if (error instanceof KeyvsError) {
+        //             discordBotKeyvs.setkeyv(message.guildId!);
+        //             logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
+        //         }
+        //     });
     }
 };
 
@@ -108,6 +132,33 @@ const executeBumpReminder = async (message: Message) => {
             logger.info(__t("log/bot/bumpReminder/remind", { guild: message.guildId! }));
         }
     }, 1000)
+};
+
+const executeStickMessage = async (message: Message) => {
+    const stickedMessages = await getStickedMessages(message.guildId!);
+    if (!stickedMessages.has(message.channel.id)) return;
+    const stickedMessageId = stickedMessages.get(message.channel.id);
+    if (stickedMessageId === message.id) return;
+    const stickedMessage = await message.channel.messages.fetch(stickedMessageId!)
+        .catch(async (error: DiscordAPIError) => {
+            if (error.code === RESTJSONErrorCodes.UnknownMessage) return undefined;
+            throw error;
+        });
+    if (!stickedMessage) return;
+    await stickedMessage.delete()
+        .catch(async (error: DiscordAPIError) => {
+            if (error.code === RESTJSONErrorCodes.UnknownMessage) return;
+            throw error;
+        });
+    stickedMessages.delete(message.channel.id);
+    const content = stickedMessage.content;
+    const embeds = stickedMessage.embeds;
+    discordBot.client.removeAllListeners(Events.MessageCreate);
+    const newStickMessage = await message.channel.send({ content, embeds });
+    discordBot.client.addListener(Events.MessageCreate, messageCreateEvent.execute);
+    stickedMessages.set(message.channel.id, newStickMessage.id);
+    await setStickedMessages(message.guildId!, stickedMessages);
+    logger.info(__t("log/bot/stickMessage/execute", { guild: message.guildId!, channel: message.channel.id }));
 };
 
 export default messageCreateEvent;
