@@ -1,7 +1,8 @@
+import { Collection } from 'discord.js';
 import Keyv from 'keyv';
 
 export class Keyvs {
-    private keyvs: Map<string, Keyv> = new Map();
+    private keyvs: Collection<string, Keyv> = new Collection();
 
     setkeyv(namespace: string) {
         return this.keyvs.set(namespace, new Keyv("sqlite://storage/db.sqlite", { namespace: namespace }));
@@ -16,21 +17,31 @@ export class Keyvs {
     }
 
     async getValue(namespace: string, key: string) {
-        return this.keyvs.get(namespace)?.get(key)
+        return await this.keyvs.get(namespace)?.get(key)
             .catch((error: Error) => {
                 throw new KeyvsError(error.message)
             });
     }
 
     async setValue(namespace: string, key: string, value: any, ttl?: number) {
-        return this.keyvs.get(namespace)?.set(key, value, ttl)
+        return await this.keyvs.get(namespace)?.set(key, value, ttl)
             .catch((error: Error) => {
                 throw new KeyvsError(error.message)
             });
     }
 
+    async getCollection(namespace: string, key: string) {
+        const value = await this.getValue(namespace, key) as string | undefined;
+        if (!value) return undefined;
+        return new Collection<string, any>(Object.entries(JSON.parse(value)));
+    }
+
+    async setCollection(namespace: string, key: string, collection: Collection<string, any>, ttl?: number) {
+        return await this.setValue(namespace, key, JSON.stringify(Object.fromEntries(collection)), ttl);
+    }
+
     async deleteValue(namespace: string, key: string) {
-        return this.keyvs.get(namespace)?.delete(key)
+        return await this.keyvs.get(namespace)?.delete(key)
             .catch((error: Error) => {
                 throw new KeyvsError(error.message)
             });
