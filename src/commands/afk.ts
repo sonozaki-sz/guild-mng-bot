@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, DiscordAPIError, RESTJSONErrorCodes, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChatInputCommandInteraction, DiscordAPIError, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import "../services/discord";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
@@ -23,13 +23,13 @@ export const afkCommand: Command = {
             await interaction.editReply({ embeds: [embed] });
             return;
         }
-        const afkChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
-        if (!afkChannel) {
+        const afkChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId) as string | undefined;
+        if (!afkChannelId) {
             const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
             await interaction.editReply({ embeds: [embed] });
             return;
         }
-        const fetchedAfkChannel = await interaction.guild?.channels.fetch(afkChannel.id)
+        const fetchedAfkChannel = await interaction.guild?.channels.fetch(afkChannelId)
             .catch((reason: DiscordAPIError) => {
                 if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;

@@ -28,19 +28,19 @@ export const cnfProfChannelCommand: Command = {
         switch (interaction.options.getSubcommand()) {
             case "set-ch": {
                 const channel = interaction.options.getChannel("channel") as TextChannel;
-                discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannel, channel);
+                discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannelId, channel.id);
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
-                const profChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannel) as TextChannel | undefined;
-                if (!profChannel) {
+                const profChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannelId) as string | undefined;
+                if (!profChannelId) {
                     const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
                     await interaction.reply({ embeds: [embed] });
                     return;
                 }
-                const channel = await interaction.guild?.channels.fetch(profChannel.id)
+                const channel = await interaction.guild?.channels.fetch(profChannelId)
                     .catch((reason: DiscordAPIError) => {
                         if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                             return undefined;

@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, Collection, DiscordAPIError, EmbedBuilder, GuildMember, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import "../services/discord";
 import { Command, EmbedPage, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
@@ -38,11 +38,11 @@ export const userInfocommand: Command = {
 };
 
 const getProfText = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const profChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannel) as TextChannel | undefined;
-    if (!profChannel) {
+    const profChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannelId) as string | undefined;
+    if (!profChannelId) {
         return __t("bot/command/unsetProfChannel");
     }
-    const channel = await interaction.guild?.channels.fetch(profChannel.id)
+    const channel = await interaction.guild?.channels.fetch(profChannelId)
         .catch((reason: DiscordAPIError) => {
             if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                 return undefined;

@@ -65,17 +65,17 @@ class DiscordBot {
 export const discordBot = new DiscordBot();
 
 export enum DiscordBotKeyvKeys {
-    DestAfkVc = "destAfkVc",
-    VacTriggerVc = "vcAutoCreation/triggerVc",
+    DestAfkVcId = "destAfkVcId",
+    VacTriggerVcId = "vcAutoCreation/triggerVcIds",
     IsVacEnabled = "vcAutoCreation/isEnabled",
-    VacChannels = "vcAutoCreation/channels",
-    ProfChannel = "profChannel",
+    VacChannelIds = "vcAutoCreation/channelIds",
+    ProfChannelId = "profChannelId",
     IsBumpReminderEnabled = "bumpReminder/isEnabled",
     BumpReminderMentionRole = "bumpReminder/mentionRole",
     BumpReminderRmdDate = "bumpReminder/rmdDate",
     BumpReminderMentionUsers = "bumpReminder/mentionUsers",
     StickedMessages = "stickMessage/stickedMessages",
-    LeaveMemberLogChannelId = "leaveMemberLog/channel",
+    LeaveMemberLogChannelId = "leaveMemberLog/channelId",
 }
 
 export const discordBotKeyvs = new Keyvs();

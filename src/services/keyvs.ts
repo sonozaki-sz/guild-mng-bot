@@ -32,7 +32,7 @@ export class Keyvs {
 
     async getCollection(namespace: string, key: string) {
         const value = await this.getValue(namespace, key) as string | undefined;
-        if (!value) return undefined;
+        if (!value) return new Collection<string, any>();
         return new Collection<string, any>(Object.entries(JSON.parse(value)));
     }
 

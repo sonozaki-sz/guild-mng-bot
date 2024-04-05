@@ -29,10 +29,10 @@ export const channelDeleteEvent: BotEvent = {
 const stopVcAutoCreation = async (channel: VoiceChannel) => {
     const isVacEnabled = await discordBotKeyvs.getValue(channel.guildId!, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
     if (isVacEnabled) {
-        const triggerChannel = await discordBotKeyvs.getValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVc) as VoiceChannel | undefined;
-        if (channel.id === triggerChannel?.id) {
+        const triggerChannelId = await discordBotKeyvs.getValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+        if (channel.id === triggerChannelId) {
             await discordBotKeyvs.setValue(channel.guildId!, DiscordBotKeyvKeys.IsVacEnabled, false);
-            await discordBotKeyvs.deleteValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVc);
+            await discordBotKeyvs.deleteValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVcId);
             logger.info(__t("log/bot/vcAutoCreation/stop", { guild: channel.guildId }));
         }
     }

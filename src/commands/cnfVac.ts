@@ -1,4 +1,4 @@
-import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, GuildChannel, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, VoiceChannel } from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, GuildChannel, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { __t } from "../services/locale";
@@ -58,9 +58,10 @@ const excuteStart = async (interaction: ChatInputCommandInteraction) => {
         return;
     };
     try {
-        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVc, triggerVc)
+        let array = [];
+        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId, triggerVc.id)
         await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled, true);
-        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannels, new Array<VoiceChannel>());
+        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannelIds, <string[]>[]);
     } catch (error) {
         triggerVc.delete();
     }
@@ -76,9 +77,9 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
         await interaction.reply({ embeds: [embed] });
         return;
     }
-    const triggerVc = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVc) as VoiceChannel | undefined;
-    if (triggerVc) {
-        const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVc.id)
+    const triggerVcId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+    if (triggerVcId) {
+        const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVcId)
             .catch((reason: DiscordAPIError) => {
                 if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;
@@ -86,7 +87,7 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
                 throw reason;
             });
         if (fetchedTriggerVc) fetchedTriggerVc.delete();
-        await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVc);
+        await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId);
     }
     await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled, false);
     const embed = getReplyEmbed(__t("bot/command/cnf-vac/stop/success"), ReplyEmbedType.Success);
@@ -100,9 +101,9 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         return isVacEnabled ? __t("executing") : __t("stoping");
     })();
     const tiggerVcText = await (async () => {
-        const triggerVc = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVc) as VoiceChannel | undefined;
-        if (triggerVc) {
-            const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVc.id)
+        const triggerVcId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+        if (triggerVcId) {
+            const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVcId)
                 .catch((reason: DiscordAPIError) => {
                     if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                         return undefined;
@@ -114,10 +115,10 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         return __t("unset");
     })();
     const createdVcs = await (async () => {
-        const createdVcs = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannels) as Array<VoiceChannel> | undefined;
-        if (createdVcs?.length) {
-            return await Promise.all(createdVcs.map(async (vc) => {
-                const fetchedVc = await interaction.guild?.channels.fetch(vc.id)
+        const createdVcIds = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannelIds) as string[] | undefined;
+        if (createdVcIds?.length) {
+            return await Promise.all(createdVcIds.map(async (vcId) => {
+                const fetchedVc = await interaction.guild?.channels.fetch(vcId)
                     .catch((reason: DiscordAPIError) => {
                         if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                             return undefined;
