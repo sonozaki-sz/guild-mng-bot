@@ -48,20 +48,7 @@ class DiscordBot {
             if (event.once) {
                 this.client.once(event.name, (...args) => event.execute(...args));
             } else {
-                this.client.on(event.name, (...args) => {
-                    event.execute(
-                        // TODO: Event内部でEventに影響する処理を実行する場合に使用する関数を実装する
-                        // {
-                        //     // 自分自身に影響する処理を内部で実行できる関数
-                        //     withoutInvoke: async (proc: Function) => {
-                        //         stopEventHandler()
-                        //         proc()
-                        //         restartEventHander()
-                        //     },
-                        // },
-                        ...args
-                    )
-                });
+                this.client.on(event.name, (...args) => event.execute(...args));
             }
             logger.info(__t("log/bot/event/set", { name: event.name }));
         }
