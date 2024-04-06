@@ -30,7 +30,7 @@ class DiscordBot {
         const rest = this.client.rest;
         rest.setToken(config.token);
         try {
-            logger.info(__t("log/bot/command/register/pre"));
+            logger.info(__t("log/bot/command/register/pre", { commandNames: globalCommands.map(command => command.data.name).join(", ") }));
             // グローバルコマンドの登録
             globalCommands.map(command => this.client.commands.set(command.data.name, command));
             await rest.put(
@@ -46,9 +46,9 @@ class DiscordBot {
         // Botのイベントを設定
         for (const event of botEvents) {
             if (event.once) {
-                this.client.once(event.name, async (...args) => await event.execute(...args));
+                this.client.once(event.name, (...args) => event.execute(...args));
             } else {
-                this.client.on(event.name, async (...args) => await event.execute(...args));
+                this.client.on(event.name, (...args) => event.execute(...args));
             }
             logger.info(__t("log/bot/event/set", { name: event.name }));
         }
@@ -65,17 +65,17 @@ class DiscordBot {
 export const discordBot = new DiscordBot();
 
 export enum DiscordBotKeyvKeys {
-    DestAfkVc = "destAfkVc",
-    VacTriggerVc = "vcAutoCreation/triggerVc",
+    DestAfkVcId = "destAfkVcId",
+    VacTriggerVcId = "vcAutoCreation/triggerVcIds",
     IsVacEnabled = "vcAutoCreation/isEnabled",
-    VacChannels = "vcAutoCreation/channels",
-    ProfChannel = "profChannel",
+    VacChannelIds = "vcAutoCreation/channelIds",
+    ProfChannelId = "profChannelId",
     IsBumpReminderEnabled = "bumpReminder/isEnabled",
     BumpReminderMentionRole = "bumpReminder/mentionRole",
     BumpReminderRmdDate = "bumpReminder/rmdDate",
     BumpReminderMentionUsers = "bumpReminder/mentionUsers",
     StickedMessages = "stickMessage/stickedMessages",
-    LeaveMemberLogChannelId = "leaveMemberLog/channel",
+    LeaveMemberLogChannelId = "leaveMemberLog/channelId",
 }
 
 export const discordBotKeyvs = new Keyvs();

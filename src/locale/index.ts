@@ -73,7 +73,7 @@ export type Vocabulary = {
     "log/bot/stickMessage/execute": Message<{ guild: string, channel: string }>,
     "log/bot/stickMessage/error": Message<{ guild: string, channel: string, error: string }>,
     "log/bot/event/set": Message<{ name: string }>,
-    "log/bot/command/register/pre": Message,
+    "log/bot/command/register/pre": Message<{ commandNames: string }>,
     "log/bot/command/register/complated": Message,
     "log/bot/command/register/faild": Message<{ error: string }>,
     "log/bot/command/notFound": Message<{ command: string }>,

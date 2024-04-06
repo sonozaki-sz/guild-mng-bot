@@ -72,7 +72,7 @@ export default new Catalog<Vocabulary>("ja", {
     "log/bot/stickMessage/execute": msg("メッセージ固定機能を実行しました。\nサーバー：{guild}\nチャンネル：{channel}"),
     "log/bot/stickMessage/error": msg("メッセージ固定機能でエラーが発生しました。\nサーバー：{guild}\nチャンネル：{channel}\n詳細：\n{error}"),
     "log/bot/event/set": msg("Botのイベントを設定しました。イベント名：{name}"),
-    "log/bot/command/register/pre": msg("スラッシュコマンドを登録します。"),
+    "log/bot/command/register/pre": msg("以下のスラッシュコマンドを登録します。\nコマンド名：\n{commandNames}"),
     "log/bot/command/register/complated": msg("スラッシュコマンドの登録が完了しました。"),
     "log/bot/command/register/faild": msg("スラッシュコマンドの登録に失敗しました。\n詳細：\n{error}"),
     "log/bot/command/notFound": msg("一致するコマンドが見つかりませんでした。コマンド：{command}"),

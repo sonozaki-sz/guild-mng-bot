@@ -48,19 +48,19 @@ export const cnfAfkCommand: Command = {
 
 const executeSetDest = async (interaction: ChatInputCommandInteraction) => {
     const channel = interaction.options.getChannel("channel") as VoiceChannel;
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc, channel)
+    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId, channel.id)
     const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
-    if (!afkChannel) {
+    const afkChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId) as string | undefined;
+    if (!afkChannelId) {
         const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
         return;
     }
-    const channel = await interaction.guild?.channels.fetch(afkChannel.id)
+    const channel = await interaction.guild?.channels.fetch(afkChannelId)
         .catch((reason: DiscordAPIError) => {
             if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                 return undefined;
@@ -77,12 +77,12 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannel = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVc) as VoiceChannel | undefined;
+    const afkChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId) as string | undefined;
     const fetchedAfkChannel = await (async () => {
-        if (!afkChannel) {
+        if (!afkChannelId) {
             return undefined;
         }
-        return await interaction.guild?.channels.fetch(afkChannel.id)
+        return await interaction.guild?.channels.fetch(afkChannelId)
             .catch((reason: DiscordAPIError) => {
                 if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
                     return undefined;
