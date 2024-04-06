@@ -23,8 +23,8 @@ export const globalCommands = [
     sendTextCommand,
     playCommand,
     statusListCommand,
-    LeaveMemberLogCommand,
     // stickMessageCommand,　// HACK: メッセージ固定機能が修正されるまで機能を塞ぐ
+    LeaveMemberLogCommand,
 ];
 
 export default globalCommands;

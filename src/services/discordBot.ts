@@ -30,7 +30,7 @@ class DiscordBot {
         const rest = this.client.rest;
         rest.setToken(config.token);
         try {
-            logger.info(__t("log/bot/command/register/pre"));
+            logger.info(__t("log/bot/command/register/pre", { commandNames: globalCommands.map(command => command.data.name).join(", ") }));
             // グローバルコマンドの登録
             globalCommands.map(command => this.client.commands.set(command.data.name, command));
             await rest.put(
@@ -46,9 +46,9 @@ class DiscordBot {
         // Botのイベントを設定
         for (const event of botEvents) {
             if (event.once) {
-                this.client.once(event.name, async (...args) => await event.execute(...args));
+                this.client.once(event.name, (...args) => event.execute(...args));
             } else {
-                this.client.on(event.name, async (...args) => await event.execute(...args));
+                this.client.on(event.name, (...args) => event.execute(...args));
             }
             logger.info(__t("log/bot/event/set", { name: event.name }));
         }
