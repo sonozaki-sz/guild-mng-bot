@@ -20,8 +20,8 @@ export const messageCreateEvent: BotEvent = {
                 }
             });
 
-        await debounce(async () => {
-            await executeStickMessage(message)
+        debounce(() => {
+            executeStickMessage(message)
                 .catch((error: Error) => {
                     const errorDesc = error.stack || error.message || "unknown error";
                     logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
@@ -30,7 +30,7 @@ export const messageCreateEvent: BotEvent = {
                         logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
                     }
                 });
-        }, 1000 * 5)();
+        }, 3_000)();
     }
 };
 

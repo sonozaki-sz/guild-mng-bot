@@ -24,8 +24,8 @@ export const globalCommands = [
     sendTextCommand,
     playCommand,
     statusListCommand,
-    LeaveMemberLogCommand,
     stickMessageCommand,
+    LeaveMemberLogCommand,
 ];
 
 export default globalCommands;

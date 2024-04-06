@@ -19,8 +19,8 @@ export const statusListCommand: Command = {
             await cnfBumpReminder.getStatusEmbed(interaction),
             await cnfAfk.getStatusEmbed(interaction),
             await cnfVac.getStatusEmbed(interaction),
-            await leaveMemberLog.getStatusEmbed(interaction),
             await stickMessage.getStatusEmbed(interaction),
+            await leaveMemberLog.getStatusEmbed(interaction),
         ];
         const statusEmbedsPage = new EmbedPage(interaction.channel!, statusEmbedList);
         await statusEmbedsPage.send({ time: 300_000 });
