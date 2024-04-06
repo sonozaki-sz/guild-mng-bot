@@ -4,8 +4,8 @@ import { __t } from "../services/locale";
 import * as cnfAfk from "./cnfAfk";
 import * as cnfBumpReminder from "./cnfBumpReminder";
 import * as cnfVac from "./cnfVac";
-// import * as stickMessage from "./stickMessage"; // HACK: メッセージ固定機能が修正されるまで機能を塞ぐ
 import * as leaveMemberLog from "./leaveMemberLog";
+import * as stickMessage from "./stickMessage";
 
 export const statusListCommand: Command = {
     data: new SlashCommandBuilder()
@@ -19,7 +19,7 @@ export const statusListCommand: Command = {
             await cnfBumpReminder.getStatusEmbed(interaction),
             await cnfAfk.getStatusEmbed(interaction),
             await cnfVac.getStatusEmbed(interaction),
-            // await stickMessage.getStatusEmbed(interaction), // HACK: メッセージ固定機能が修正されるまで機能を塞ぐ
+            await stickMessage.getStatusEmbed(interaction),
             await leaveMemberLog.getStatusEmbed(interaction),
         ];
         const statusEmbedsPage = new EmbedPage(interaction.channel!, statusEmbedList);

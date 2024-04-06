@@ -1,7 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPIError, Events, Message, RESTJSONErrorCodes, Role, User } from "discord.js";
+import { debounce } from "lodash";
 import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBot, discordBotKeyvs } from "../services/discordBot";
+import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
 import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -19,18 +20,14 @@ export const messageCreateEvent: BotEvent = {
                 }
             });
 
-        // HACK: メッセージ固定機能が修正されるまで機能を塞ぐ
-        // await debounce(async () => {
-        //     await executeStickMessage(message)
-        //         .catch((error: Error) => {
-        //             const errorDesc = error.stack || error.message || "unknown error";
-        //             logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
-        //             if (error instanceof KeyvsError) {
-        //                 discordBotKeyvs.setkeyv(message.guildId!);
-        //                 logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
-        //             }
-        //         });
-        // }, 1000 * 5)();
+        await debouncedExecuteStickMessage(message)?.catch((error: Error) => {
+            const errorDesc = error.stack || error.message || "unknown error";
+            logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
+            if (error instanceof KeyvsError) {
+                discordBotKeyvs.setkeyv(message.guildId!);
+                logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
+            }
+        });
     }
 };
 
@@ -143,12 +140,12 @@ const executeStickMessage = async (message: Message) => {
     stickedMessages.delete(message.channel.id);
     const content = stickedMessage.content;
     const embeds = stickedMessage.embeds;
-    discordBot.client.removeAllListeners(Events.MessageCreate);
     const newStickMessage = await message.channel.send({ content, embeds });
-    discordBot.client.addListener(Events.MessageCreate, messageCreateEvent.execute);
     stickedMessages.set(message.channel.id, newStickMessage.id);
     await setStickedMessages(message.guildId!, stickedMessages);
     logger.info(__t("log/bot/stickMessage/execute", { guild: message.guildId!, channel: message.channel.id }));
 };
+
+const debouncedExecuteStickMessage = debounce(executeStickMessage, 3_000);
 
 export default messageCreateEvent;

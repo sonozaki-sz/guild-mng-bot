@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export interface Command {
@@ -19,6 +19,16 @@ export interface BotEvent {
     once?: boolean | false;
     execute: (...args: any[]) => Promise<void>;
 }
+
+export const stopEventHandler = (client: Client, event: BotEvent) => {
+    client.removeListener(
+        event.name, (...args: any[]) => event.execute(...args));
+};
+
+export const startEventHander = (client: Client, event: BotEvent) => {
+    client.addListener(
+        event.name, (...args: any[]) => event.execute(...args));
+};
 
 declare module "discord.js" {
     interface Client {
