@@ -26,11 +26,11 @@ export const userInfocommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "normal": {
-                executeNormal(interaction);
+                await executeNormal(interaction);
                 break;
             }
             case "vc-members": {
-                executeVcMembers(interaction);
+                await executeVcMembers(interaction);
                 break;
             }
         }
@@ -67,7 +67,7 @@ const getProfText = async (interaction: ChatInputCommandInteraction, member: Gui
 };
 
 const getUserInfoEmbes = async (interaction: ChatInputCommandInteraction, member: GuildMember) => {
-    const userInfoEmbeds = new Array<EmbedBuilder>();
+    const userInfoEmbeds = [] as EmbedBuilder[];
     userInfoEmbeds.push(
         new EmbedBuilder()
             .setTitle(member.user.tag)

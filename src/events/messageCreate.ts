@@ -63,7 +63,8 @@ const executeBumpReminder = async (message: Message) => {
     collector.on("collect", async (interaction) => {
         switch (interaction.customId) {
             case "doRemind": {
-                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as User[] | undefined;
+                if (!mentionUsers?.length) return;
                 if (mentionUsers.some(user => user.id === interaction.user.id)) {
                     const embed = getReplyEmbed(__t("bot/bumpReminder/alreadySetRemind"), ReplyEmbedType.Warn);
                     await interaction.reply({ embeds: [embed], ephemeral: true });
@@ -77,8 +78,8 @@ const executeBumpReminder = async (message: Message) => {
                 break;
             }
             case "doNotRemind": {
-                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> || new Array<User>();
-                if (mentionUsers.some(user => user.id === interaction.user.id)) {
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as User[] | undefined;
+                if (mentionUsers?.some(user => user.id === interaction.user.id)) {
                     const newMentionUsers = mentionUsers.filter(user => user.id !== interaction.user.id);
                     await discordBotKeyvs.setValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers, newMentionUsers);
                 }
@@ -105,7 +106,7 @@ const executeBumpReminder = async (message: Message) => {
                 return role?.toString() || "";
             })();
             const mentionUsersText = await (async () => {
-                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> | undefined;
+                const mentionUsers = await discordBotKeyvs.getValue(message.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as User[] | undefined;
                 if (!mentionUsers) return "";
                 return await Promise.all(mentionUsers.map(async user => {
                     const member = await bumpReminderMessage.guild?.members.fetch(user.id);
