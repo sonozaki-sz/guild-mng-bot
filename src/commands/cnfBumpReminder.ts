@@ -34,19 +34,19 @@ export const cnfBumpReminderCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                executeStart(interaction);
+                await executeStart(interaction);
                 break;
             }
             case "stop": {
-                executeStop(interaction);
+                await executeStop(interaction);
                 break;
             }
             case "set-mention": {
-                executeSetMention(interaction);
+                await executeSetMention(interaction);
                 break;
             }
             case "status": {
-                executeStatus(interaction);
+                await executeStatus(interaction);
                 break;
             }
         }
@@ -55,7 +55,7 @@ export const cnfBumpReminderCommand: Command = {
 
 const executeStart = async (interaction: ChatInputCommandInteraction) => {
     await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsBumpReminderEnabled, true);
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers, new Array<User>());
+    await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers);
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/start/success"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/bumpReminder/start", { guild: interaction.guildId! }));
@@ -101,8 +101,8 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         return role?.toString() || __t("unset");
     })();
     const mentionUsersText = await (async () => {
-        const mentionUsers = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as Array<User> | undefined;
-        if (!mentionUsers) return __t("notting");
+        const mentionUsers = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as User[] | undefined;
+        if (!mentionUsers?.length) return __t("notting");
         return await Promise.all(mentionUsers.map(async user => {
             const member = await interaction.guild?.members.fetch(user.id)
                 .catch(() => undefined);

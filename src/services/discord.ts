@@ -134,13 +134,13 @@ GuildMessageManager.prototype.fetchMany = async function (
 
 export class EmbedPage {
     private _channel: TextBasedChannel;
-    private _pages: Array<EmbedBuilder>;
+    private _pages: EmbedBuilder[];
     private _currentPageIndex: number;
-    private _actionRows: Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>;
+    private _actionRows: ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>[];
     private _message: Message | undefined;
     private _collector: InteractionCollector<MappedInteractionTypes[ComponentType.Button | ComponentType.StringSelect]> | undefined;
 
-    constructor(channel: TextBasedChannel, pages: Array<EmbedBuilder>) {
+    constructor(channel: TextBasedChannel, pages: EmbedBuilder[]) {
         this._channel = channel;
         this._pages = pages;
         this._pages.forEach((page, index, pages) => {
@@ -148,7 +148,7 @@ export class EmbedPage {
         });
         this._currentPageIndex = 0;
 
-        this._actionRows = new Array<ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>>(
+        this._actionRows = [
             new ActionRowBuilder<ButtonBuilder>()
                 .addComponents(
                     new ButtonBuilder()
@@ -194,7 +194,7 @@ export class EmbedPage {
                             };
                         }))
                 )
-        );
+        ];
     }
 
     public async send(options?: MessageCollectorOptionsParams<ComponentType.Button | ComponentType.StringSelect>) {

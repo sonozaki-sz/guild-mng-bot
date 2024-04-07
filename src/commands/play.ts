@@ -14,7 +14,7 @@ export const playCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "rps": {
-                executeRps(interaction);
+                await executeRps(interaction);
                 break;
             }
         }

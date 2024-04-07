@@ -25,15 +25,15 @@ export const cnfVacCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                excuteStart(interaction);
+                await excuteStart(interaction);
                 break;
             }
             case "stop": {
-                excuteStop(interaction);
+                await excuteStop(interaction);
                 break;
             }
             case "status": {
-                excuteStatus(interaction);
+                await excuteStatus(interaction);
                 break;
             }
         }

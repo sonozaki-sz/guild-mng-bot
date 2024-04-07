@@ -38,15 +38,15 @@ export const stickMessageCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                executeStart(interaction);
+                await executeStart(interaction);
                 break;
             }
             case "delete": {
-                executeDelete(interaction);
+                await executeDelete(interaction);
                 break;
             }
             case "status": {
-                executeStatus(interaction);
+                await executeStatus(interaction);
                 break;
             }
         }

@@ -31,23 +31,27 @@ export const interactionCreateEvent: BotEvent = {
             } else if (command.cooldown && !cooldown) {
                 interaction.client.cooldowns.set(`${interaction.commandName}-${interaction.user.username}`, Date.now() + command.cooldown * 1000);
             }
-            command.execute(interaction)
+            await command.execute(interaction)
                 .then(() => {
                     logger.info(__t("log/bot/command/execute/success", { command: interaction.commandName, guild: interaction.guildId! }));
                 }).catch(async (error: Error) => {
+                    // エラーをチャンネルに送信する
                     const errorDescMsg = error.message || "unknown error";
                     const replyMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
                     const embed = getReplyEmbed(replyMsg, ReplyEmbedType.Error);
                     await interaction.channel?.send({ embeds: [embed] });
+
+                    // エラーをログに出力する
                     const errorDescLog = error.stack || error.message || "unknown error";
                     const logMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescLog });
                     logger.error(logMsg);
-                    interaction
+
                     if (error instanceof KeyvsError) {
+                        // keyvがエラーを返した場合はkeyvをリセットし、メッセージをチャンネルとログに出力する
                         discordBotKeyvs.setkeyv(interaction.guildId!);
-                        logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
                         const embed = getReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
                         await interaction.channel?.send({ embeds: [embed] });
+                        logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
                     }
                 });
         } else if (interaction.isAutocomplete()) {
