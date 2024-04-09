@@ -2,7 +2,7 @@ import { Collection } from 'discord.js';
 import Keyv from 'keyv';
 
 export class Keyvs {
-    private keyvs: Collection<string, Keyv> = new Collection();
+    private readonly keyvs: Collection<string, Keyv> = new Collection();
 
     setkeyv(namespace: string) {
         return this.keyvs.set(namespace, new Keyv("sqlite://storage/db.sqlite", { namespace: namespace }));
@@ -32,7 +32,7 @@ export class Keyvs {
 
     async getCollection(namespace: string, key: string) {
         const value = await this.getValue(namespace, key) as string | undefined;
-        if (!value) return new Collection<string, any>();
+        if (!value) return undefined;
         return new Collection<string, any>(Object.entries(JSON.parse(value)));
     }
 

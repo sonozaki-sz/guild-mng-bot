@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, GuildChannel, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -41,7 +41,7 @@ export const cnfVacCommand: Command = {
 };
 
 const excuteStart = async (interaction: ChatInputCommandInteraction) => {
-    const isVacEnabled = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
+    const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(interaction.guildId!);
     if (isVacEnabled) {
         const embed = getReplyEmbed(__t("bot/command/cnf-vac/start/alreadyStarting"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
@@ -58,10 +58,9 @@ const excuteStart = async (interaction: ChatInputCommandInteraction) => {
         return;
     };
     try {
-        let array = [];
-        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId, triggerVc.id)
-        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled, true);
-        await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannelIds, <string[]>[]);
+        await discordBotKeyvs.setVacTriggerVcId(interaction.guildId!, triggerVc.id)
+        await discordBotKeyvs.setIsVacEnabled(interaction.guildId!, true);
+        await discordBotKeyvs.deleteVacChannelIds(interaction.guildId!);
     } catch (error) {
         triggerVc.delete();
     }
@@ -71,13 +70,13 @@ const excuteStart = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const excuteStop = async (interaction: ChatInputCommandInteraction) => {
-    const isVacEnabled = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
+    const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(interaction.guildId!);
     if (!isVacEnabled) {
         const embed = getReplyEmbed(__t("bot/command/cnf-vac/stop/alreadyStoping"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
         return;
     }
-    const triggerVcId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+    const triggerVcId = await discordBotKeyvs.getVacTriggerVcId(interaction.guildId!);
     if (triggerVcId) {
         const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVcId)
             .catch((reason: DiscordAPIError) => {
@@ -87,9 +86,9 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
                 throw reason;
             });
         if (fetchedTriggerVc) fetchedTriggerVc.delete();
-        await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId);
+        await discordBotKeyvs.deleteVacTriggerVcId(interaction.guildId!);
     }
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled, false);
+    await discordBotKeyvs.setIsVacEnabled(interaction.guildId!, false);
     const embed = getReplyEmbed(__t("bot/command/cnf-vac/stop/success"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/vcAutoCreation/stop", { guild: interaction.guildId! }));
@@ -97,11 +96,11 @@ const excuteStop = async (interaction: ChatInputCommandInteraction) => {
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
-        const isVacEnabled = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
+        const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(interaction.guildId!)
         return isVacEnabled ? __t("executing") : __t("stoping");
     })();
     const tiggerVcText = await (async () => {
-        const triggerVcId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+        const triggerVcId = await discordBotKeyvs.getVacTriggerVcId(interaction.guildId!);
         if (triggerVcId) {
             const fetchedTriggerVc = await interaction.guild?.channels.fetch(triggerVcId)
                 .catch((reason: DiscordAPIError) => {
@@ -115,7 +114,7 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         return __t("unset");
     })();
     const createdVcs = await (async () => {
-        const createdVcIds = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.VacChannelIds) as string[] | undefined;
+        const createdVcIds = await discordBotKeyvs.getVacChannelIds(interaction.guildId!);
         if (createdVcIds?.length) {
             return await Promise.all(createdVcIds.map(async (vcId) => {
                 const fetchedVc = await interaction.guild?.channels.fetch(vcId)

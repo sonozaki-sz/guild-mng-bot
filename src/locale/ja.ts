@@ -211,6 +211,7 @@ export default new Catalog<Vocabulary>("ja", {
     "bot/command/stick-msg/delete/description": msg("チャンネルの最下部に固定したメッセージを削除します。"),
     "bot/command/stick-msg/delete/channelOption/description": msg("メッセージの固定を削除するチャンネルを入力してください。(未指定時はコマンドを実行したチャンネルから削除)"),
     "bot/command/stick-msg/delete/success": msg("{channel}に固定したメッセージを削除しました。"),
+    "bot/command/stick-msg/delete/notSticked": msg("固定されているメッセージがありません。"),
     "bot/command/stick-msg/status/description": msg("メッセージの固定状態を表示します。"),
     "bot/command/stick-msg/modal/title": msg("固定メッセージの入力"),
     "bot/command/stick-msg/modal/inputStickText/label": msg("固定するテキストを入力してください。"),

@@ -212,6 +212,7 @@ export type Vocabulary = {
     "bot/command/stick-msg/delete/description": Message,
     "bot/command/stick-msg/delete/channelOption/description": Message,
     "bot/command/stick-msg/delete/success": Message<{ channel: string }>,
+    "bot/command/stick-msg/delete/notSticked": Message,
     "bot/command/stick-msg/status/description": Message,
     "bot/command/stick-msg/modal/title": Message,
     "bot/command/stick-msg/modal/inputStickText/label": Message,

@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 
 export const LeaveMemberLogCommand: Command = {
@@ -26,13 +26,13 @@ export const LeaveMemberLogCommand: Command = {
     execute: async (interaction: ChatInputCommandInteraction) => {
         switch (interaction.options.getSubcommand()) {
             case "start": {
-                await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.LeaveMemberLogChannelId, interaction.channelId!);
+                await discordBotKeyvs.setLeaveMemberLogChannelId(interaction.guildId!, interaction.channelId!);
                 const embed = getReplyEmbed(__t("bot/command/leaveMemberLog/start/success"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "stop": {
-                await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.LeaveMemberLogChannelId);
+                await discordBotKeyvs.deleteLeaveMemberLogChannelId(interaction.guildId!);
                 const embed = getReplyEmbed(__t("bot/command/leaveMemberLog/stop/success"), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed] });
                 break;
@@ -46,7 +46,7 @@ export const LeaveMemberLogCommand: Command = {
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const leaveMemberLogChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.LeaveMemberLogChannelId) as string | undefined;
+    const leaveMemberLogChannelId = await discordBotKeyvs.getLeaveMemberLogChannelId(interaction.guildId!);
     const leaveMemberLogChannel = await (async () => {
         if (!leaveMemberLogChannelId) return undefined;
         return await interaction.guild?.channels.fetch(leaveMemberLogChannelId)

@@ -1,6 +1,6 @@
 import { ChannelType, DMChannel, Events, GuildChannel, VoiceChannel } from "discord.js";
 import { BotEvent } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
@@ -16,7 +16,7 @@ export const channelDeleteEvent: BotEvent = {
                         const logMsg = __t("log/bot/vcAutoCreation/error", { guild: channel.guildId, error: errorDesc });
                         logger.error(logMsg);
                         if (error instanceof KeyvsError) {
-                            discordBotKeyvs.setkeyv(channel.guildId);
+                            discordBotKeyvs.keyvs.setkeyv(channel.guildId);
                             logger.info(__t("log/keyvs/reset", { namespace: channel.guildId }));
                         }
                     });
@@ -27,12 +27,12 @@ export const channelDeleteEvent: BotEvent = {
 };
 
 const stopVcAutoCreation = async (channel: VoiceChannel) => {
-    const isVacEnabled = await discordBotKeyvs.getValue(channel.guildId!, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
+    const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(channel.guildId!);
     if (isVacEnabled) {
-        const triggerChannelId = await discordBotKeyvs.getValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+        const triggerChannelId = await discordBotKeyvs.getVacTriggerVcId(channel.guildId!);
         if (channel.id === triggerChannelId) {
-            await discordBotKeyvs.setValue(channel.guildId!, DiscordBotKeyvKeys.IsVacEnabled, false);
-            await discordBotKeyvs.deleteValue(channel.guildId!, DiscordBotKeyvKeys.VacTriggerVcId);
+            await discordBotKeyvs.setIsVacEnabled(channel.guildId!, false);
+            await discordBotKeyvs.deleteVacTriggerVcId(channel.guildId!);
             logger.info(__t("log/bot/vcAutoCreation/stop", { guild: channel.guildId }));
         }
     }

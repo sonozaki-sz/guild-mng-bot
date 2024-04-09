@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, Collection, Colors, ComponentType, DiscordAPIError, EmbedBuilder, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
-import { getStickedMessages, setStickedMessages } from "../services/botUtilty";
 import { Command, Modal, ReplyEmbedType, getReplyEmbed } from "../services/discord";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 
 export const stickMessageCommand: Command = {
@@ -80,8 +80,8 @@ const stickTextModal: Modal = {
             await interaction.editReply({ embeds: [embed] });
             return;
         }
-        const stickedMessages = await getStickedMessages(interaction.guild!.id);
-        if (stickedMessages.has(stickChannel.id)) {
+        const stickedMessageIds = await discordBotKeyvs.getStickedMessageIds(interaction.guild!.id) || new Collection<string, string>();
+        if (stickedMessageIds.has(stickChannel.id)) {
             const embed = getReplyEmbed(__t("bot/command/stick-msg/start/alreadySticked"), ReplyEmbedType.Warn);
             const actionRow = new ActionRowBuilder<ButtonBuilder>()
                 .setComponents([
@@ -99,8 +99,8 @@ const stickTextModal: Modal = {
             collector?.on("collect", async (buttonInteraction) => {
                 switch (buttonInteraction.customId) {
                     case "delete": {
-                        deleteStickMessage(stickChannel, stickedMessages);
-                        await stickMessage(stickChannel, text, stickedMessages);
+                        deleteStickMessage(stickChannel, stickedMessageIds);
+                        await stickMessage(stickChannel, text, stickedMessageIds);
                         const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success/restick", { channel: stickChannel.toString() }), ReplyEmbedType.Success);
                         await interaction.followUp({ embeds: [embed] });
                         break;
@@ -122,16 +122,16 @@ const stickTextModal: Modal = {
             });
             return;
         }
-        await stickMessage(stickChannel, text, stickedMessages);
+        await stickMessage(stickChannel, text, stickedMessageIds);
         const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success", { channel: stickChannel.toString() }), ReplyEmbedType.Success);
         await interaction.followUp({ embeds: [embed] });
     }
 }
 
-const stickMessage = async (stickChannel: TextChannel, message: string, sticedMessages: Collection<string, string>) => {
+const stickMessage = async (stickChannel: TextChannel, message: string, sticedMessageIds: Collection<string, string>) => {
     const sentMessage = await stickChannel.send(message);
-    sticedMessages.set(stickChannel.id, sentMessage.id);
-    await setStickedMessages(stickChannel.guildId, sticedMessages);
+    sticedMessageIds.set(stickChannel.id, sentMessage.id);
+    await discordBotKeyvs.setStickedMessageIds(stickChannel.guildId, sticedMessageIds);
 };
 
 const executeStart = async (interaction: ChatInputCommandInteraction) => {
@@ -143,8 +143,8 @@ const executeStart = async (interaction: ChatInputCommandInteraction) => {
     }
 };
 
-const deleteStickMessage = async (stickChannel: TextChannel, stickedMessages: Collection<string, string>) => {
-    const stickedMessageId = stickedMessages.get(stickChannel.id);
+const deleteStickMessage = async (stickChannel: TextChannel, stickedMessageIds: Collection<string, string>) => {
+    const stickedMessageId = stickedMessageIds.get(stickChannel.id);
     if (!stickedMessageId) return;
     const stickedMessage = await stickChannel.messages.fetch(stickedMessageId)
         .catch((error: DiscordAPIError) => {
@@ -158,30 +158,35 @@ const deleteStickMessage = async (stickChannel: TextChannel, stickedMessages: Co
                 throw error;
             });
     }
-    stickedMessages.delete(stickChannel.id);
-    await setStickedMessages(stickChannel.guildId, stickedMessages);
+    stickedMessageIds.delete(stickChannel.id);
+    await discordBotKeyvs.setStickedMessageIds(stickChannel.guildId, stickedMessageIds);
 };
 
 const executeDelete = async (interaction: ChatInputCommandInteraction) => {
-    const stickedMessages = await getStickedMessages(interaction.guildId!);
-    for (const channelId of stickedMessages.keys()) {
-        const stickChannel = interaction.guild?.channels.cache.get(channelId);
+    const stickedMessageIds = await discordBotKeyvs.getStickedMessageIds(interaction.guildId!);
+    if (!stickedMessageIds?.size) {
+        const embed = getReplyEmbed(__t("bot/command/stick-msg/delete/notSticked"), ReplyEmbedType.Warn);
+        await interaction.reply({ embeds: [embed] });
+        return;
+    }
+    for (const channelId of stickedMessageIds.keys()) {
+        const stickChannel = await interaction.guild?.channels.fetch(channelId);
         if (!stickChannel) {
-            stickedMessages.delete(channelId);
+            stickedMessageIds.delete(channelId);
         }
     }
-    await setStickedMessages(interaction.guildId!, stickedMessages);
+    await discordBotKeyvs.setStickedMessageIds(interaction.guildId!, stickedMessageIds);
     const channel = interaction.options.getChannel("channel") as TextChannel || interaction.channel! as TextChannel;
-    deleteStickMessage(channel, stickedMessages);
+    deleteStickMessage(channel, stickedMessageIds);
     const embed = getReplyEmbed(__t("bot/command/stick-msg/delete/success", { channel: channel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const stickedMessageChannels = await (async () => {
-        const stickedMessages = await getStickedMessages(interaction.guildId!);
-        if (!stickedMessages.size) return __t("notting");
-        const stickedMessageChannelIds = stickedMessages.keys();
+        const stickedMessageIds = await discordBotKeyvs.getStickedMessageIds(interaction.guildId!);
+        if (!stickedMessageIds?.size) return __t("notting");
+        const stickedMessageChannelIds = stickedMessageIds.keys();
         return await Promise.all(Array.from(stickedMessageChannelIds).map(async channelId => {
             return `<#${channelId}>`;
         })).then(channels => channels.toString());

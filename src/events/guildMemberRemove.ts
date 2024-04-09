@@ -1,6 +1,6 @@
 import { DiscordAPIError, Events, GuildMember, PartialGuildMember, RESTJSONErrorCodes, TextChannel } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed as getBotEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -13,7 +13,7 @@ export const guildMemberRemoveEvent: BotEvent = {
 
 const executeMemberLeaveLog = async (member: GuildMember | PartialGuildMember) => {
     if (!member.guild.available) return;
-    const leaveMemberLogChannelId = await discordBotKeyvs.getValue(member.guild.id, DiscordBotKeyvKeys.LeaveMemberLogChannelId) as string | undefined;
+    const leaveMemberLogChannelId = await discordBotKeyvs.getLeaveMemberLogChannelId(member.guild.id);
     if (!leaveMemberLogChannelId) return;
     const leaveMemberLogChannel = await member.guild.channels.fetch(leaveMemberLogChannelId)
         .catch((reason: DiscordAPIError) => {
