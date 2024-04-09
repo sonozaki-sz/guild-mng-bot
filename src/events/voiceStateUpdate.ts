@@ -27,7 +27,7 @@ export const voiceStateUpdateEvent: BotEvent = {
     }
 };
 
-// Cの自動作成機能を実行する
+// VCの自動作成機能を実行する
 const executeVcAutoCreation = async (oldState: VoiceState, newState: VoiceState) => {
     const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(newState.guild.id);
     if (!isVacEnabled) return;
@@ -40,6 +40,7 @@ const executeVcAutoCreation = async (oldState: VoiceState, newState: VoiceState)
     }
     if (oldState.member && oldState.member.voice.channelId === triggerVcId) {
         const newChannel = await newState.guild.channels.create({
+            parent: newState.channel?.parent,
             name: `${oldState.member.displayName}'s Room`,
             type: ChannelType.GuildVoice,
             userLimit: 99,
