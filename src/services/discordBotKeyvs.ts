@@ -130,7 +130,7 @@ class DiscordBotKeyvs {
     }
 
     async setStickedMessageIds(guildId: string, stickedMessages: Collection<string, string>) {
-        await this.keyvs.setValue(guildId, DiscordBotKeyvKeys.StickedMessageIds, stickedMessages);
+        await this.keyvs.setCollection(guildId, DiscordBotKeyvKeys.StickedMessageIds, stickedMessages);
     }
 
     async deleteStickedMessageIds(guildId: string) {
