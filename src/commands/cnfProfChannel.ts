@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, DiscordAPIError, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 
 export const cnfProfChannelCommand: Command = {
@@ -28,13 +28,13 @@ export const cnfProfChannelCommand: Command = {
         switch (interaction.options.getSubcommand()) {
             case "set-ch": {
                 const channel = interaction.options.getChannel("channel") as TextChannel;
-                discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannelId, channel.id);
+                discordBotKeyvs.setProfChannelId(interaction.guildId!, channel.id);
                 const embed = getReplyEmbed(__t("bot/command/cnf-prof-ch/set-ch/success", { channel: channel.toString() }), ReplyEmbedType.Success);
                 await interaction.reply({ embeds: [embed] });
                 break;
             }
             case "get-ch": {
-                const profChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.ProfChannelId) as string | undefined;
+                const profChannelId = await discordBotKeyvs.getProfChannelId(interaction.guildId!);
                 if (!profChannelId) {
                     const embed = getReplyEmbed(__t("bot/command/unsetProfChannel"), ReplyEmbedType.Warn);
                     await interaction.reply({ embeds: [embed] });

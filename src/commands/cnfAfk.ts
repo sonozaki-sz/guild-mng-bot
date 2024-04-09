@@ -1,6 +1,6 @@
 import { ChannelType, ChatInputCommandInteraction, Colors, DiscordAPIError, EmbedBuilder, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, VoiceChannel } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 
 export const cnfAfkCommand: Command = {
@@ -48,13 +48,13 @@ export const cnfAfkCommand: Command = {
 
 const executeSetDest = async (interaction: ChatInputCommandInteraction) => {
     const channel = interaction.options.getChannel("channel") as VoiceChannel;
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId, channel.id)
+    await discordBotKeyvs.setDestAfkVcId(interaction.guildId!, channel.id)
     const embed = getReplyEmbed(__t("bot/command/cnf-afk/set-dest/success", { channel: channel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId) as string | undefined;
+    const afkChannelId = await discordBotKeyvs.getDestAfkVcId(interaction.guildId!);
     if (!afkChannelId) {
         const embed = getReplyEmbed(__t("bot/command/unsetDestAfk"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
@@ -77,7 +77,7 @@ const executeGetDest = async (interaction: ChatInputCommandInteraction) => {
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const afkChannelId = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.DestAfkVcId) as string | undefined;
+    const afkChannelId = await discordBotKeyvs.getDestAfkVcId(interaction.guildId!);
     const fetchedAfkChannel = await (async () => {
         if (!afkChannelId) {
             return undefined;

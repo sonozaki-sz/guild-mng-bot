@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, Role, SlashCommandBuilder, User } from "discord.js";
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { Command, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { DiscordBotKeyvKeys, discordBotKeyvs } from "../services/discordBot";
+import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -54,16 +54,16 @@ export const cnfBumpReminderCommand: Command = {
 };
 
 const executeStart = async (interaction: ChatInputCommandInteraction) => {
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsBumpReminderEnabled, true);
-    await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers);
+    await discordBotKeyvs.setIsBumpReminderEnabled(interaction.guildId!, true);
+    await discordBotKeyvs.deleteBumpReminderMentionUserIds(interaction.guildId!);
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/start/success"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/bumpReminder/start", { guild: interaction.guildId! }));
 };
 
 const executeStop = async (interaction: ChatInputCommandInteraction) => {
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.IsBumpReminderEnabled, false);
-    await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers);
+    await discordBotKeyvs.setIsBumpReminderEnabled(interaction.guildId!, false);
+    await discordBotKeyvs.deleteBumpReminderMentionUserIds(interaction.guildId!);
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/stop/success"), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
     logger.info(__t("log/bot/bumpReminder/stop", { guild: interaction.guildId! }));
@@ -72,7 +72,7 @@ const executeStop = async (interaction: ChatInputCommandInteraction) => {
 const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
     const role = interaction.options.getRole("role", false);
     if (!role) {
-        await discordBotKeyvs.deleteValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionRole);
+        await discordBotKeyvs.deleteBumpReminderMentionRoleId(interaction.guildId!);
         const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: __t("disabled") }), ReplyEmbedType.Success);
         await interaction.reply({ embeds: [embed] });
         return;
@@ -84,27 +84,27 @@ const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
         return;
     }
 
-    await discordBotKeyvs.setValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionRole, role);
+    await discordBotKeyvs.setBumpReminderMentionRoleId(interaction.guildId!, role.id);
     const embed = getReplyEmbed(__t("bot/command/cnf-bump-reminder/set-mention/success", { role: role.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
-        const isEnabled = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.IsBumpReminderEnabled) as boolean | undefined;
+        const isEnabled = await discordBotKeyvs.getIsBumpReminderEnabled(interaction.guildId!);
         return isEnabled ? __t("executing") : __t("stoping");
     })();
     const mentionRoleText = await (async () => {
-        const memtionRole = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionRole) as Role | undefined;
-        if (!memtionRole) return __t("unset");
-        const role = await interaction.guild?.roles.fetch(memtionRole.id);
+        const memtionRoleId = await discordBotKeyvs.getBumpReminderMentionRoleId(interaction.guildId!);
+        if (!memtionRoleId) return __t("unset");
+        const role = await interaction.guild?.roles.fetch(memtionRoleId);
         return role?.toString() || __t("unset");
     })();
     const mentionUsersText = await (async () => {
-        const mentionUsers = await discordBotKeyvs.getValue(interaction.guildId!, DiscordBotKeyvKeys.BumpReminderMentionUsers) as User[] | undefined;
-        if (!mentionUsers?.length) return __t("notting");
-        return await Promise.all(mentionUsers.map(async user => {
-            const member = await interaction.guild?.members.fetch(user.id)
+        const mentionUserIds = await discordBotKeyvs.getBumpReminderMentionUserIds(interaction.guildId!);
+        if (!mentionUserIds?.length) return __t("notting");
+        return await Promise.all(mentionUserIds.map(async userId => {
+            const member = await interaction.guild?.members.fetch(userId)
                 .catch(() => undefined);
             return member?.toString() || __t("notFoundUser");
         })).then(members => members.toString());
