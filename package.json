@@ -25,8 +25,8 @@
   "devDependencies": {
     "@hi18n/cli": "^0.1.11",
     "@types/lodash": "^4.17.0",
-    "@types/node": "^20.12.5",
+    "@types/node": "^20.12.7",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   }
 }
