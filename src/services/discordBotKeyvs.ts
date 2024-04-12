@@ -10,7 +10,7 @@ enum DiscordBotKeyvKeys {
     BumpReminderMentionRoleId = "bumpReminder/mentionRoleId",
     BumpReminderRemindDate = "bumpReminder/remindDate",
     BumpReminderMentionUserIds = "bumpReminder/mentionUserIds",
-    StickedMessageChannelIdMessageIdPairs = "stickMessage/channelIdMessageIdPairs",
+    StickMessageChannelIdMessageIdPairs = "stickMessage/channelIdMessageIdPairs",
     LeaveMemberLogChannelId = "leaveMemberLog/channelId",
 }
 
@@ -112,16 +112,16 @@ class DiscordBotKeyvs {
         await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.BumpReminderMentionUserIds);
     }
 
-    async getStickedMessageChannelIdMessageIdPairs(guildId: string) {
-        return await this.keyvs.getCollection(guildId, DiscordBotKeyvKeys.StickedMessageChannelIdMessageIdPairs) as Collection<string, string> | undefined;
+    async getStickMessageChannelIdMessageIdPairs(guildId: string) {
+        return await this.keyvs.getCollection(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs) as Collection<string, string> | undefined;
     }
 
-    async setStickedMessageChannelIdMessageIdPairs(guildId: string, channelIdMessageIdPairs: Collection<string, string>) {
-        await this.keyvs.setCollection(guildId, DiscordBotKeyvKeys.StickedMessageChannelIdMessageIdPairs, channelIdMessageIdPairs);
+    async setStickMessageChannelIdMessageIdPairs(guildId: string, channelIdMessageIdPairs: Collection<string, string>) {
+        await this.keyvs.setCollection(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs, channelIdMessageIdPairs);
     }
 
-    async deleteStickedMessageChannelIdMessageIdPairs(guildId: string) {
-        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.StickedMessageChannelIdMessageIdPairs);
+    async deleteStickMessageChannelIdMessageIdPairs(guildId: string) {
+        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs);
     }
 
     async getLeaveMemberLogChannelId(guildId: string) {

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, Collection, Colors, ComponentType, DiscordAPIError, EmbedBuilder, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, ChatInputCommandInteraction, Collection, Colors, ComponentType, DiscordAPIError, EmbedBuilder, Guild, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, PermissionFlagsBits, RESTJSONErrorCodes, SlashCommandBuilder, TextChannel, TextInputBuilder, TextInputStyle } from "discord.js";
 import { Command, Modal, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
@@ -67,21 +67,14 @@ const stickTextModal: Modal = {
     execute: async (interaction: ModalSubmitInteraction) => {
         await interaction.deferReply();
         const text = interaction.fields.getTextInputValue("inputStickText");
-        const channel = stickTextModal.data as TextChannel;
-        const stickChannel = await interaction.guild!.channels.fetch(channel.id)
-            .catch((reason: DiscordAPIError) => {
-                if (reason.code === RESTJSONErrorCodes.UnknownChannel) {
-                    return undefined;
-                }
-                throw reason;
-            }) as TextChannel | undefined;
-        if (!stickChannel) {
+        const stickMessageChannel = stickTextModal.data as TextChannel | undefined;
+        if (!stickMessageChannel) {
             const embed = getReplyEmbed(__t("bot/command/stick-msg/start/notFoundChannel"), ReplyEmbedType.Warn);
             await interaction.editReply({ embeds: [embed] });
             return;
         }
-        const stickedMessagePairs = await discordBotKeyvs.getStickedMessageChannelIdMessageIdPairs(interaction.guild!.id) || new Collection<string, string>();
-        if (stickedMessagePairs.has(stickChannel.id)) {
+        const stickMessagePairs = await discordBotKeyvs.getStickMessageChannelIdMessageIdPairs(interaction.guild!.id) || new Collection<string, string>();
+        if (stickMessagePairs.has(stickMessageChannel.id)) {
             const embed = getReplyEmbed(__t("bot/command/stick-msg/start/alreadySticked"), ReplyEmbedType.Warn);
             const actionRow = new ActionRowBuilder<ButtonBuilder>()
                 .setComponents([
@@ -99,9 +92,9 @@ const stickTextModal: Modal = {
             collector?.on("collect", async (buttonInteraction) => {
                 switch (buttonInteraction.customId) {
                     case "delete": {
-                        deleteStickMessage(stickChannel, stickedMessagePairs);
-                        await stickMessage(stickChannel, text, stickedMessagePairs);
-                        const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success/restick", { channel: stickChannel.toString() }), ReplyEmbedType.Success);
+                        await deleteStickMessage(stickMessageChannel);
+                        await stickMessage(stickMessageChannel, text, stickMessagePairs);
+                        const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success/restick", { channel: stickMessageChannel.toString() }), ReplyEmbedType.Success);
                         await interaction.followUp({ embeds: [embed] });
                         break;
                     }
@@ -122,78 +115,106 @@ const stickTextModal: Modal = {
             });
             return;
         }
-        await stickMessage(stickChannel, text, stickedMessagePairs);
-        const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success", { channel: stickChannel.toString() }), ReplyEmbedType.Success);
+        await stickMessage(stickMessageChannel, text, stickMessagePairs);
+        const embed = getReplyEmbed(__t("bot/command/stick-msg/start/success", { channel: stickMessageChannel.toString() }), ReplyEmbedType.Success);
         await interaction.followUp({ embeds: [embed] });
     }
 }
 
-const stickMessage = async (stickChannel: TextChannel, message: string, sticedMessageChannelIdMessageIdPairs: Collection<string, string>) => {
-    const sentMessage = await stickChannel.send(message);
-    sticedMessageChannelIdMessageIdPairs.set(stickChannel.id, sentMessage.id);
-    await discordBotKeyvs.setStickedMessageChannelIdMessageIdPairs(stickChannel.guildId, sticedMessageChannelIdMessageIdPairs);
+const refreshStickMessage = async (guild: Guild) => {
+    const stickMessagePairs = await discordBotKeyvs.getStickMessageChannelIdMessageIdPairs(guild.id);
+    if (!stickMessagePairs?.size) return;
+    await discordBotKeyvs.setStickMessageChannelIdMessageIdPairs(guild.id, stickMessagePairs);
+    for (const [channelId, messageId] of stickMessagePairs.entries()) {
+        const stickMessageChannel = await guild.channels.fetch(channelId)
+            .catch((error: DiscordAPIError) => {
+                if (error.code === RESTJSONErrorCodes.UnknownChannel) return undefined;
+                throw error;
+            }) as TextChannel | undefined;
+        if (!stickMessageChannel) {
+            stickMessagePairs.delete(channelId);
+            continue;
+        }
+        const stickMessage = await stickMessageChannel.messages.fetch(messageId)
+            .catch((error: DiscordAPIError) => {
+                if (error.code === RESTJSONErrorCodes.UnknownMessage) return undefined;
+                throw error;
+            });
+        if (!stickMessage) {
+            stickMessagePairs.delete(channelId);
+            continue;
+        }
+    }
+    await discordBotKeyvs.setStickMessageChannelIdMessageIdPairs(guild.id, stickMessagePairs);
 };
 
-const executeStart = async (interaction: ChatInputCommandInteraction) => {
-    const channel = interaction.options.getChannel("channel") || interaction.channel!;
-    if (channel.type === ChannelType.GuildText) {
-        stickTextModal.data = channel;
-        interaction.client.modals.set(stickTextModal.modal.data.custom_id!, stickTextModal);
-        await interaction.showModal(stickTextModal.modal);
-    }
+const stickMessage = async (stickMessageChannel: TextChannel, message: string, stickMessageChannelIdMessageIdPairs: Collection<string, string>) => {
+    const sentMessage = await stickMessageChannel.send(message);
+    stickMessageChannelIdMessageIdPairs.set(stickMessageChannel.id, sentMessage.id);
+    await discordBotKeyvs.setStickMessageChannelIdMessageIdPairs(stickMessageChannel.guildId, stickMessageChannelIdMessageIdPairs);
 };
 
 enum StickMessageDeleteStatus {
     Success,
-    NotFound,
+    notSticked,
+    NotFoundChannel,
+    NotFoundMessage,
     UnknownError,
 }
 
-const deleteStickMessage = async (stickChannel: TextChannel, stickedMessageChannelIdMessageIdPairs: Collection<string, string>) => {
-    const stickedMessageId = stickedMessageChannelIdMessageIdPairs.get(stickChannel.id);
-    if (!stickedMessageId) return;
-    const stickedMessage = await stickChannel.messages.fetch(stickedMessageId)
+const deleteStickMessage = async (stickMessageChannel: TextChannel) => {
+    const stickMessagePairs = await discordBotKeyvs.getStickMessageChannelIdMessageIdPairs(stickMessageChannel.guildId);
+    if (!stickMessagePairs?.has(stickMessageChannel.id)) return StickMessageDeleteStatus.notSticked;
+    const stickMessageId = stickMessagePairs.get(stickMessageChannel.id);
+    if (!stickMessageId) return StickMessageDeleteStatus.NotFoundChannel;
+    const stickMessage = await stickMessageChannel.messages.fetch(stickMessageId)
         .catch((error: DiscordAPIError) => {
             if (error.code === RESTJSONErrorCodes.UnknownMessage) return undefined;
             throw error;
         });
-    if (stickedMessage) {
-        await stickedMessage.delete()
+    if (!stickMessage) return StickMessageDeleteStatus.NotFoundMessage;
+    else {
+        await stickMessage.delete()
             .catch((error: DiscordAPIError) => {
                 if (error.code === RESTJSONErrorCodes.UnknownMessage) return;
                 throw error;
             });
     }
-    stickedMessageChannelIdMessageIdPairs.delete(stickChannel.id);
-    await discordBotKeyvs.setStickedMessageChannelIdMessageIdPairs(stickChannel.guildId, stickedMessageChannelIdMessageIdPairs);
+    stickMessagePairs.delete(stickMessageChannel.id);
+    await discordBotKeyvs.setStickMessageChannelIdMessageIdPairs(stickMessageChannel.guildId, stickMessagePairs);
+    return StickMessageDeleteStatus.Success;
+};
+
+const executeStart = async (interaction: ChatInputCommandInteraction) => {
+    const stickMessageChannel = interaction.options.getChannel("channel") || interaction.channel! as TextChannel;
+    await refreshStickMessage(interaction.guild!);
+    if (stickMessageChannel.type === ChannelType.GuildText) {
+        stickTextModal.data = stickMessageChannel;
+        interaction.client.modals.set(stickTextModal.modal.data.custom_id!, stickTextModal);
+        await interaction.showModal(stickTextModal.modal);
+    }
 };
 
 const executeDelete = async (interaction: ChatInputCommandInteraction) => {
-    const stickedMessagePairs = await discordBotKeyvs.getStickedMessageChannelIdMessageIdPairs(interaction.guildId!);
-    if (!stickedMessagePairs?.size) {
+    await refreshStickMessage(interaction.guild!);
+    const stickMessageChannel = interaction.options.getChannel("channel") as TextChannel || interaction.channel! as TextChannel;
+    const deleteStatus = await deleteStickMessage(stickMessageChannel);
+    if (deleteStatus !== StickMessageDeleteStatus.Success) {
         const embed = getReplyEmbed(__t("bot/command/stick-msg/delete/notSticked"), ReplyEmbedType.Warn);
         await interaction.reply({ embeds: [embed] });
         return;
     }
-    for (const channelId of stickedMessagePairs.keys()) {
-        const stickChannel = await interaction.guild?.channels.fetch(channelId);
-        if (!stickChannel) {
-            stickedMessagePairs.delete(channelId);
-        }
-    }
-    await discordBotKeyvs.setStickedMessageChannelIdMessageIdPairs(interaction.guildId!, stickedMessagePairs);
-    const channel = interaction.options.getChannel("channel") as TextChannel || interaction.channel! as TextChannel;
-    deleteStickMessage(channel, stickedMessagePairs);
-    const embed = getReplyEmbed(__t("bot/command/stick-msg/delete/success", { channel: channel.toString() }), ReplyEmbedType.Success);
+    const embed = getReplyEmbed(__t("bot/command/stick-msg/delete/success", { channel: stickMessageChannel.toString() }), ReplyEmbedType.Success);
     await interaction.reply({ embeds: [embed] });
 };
 
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
-    const stickedMessageChannels = await (async () => {
-        const stickedMessagePairs = await discordBotKeyvs.getStickedMessageChannelIdMessageIdPairs(interaction.guildId!);
-        if (!stickedMessagePairs?.size) return __t("notting");
-        const stickedMessageChannelIds = stickedMessagePairs.keys();
-        return await Promise.all(Array.from(stickedMessageChannelIds).map(async channelId => {
+    await refreshStickMessage(interaction.guild!);
+    const stickMessageChannels = await (async () => {
+        const stickMessagePairs = await discordBotKeyvs.getStickMessageChannelIdMessageIdPairs(interaction.guildId!);
+        if (!stickMessagePairs?.size) return __t("notting");
+        const stickMessageChannelIds = stickMessagePairs.keys();
+        return await Promise.all(Array.from(stickMessageChannelIds).map(async channelId => {
             return `<#${channelId}>`;
         })).then(channels => channels.toString());
     })();
@@ -201,7 +222,7 @@ export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) =
         .setTitle(__t("bot/stickMessage"))
         .setColor(Colors.Blue)
         .setFields([
-            { name: __t("stickedMessageChannel"), value: stickedMessageChannels },
+            { name: __t("stickMessageChannel"), value: stickMessageChannels },
         ])
     return statusEmbed;
 };

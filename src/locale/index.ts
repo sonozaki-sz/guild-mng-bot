@@ -48,7 +48,7 @@ export type Vocabulary = {
     "doDelete": Message,
     "cancel": Message,
     "operationTimedOut": Message,
-    "stickedMessageChannel": Message,
+    "stickMessageChannel": Message,
     "leaveMemberLogSendChannel": Message,
 
     // log

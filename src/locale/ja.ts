@@ -47,7 +47,7 @@ export default new Catalog<Vocabulary>("ja", {
     "doDelete": msg("削除する"),
     "cancel": msg("キャンセル"),
     "operationTimedOut": msg("操作がタイムアウトしました。"),
-    "stickedMessageChannel": msg("メッセージを固定したチャンネル"),
+    "stickMessageChannel": msg("メッセージを固定したチャンネル"),
     "leaveMemberLogSendChannel": msg("脱退メンバーログの送信チャンネル"),
 
     // Log
