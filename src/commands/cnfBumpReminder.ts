@@ -92,7 +92,7 @@ const executeSetMention = async (interaction: ChatInputCommandInteraction) => {
 export const getStatusEmbed = async (interaction: ChatInputCommandInteraction) => {
     const statusText = await (async () => {
         const isEnabled = await discordBotKeyvs.getIsBumpReminderEnabled(interaction.guildId!);
-        return isEnabled ? __t("executing") : __t("stoping");
+        return isEnabled ? __t("executing") : __t("stopping");
     })();
     const mentionRoleText = await (async () => {
         const memtionRoleId = await discordBotKeyvs.getBumpReminderMentionRoleId(interaction.guildId!);

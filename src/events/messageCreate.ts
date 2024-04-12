@@ -122,9 +122,9 @@ const executeBumpReminder = async (message: Message) => {
 };
 
 const executeStickMessage = async (message: Message) => {
-    const stickedMessageIds = await discordBotKeyvs.getStickedMessageIds(message.guildId!);
-    if (!stickedMessageIds?.has(message.channel.id)) return;
-    const stickedMessageId = stickedMessageIds.get(message.channel.id);
+    const stickedMessagePairs = await discordBotKeyvs.getStickedMessageChannelIdMessageIdPairs(message.guildId!);
+    if (!stickedMessagePairs?.has(message.channel.id)) return;
+    const stickedMessageId = stickedMessagePairs.get(message.channel.id);
     if (stickedMessageId === message.id) return;
     const stickedMessage = await message.channel.messages.fetch(stickedMessageId!)
         .catch(async (error: DiscordAPIError) => {
@@ -137,12 +137,12 @@ const executeStickMessage = async (message: Message) => {
             if (error.code === RESTJSONErrorCodes.UnknownMessage) return;
             throw error;
         });
-    stickedMessageIds.delete(message.channel.id);
+    stickedMessagePairs.delete(message.channel.id);
     const content = stickedMessage.content;
     const embeds = stickedMessage.embeds;
     const newStickMessage = await message.channel.send({ content, embeds });
-    stickedMessageIds.set(message.channel.id, newStickMessage.id);
-    await discordBotKeyvs.setStickedMessageIds(message.guildId!, stickedMessageIds);
+    stickedMessagePairs.set(message.channel.id, newStickMessage.id);
+    await discordBotKeyvs.setStickedMessageChannelIdMessageIdPairs(message.guildId!, stickedMessagePairs);
     logger.info(__t("log/bot/stickMessage/execute", { guild: message.guildId!, channel: message.channel.id }));
 };
 
