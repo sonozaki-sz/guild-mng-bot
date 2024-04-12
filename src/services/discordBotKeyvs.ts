@@ -3,15 +3,14 @@ import { Keyvs } from "./keyvs";
 
 enum DiscordBotKeyvKeys {
     DestAfkVcId = "destAfkVcId",
-    VacTriggerVcId = "vcAutoCreation/triggerVcIds",
-    IsVacEnabled = "vcAutoCreation/isEnabled",
+    VacTriggerVcIds = "vcAutoCreation/triggerVcIds",
     VacChannelIds = "vcAutoCreation/channelIds",
     ProfChannelId = "profChannelId",
     IsBumpReminderEnabled = "bumpReminder/isEnabled",
     BumpReminderMentionRoleId = "bumpReminder/mentionRoleId",
     BumpReminderRemindDate = "bumpReminder/remindDate",
     BumpReminderMentionUserIds = "bumpReminder/mentionUserIds",
-    StickedMessageIds = "stickMessage/stickedMessageIds",
+    StickMessageChannelIdMessageIdPairs = "stickMessage/channelIdMessageIdPairs",
     LeaveMemberLogChannelId = "leaveMemberLog/channelId",
 }
 
@@ -30,28 +29,16 @@ class DiscordBotKeyvs {
         await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.DestAfkVcId);
     }
 
-    async getVacTriggerVcId(guildId: string) {
-        return await this.keyvs.getValue(guildId, DiscordBotKeyvKeys.VacTriggerVcId) as string | undefined;
+    async getVacTriggerVcIds(guildId: string) {
+        return await this.keyvs.getValue(guildId, DiscordBotKeyvKeys.VacTriggerVcIds) as string[] | undefined;
     }
 
-    async setVacTriggerVcId(guildId: string, vacTriggerVcId: string) {
-        await this.keyvs.setValue(guildId, DiscordBotKeyvKeys.VacTriggerVcId, vacTriggerVcId);
+    async setVacTriggerVcIds(guildId: string, vacTriggerVcIds: string[]) {
+        await this.keyvs.setValue(guildId, DiscordBotKeyvKeys.VacTriggerVcIds, vacTriggerVcIds);
     }
 
-    async deleteVacTriggerVcId(guildId: string) {
-        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.VacTriggerVcId);
-    }
-
-    async getIsVacEnabled(guildId: string) {
-        return await this.keyvs.getValue(guildId, DiscordBotKeyvKeys.IsVacEnabled) as boolean | undefined;
-    }
-
-    async setIsVacEnabled(guildId: string, isEnabled: boolean) {
-        await this.keyvs.setValue(guildId, DiscordBotKeyvKeys.IsVacEnabled, isEnabled);
-    }
-
-    async deleteIsVacEnabled(guildId: string) {
-        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.IsVacEnabled);
+    async deleteVacTriggerVcIds(guildId: string) {
+        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.VacTriggerVcIds);
     }
 
     async getVacChannelIds(guildId: string) {
@@ -125,16 +112,16 @@ class DiscordBotKeyvs {
         await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.BumpReminderMentionUserIds);
     }
 
-    async getStickedMessageIds(guildId: string) {
-        return await this.keyvs.getCollection(guildId, DiscordBotKeyvKeys.StickedMessageIds) as Collection<string, string> | undefined;
+    async getStickMessageChannelIdMessageIdPairs(guildId: string) {
+        return await this.keyvs.getCollection(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs) as Collection<string, string> | undefined;
     }
 
-    async setStickedMessageIds(guildId: string, stickedMessages: Collection<string, string>) {
-        await this.keyvs.setCollection(guildId, DiscordBotKeyvKeys.StickedMessageIds, stickedMessages);
+    async setStickMessageChannelIdMessageIdPairs(guildId: string, channelIdMessageIdPairs: Collection<string, string>) {
+        await this.keyvs.setCollection(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs, channelIdMessageIdPairs);
     }
 
-    async deleteStickedMessageIds(guildId: string) {
-        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.StickedMessageIds);
+    async deleteStickMessageChannelIdMessageIdPairs(guildId: string) {
+        await this.keyvs.deleteValue(guildId, DiscordBotKeyvKeys.StickMessageChannelIdMessageIdPairs);
     }
 
     async getLeaveMemberLogChannelId(guildId: string) {

@@ -10,7 +10,7 @@ export const channelDeleteEvent: BotEvent = {
     execute: async (channel: DMChannel | GuildChannel) => {
         switch (channel.type) {
             case ChannelType.GuildVoice: {
-                stopVcAutoCreation(channel as VoiceChannel)
+                await deleteVacTriggerVc(channel as VoiceChannel)
                     .catch((error: Error) => {
                         const errorDesc = error.stack || error.message || "unknown error";
                         const logMsg = __t("log/bot/vcAutoCreation/error", { guild: channel.guildId, error: errorDesc });
@@ -26,15 +26,12 @@ export const channelDeleteEvent: BotEvent = {
     }
 };
 
-const stopVcAutoCreation = async (channel: VoiceChannel) => {
-    const isVacEnabled = await discordBotKeyvs.getIsVacEnabled(channel.guildId!);
-    if (isVacEnabled) {
-        const triggerChannelId = await discordBotKeyvs.getVacTriggerVcId(channel.guildId!);
-        if (channel.id === triggerChannelId) {
-            await discordBotKeyvs.setIsVacEnabled(channel.guildId!, false);
-            await discordBotKeyvs.deleteVacTriggerVcId(channel.guildId!);
-            logger.info(__t("log/bot/vcAutoCreation/stop", { guild: channel.guildId }));
-        }
+const deleteVacTriggerVc = async (channel: VoiceChannel) => {
+    const vacTriggerVcIds = await discordBotKeyvs.getVacTriggerVcIds(channel.guildId!);
+    if (vacTriggerVcIds?.some(triggerVcId => triggerVcId === channel.id)) {
+        vacTriggerVcIds.splice(vacTriggerVcIds.indexOf(channel.id), 1);
+        await discordBotKeyvs.setVacTriggerVcIds(channel.guildId!, vacTriggerVcIds);
+        logger.info(__t("log/bot/vcAutoCreation/deleteTriggerChannel", { guild: channel.guildId!, channel: channel.id }));
     }
 };
 
