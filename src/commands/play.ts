@@ -65,7 +65,6 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
     const collector = message.createMessageComponentCollector<ComponentType.StringSelect>({ time: 300_000 });
     collector.on("collect", async (stringSelectMenuInteraction) => {
         if (stringSelectMenuInteraction.customId === "selectRps") {
-            collector.stop();
             const botHandIndex = rpsHands.randomKey()!;
             const userHandIndex = Number(stringSelectMenuInteraction.values[0]);
             const rpsResult = judgeRps(botHandIndex, userHandIndex);
@@ -83,10 +82,14 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
                 }
             })(rpsResult.result);
             await stringSelectMenuInteraction.update({ content: rpsHands.get(userHandIndex)?.handEmoji, components: [] });
-            await (await stringSelectMenuInteraction.followUp(rpsResult.resultText)).reply(botResponse);
+            const followUp = await stringSelectMenuInteraction.followUp(rpsResult.resultText);
+            await followUp.reply(botResponse);
+            collector.stop("complete");
+            // await (await stringSelectMenuInteraction.followUp(rpsResult.resultText)).reply(botResponse);
         }
     });
     collector.once("end", async (_, reason) => {
+        if (reason === "complete") return;
         if (reason === "time") {
             await interaction.followUp(__t("bot/command/play/rps/timeout"));
         }
