@@ -85,7 +85,6 @@ const executeRps = async (interaction: ChatInputCommandInteraction) => {
             const followUp = await stringSelectMenuInteraction.followUp(rpsResult.resultText);
             await followUp.reply(botResponse);
             collector.stop("complete");
-            // await (await stringSelectMenuInteraction.followUp(rpsResult.resultText)).reply(botResponse);
         }
     });
     collector.once("end", async (_, reason) => {
