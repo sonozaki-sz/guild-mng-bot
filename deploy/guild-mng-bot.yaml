@@ -17,13 +17,13 @@ spec:
         image: ghcr.io/sylx/guild-mng-bot:latest
         env:
         - name: TOKEN
-          value: '{{TOKEN}}'
+          value: $(TOKEN)
         - name: APP_ID
-          value: '{{APP_ID}}'
+          value: $(APP_ID)
         - name: GUILD_ID
-          value: '{{GUILD_ID}}'
+          value: $(GUILD_ID)
         - name: LOCALE
-          value: '{{LOCALE}}'
+          value: $(LOCALE)
         volumeMounts:
         - name: logs
           mountPath: /app/logs
