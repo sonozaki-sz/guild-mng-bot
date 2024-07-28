@@ -15,15 +15,9 @@ spec:
       containers:
       - name: bot
         image: ghcr.io/sylx/guild-mng-bot:latest
-        env:
-        - name: TOKEN
-          value: $(TOKEN)
-        - name: APP_ID
-          value: $(APP_ID)
-        - name: GUILD_ID
-          value: $(GUILD_ID)
-        - name: LOCALE
-          value: $(LOCALE)
+        envFrom:
+        - configMapRef:
+            name: guild-mng-bot-config   
         volumeMounts:
         - name: logs
           mountPath: /app/logs
@@ -38,7 +32,6 @@ spec:
       - name: storage
         persistentVolumeClaim:
           claimName: storage-pvc
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
