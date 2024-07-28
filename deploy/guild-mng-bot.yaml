@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guild-mng-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guild-mng-bot
+  template:
+    metadata:
+      labels:
+        app: guild-mng-bot
+    spec:
+      containers:
+      - name: bot
+        image: ghcr.io/sylx/guild-mng-bot:latest
+        envFrom:
+        - configMapRef:
+            name: guild-mng-bot-config   
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: storage
+          mountPath: /app/storage
+      nodeSelector:
+        kubernetes.io/hostname: turbine      
+      volumes:
+      - name: logs
+        persistentVolumeClaim:
+          claimName: logs-pvc
+      - name: storage
+        persistentVolumeClaim:
+          claimName: storage-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
