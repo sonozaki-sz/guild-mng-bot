@@ -36,10 +36,12 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Set DISCORD_WEBHOOK_URL environment variable
+        run: echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> $GITHUB_ENV
       # Discordに通知する
       - name: Notify Discord
         # secrets.DISCORD_WEBHOOK_URLがある場合のみ実行
-        if: secrets.DISCORD_WEBHOOK_URL
+        if: env.DISCORD_WEBHOOK_URL != ''
         run: |
           # Embedメッセージの内容を作成
           if [ "${{ needs.deploy.result }}" = "success" ]; then
