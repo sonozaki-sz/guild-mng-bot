@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: bot
-        image: ghcr.io/sonozakisz/guild-mng-bot:latest
+        image: ghcr.io/sylx/guild-mng-bot:latest
         env:
         - name: TOKEN
           value: '{{TOKEN}}'
