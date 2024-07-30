@@ -23,8 +23,11 @@ spec:
           mountPath: /app/logs
         - name: storage
           mountPath: /app/storage
-      nodeSelector:
-        kubernetes.io/hostname: turbine      
+      tolerations:
+        - effect: NoSchedule
+          key: dedicated
+          operator: Equal
+          value: turbine
       volumes:
       - name: logs
         persistentVolumeClaim:
