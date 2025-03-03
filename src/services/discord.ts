@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SharedSlashCommand, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, Collection, ColorResolvable, Colors, ComponentType, EmbedBuilder, FetchMessagesOptions, GuildMessageManager, GuildTextBasedChannel, InteractionCollector, MappedInteractionTypes, Message, MessageCollectorOptionsParams, ModalBuilder, ModalSubmitInteraction, SharedSlashCommand, StringSelectMenuBuilder, StringSelectMenuInteraction, TextBasedChannel } from "discord.js";
 import { __t } from "./locale";
 
 export interface Command {
@@ -198,7 +198,7 @@ export class EmbedPage {
     }
 
     public async send(options?: MessageCollectorOptionsParams<ComponentType.Button | ComponentType.StringSelect>) {
-        this._message = await this._channel.send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
+        this._message = await (this._channel as GuildTextBasedChannel).send({ embeds: [this._pages[this._currentPageIndex]], components: this._actionRows });
         this._collector = this._message.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({ ...options });
         this._collector?.on("collect", async interaction => {
             switch (interaction.customId) {

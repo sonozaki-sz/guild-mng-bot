@@ -1,4 +1,4 @@
-import { Events, Interaction } from "discord.js";
+import { Events, GuildTextBasedChannel, Interaction } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { KeyvsError } from "../services/keyvs";
@@ -39,7 +39,7 @@ export const interactionCreateEvent: BotEvent = {
                     const errorDescMsg = error.message || "unknown error";
                     const replyMsg = __t("log/bot/command/execute/faild", { command: interaction.commandName, guild: interaction.guildId!, error: errorDescMsg });
                     const embed = getReplyEmbed(replyMsg, ReplyEmbedType.Error);
-                    await interaction.channel?.send({ embeds: [embed] });
+                    await (interaction.channel as GuildTextBasedChannel)?.send({ embeds: [embed] });
 
                     // エラーをログに出力する
                     const errorDescLog = error.stack || error.message || "unknown error";
@@ -50,7 +50,7 @@ export const interactionCreateEvent: BotEvent = {
                         // keyvがエラーを返した場合はkeyvをリセットし、メッセージをチャンネルとログに出力する
                         discordBotKeyvs.keyvs.setkeyv(interaction.guildId!);
                         const embed = getReplyEmbed(__t("bot/config/reset", { namespace: interaction.guildId! }), ReplyEmbedType.Info);
-                        await interaction.channel?.send({ embeds: [embed] });
+                        await (interaction.channel as GuildTextBasedChannel)?.send({ embeds: [embed] });
                         logger.info(__t("log/keyvs/reset", { namespace: interaction.guildId! }));
                     }
                 });
