@@ -21,12 +21,12 @@ export interface BotEvent {
 }
 
 export const stopEventHandler = (client: Client, event: BotEvent) => {
-    client.removeListener(
+    client.off(
         event.name, (...args: any[]) => event.execute(...args));
 };
 
 export const startEventHander = (client: Client, event: BotEvent) => {
-    client.addListener(
+    client.on(
         event.name, (...args: any[]) => event.execute(...args));
 };
 
