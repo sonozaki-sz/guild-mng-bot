@@ -16,17 +16,27 @@
   "dependencies": {
     "@hi18n/core": "^0.1.10",
     "@keyv/sqlite": "^3.6.7",
-    "discord.js": "^14.15.2",
-    "dotenv": "^16.4.5",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
     "keyv": "^4.5.4",
     "lodash": "^4.17.21",
     "log4js": "^6.9.1"
   },
   "devDependencies": {
     "@hi18n/cli": "^0.1.11",
-    "@types/lodash": "^4.17.1",
-    "@types/node": "^20.12.11",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^20.17.22",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "core-js-pure",
+      "sqlite3"
+    ]
   }
 }
