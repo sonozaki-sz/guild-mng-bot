@@ -30,7 +30,7 @@ export const cnfVcCommand: Command = {
                         .setRequired(true)
                 )
         ),
-    cooldown: 10,
+    cooldown: 20,
     execute: async (interaction: ChatInputCommandInteraction) => {
         await interaction.deferReply();
         const member = await interaction.guild?.members.fetch(interaction.user.id);
