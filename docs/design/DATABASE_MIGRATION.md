@@ -2,9 +2,121 @@
 
 ## 概要
 
-SQLiteベースのKeyvストレージから、PostgreSQL + Prismaへ移行します。
+このドキュメントでは、データ永続化の戦略選択と、将来的なPostgreSQL移行について説明します。
 
-## 現状分析
+## データ永続化戦略の選択
+
+### オプション1: ローカルストレージ + SQLite（推奨 - 現段階）
+
+**概要**: 既存のSQLite + Keyvをそのまま使用し、docker-compose volumesで永続化
+
+#### メリット
+- ✅ **最小限の変更**: 既存コードをほぼそのまま使用可能
+- ✅ **完全無料**: Oracle Cloud Always Freeのローカルストレージを使用
+- ✅ **シンプル**: セットアップが簡単
+- ✅ **低レイテンシ**: ローカルファイルアクセスで高速
+- ✅ **軽量**: メモリ・CPU消費が少ない
+- ✅ **容量十分**: 47GB boot volume（現状のデータ量で十分）
+
+#### デメリット
+- ❌ **スケール不可**: 単一インスタンスのみ（複数マシンで共有不可）
+- ❌ **手動バックアップ**: 自動バックアップ機能なし
+- ❌ **高可用性なし**: マシン故障時にダウンタイム発生
+
+#### セットアップ手順
+
+```yaml
+# docker-compose.yml に設定
+services:
+  bot:
+    image: guild-mng-bot:latest
+    volumes:
+      - ./storage:/app/storage  # ローカルディレクトリをマウント
+    environment:
+      - DATABASE_URL=sqlite:///app/storage/db.sqlite
+```
+
+```typescript
+// src/shared/config/index.ts
+export const config = {
+  // ...
+  databaseUrl: process.env.DATABASE_URL || 'sqlite:///app/storage/db.sqlite',
+};
+```
+
+#### バックアップ戦略
+
+```bash
+# 定期的に手動バックアップ（cronで自動化可能）
+ssh -i ~/.ssh/oracle_cloud ubuntu@<INSTANCE_IP>
+cd ~/guild-mng-bot
+tar -czf ~/backups/backup-$(date +%Y%m%d).tar.gz ./storage
+
+# ローカルにダウンロード
+scp -i ~/.ssh/oracle_cloud ubuntu@<INSTANCE_IP>:~/backups/backup-20260123.tar.gz ./
+```
+
+#### この方式が適している場合
+- ✅ 個人・小規模Bot（現状のguild-mng-bot）
+- ✅ 単一インスタンスで十分
+- ✅ データ量が少ない（数MB〜数十MB）
+- ✅ ダウンタイム許容可能
+- ✅ コストを抑えたい
+
+---
+
+### オプション2: PostgreSQL + Prisma（将来検討）
+
+**概要**: PostgreSQLへ移行し、Prisma ORMで管理（Oracle Cloud上でDockerコンテナとして稼働）
+
+#### メリット
+- ✅ **スケーラブル**: 複数Botインスタンスで共有可能
+- ✅ **WebUI対応**: 複数サーバー（Bot + WebAPI）からアクセス可能
+- ✅ **本番向け**: エンタープライズ用途に適している
+- ✅ **完全無料**: Oracle Cloud Always Free内で稼働可能
+- ✅ **データ整合性**: ACID準拠、トランザクション対応
+
+#### デメリット
+- ❌ **複雑**: セットアップ・運用が複雑
+- ❌ **ネットワークレイテンシ**: コンテナ間通信で若干遅延
+- ❌ **リソース消費**: PostgreSQLコンテナ分のメモリ・CPU消費
+- ❌ **移行作業**: データ移行スクリプトが必要
+
+#### この方式が適している場合
+- ✅ WebUIを本格実装予定
+- ✅ 複数インスタンスでスケール必要
+- ✅ データ量が増加（100MB超）
+- ✅ 高可用性が必須
+- ✅ 本番環境での安定運用重視
+
+---
+
+### 推奨アプローチ: 段階的移行
+
+**Phase 1（現在）**: ローカルストレージ + SQLite
+- 既存コードそのまま
+- 最小限の変更でOracle Cloudデプロイ
+- docker-compose volumesで永続化
+- コスト: $0
+
+**Phase 2（将来 - WebUI実装時）**: PostgreSQL移行検討
+- 以下の条件を満たしたら移行:
+  - WebUIを実装する
+  - 複数インスタンスが必要になる
+  - データ量が1GB超える
+  - 高可用性が求められる
+  - 複数Botで同一DBを共有したい
+
+---
+
+## PostgreSQL移行（将来実装用）
+
+以下は、将来Postgresへ移行する際の詳細手順です。現時点では実装不要です。
+
+## 現状分析（参考情報）
+
+> **注**: このセクションは将来のPostgres移行時の参考情報です。
+> 現段階では既存のSQLite + Keyvを**そのまま使用**し、docker-compose volumesで永続化します。
 
 ### 現在のデータ構造（Keyv）
 
@@ -387,43 +499,68 @@ export class GuildConfigRepository {
 export const guildConfigRepository = new GuildConfigRepository();
 ```
 
-## Fly.io PostgreSQL セットアップ
+## PostgreSQL セットアップ（将来実装用）
 
-### Step 1: Fly Postgres作成
+### Step 1: PostgreSQL コンテナ追加
+
+```yaml
+# docker-compose.yml に追加
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: guild-mng-bot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-guild_bot}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-guild_mng_bot}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-guild_bot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+```
 
 ```bash
-# Fly Postgresアプリ作成
-fly postgres create --name guild-mng-bot-db
-
-# 接続情報取得
-fly postgres connect -a guild-mng-bot-db
-
-# 接続文字列をFly Secretsに設定
-fly secrets set DATABASE_URL="postgres://..." -a guild-mng-bot
+# 環境変数設定（.env）
+DB_USER=guild_bot
+DB_PASSWORD=your-secure-password-here
+DB_NAME=guild_mng_bot
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
 ```
 
 ### Step 2: 本番マイグレーション
 
 ```bash
-# fly.toml に追加
-[deploy]
-  release_command = "npx prisma migrate deploy"
+# Prismaマイグレーション実行
+docker compose exec bot npx prisma migrate deploy
 
-# デプロイ時に自動実行される
-fly deploy
+# または、起動時に自動実行（package.json）
+{
+  "scripts": {
+    "start": "npx prisma migrate deploy && node .build/src/main.js"
+  }
+}
 ```
 
 ## ロールバック計画
 
 ### 問題発生時の対処
-
-```bash
-# 1. 旧バージョンにロールバック
-fly releases rollback -a guild-mng-bot
+docker compose down
+git checkout <previous-commit>
+docker compose up -d
 
 # 2. データをSQLiteに戻す（逆移行スクリプト）
 pnpm tsx scripts/migrate-to-sqlite.ts
 
+# 3. 旧docker-compose.ymlでデプロイ
+git checkout main -- docker-compose.yml
+docker compose up -d
 # 3. 旧Dockerfileでデプロイ
 git checkout main -- Dockerfile
 fly deploy
@@ -495,27 +632,33 @@ pnpm prisma generate
 ```
 
 ### データバックアップ
+Oracle Cloud上でのPostgreSQLバックアップ
+ssh -i ~/.ssh/oracle_cloud ubuntu@<INSTANCE_IP>
 
-```bash
-# Fly.ioでの定期バックアップ設定
-# fly.toml に追加（Fly Postgresは自動バックアップあり）
+# PostgreSQLバックアップ
+docker compose exec postgres pg_dump -U guild_bot guild_mng_bot > backup-$(date +%Y%m%d).sql
 
-# 手動バックアップ
+# または、docker execで直接
+docker exec guild-mng-bot-db pg_dump -U guild_bot guild_mng_bot > backup.sql
+
+# ローカルにダウンロード
+scp -i ~/.ssh/oracle_cloud ubuntu@<INSTANCE_IP>:~/backup-20260123.sql ./
 fly postgres connect -a guild-mng-bot-db
 pg_dump -Fc guild_mng_bot_dev > backup.dump
 ```
 
-## まとめ
-
-SQLite → PostgreSQL移行により：
-
-✅ **メリット**:
-- Fly.ioでの永続化対応
+##Oracle Cloud上での永続化対応
 - 型安全なデータアクセス
 - スケーラビリティ向上
 - クエリ性能向上
+- 複数Botインスタンスで共有可能
 
 ⚠️ **注意点**:
+- 移行時のダウンタイム（数分）
+- リソース消費増加（PostgreSQLコンテナ分）
+- 複雑性の増加
+
+🎯 **推奨**: Oracle Cloud Always Free内で完結。外部DBサービス（Supabase等）も選択肢
 - 移行時のダウンタイム（数分）
 - コスト増加（Fly Postgres有料）
 - 複雑性の増加

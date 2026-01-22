@@ -167,6 +167,7 @@ Discord OAuth2コールバック
 ```json
 {
   "guildId": "guild-id-1",
+  "locale": "ja",
   "afk": {
     "enabled": true,
     "voiceChannelId": "vc-afk"
@@ -216,6 +217,7 @@ Discord OAuth2コールバック
 **リクエストボディ**:
 ```json
 {
+  "locale": "en",
   "afk": {
     "enabled": true,
     "voiceChannelId": "vc-afk"

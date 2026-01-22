@@ -2,7 +2,7 @@
 
 ## 概要
 
-guild-mng-botを、Fly.ioへの自動デプロイとWebUIでの設定管理が可能なアーキテクチャへリファクタリングします。
+guild-mng-botを、Oracle Cloud Always Freeへの自動デプロイとWebUIでの設定管理が可能なアーキテクチャへリファクタリングします。
 
 ## 設計原則
 
@@ -59,7 +59,10 @@ guild-mng-bot/
 │   │   │   ├── logger.ts             # ロガー
 │   │   │   ├── errors.ts             # カスタムエラー
 │   │   │   └── index.ts
-│   │   └── locale/                   # 国際化
+│   │   └── locale/                   # 国際化（Guild別言語対応）
+│   │   │   ├── index.ts              # 言語取得ヘルパー
+│   │   │   ├── ja.ts                 # 日本語カタログ
+│   │   │   └── en.ts                 # 英語カタログ（将来）
 │   │       ├── index.ts
 │   │       └── ja.ts
 │   │
@@ -76,7 +79,8 @@ guild-mng-bot/
 ├── .github/workflows/                # CI/CD
 │   └── deploy.yml                    # 自動デプロイ
 │
-├── fly.toml                          # Fly.io設定
+├── docker-compose.yml                # Docker Compose設定
+├── Dockerfile                        # コンテナイメージ定義
 └── docs/                             # ドキュメント
 ```
 
@@ -196,6 +200,7 @@ class GuildConfigRepository {
 ```typescript
 interface GuildConfig {
   guildId: string;
+  locale: string; // 'ja' | 'en' - Guild別言語設定
   afkVoiceChannelId?: string;
   profChannelId?: string;
   vacTriggerVcIds: string[];
@@ -230,13 +235,15 @@ interface GuildConfig {
 - @fastify/helmet（セキュリティ）
 
 ### Shared Layer
-- Prisma（ORM）
+- Prisma（ORM - 将来実装）
 - Zod（バリデーション）
 - Winston（ロギング）
+- winston-daily-rotate-file（ログローテーション）
 
 ### インフラ
 - PostgreSQL（データベース）
-- Fly.io（ホスティング）
+- Oracle Cloud Always Free（ホスティング）
+- Docker + Docker Compose（コンテナ化）
 - GitHub Actions（CI/CD）
 
 ## 環境変数設計
@@ -331,8 +338,8 @@ class AuthorizationError extends AppError {}
 
 ### Phase 2: Server実装
 1. ヘルスチェックエンドポイント
-2. Fly.ioデプロイ設定
-3. CI/CD構築
+2. Oracle Cloudデプロイ設定
+3. CI/CD構築（GitHub Actions + SSH）
 
 ### Phase 3: WebUI準備
 1. REST API実装
@@ -362,9 +369,27 @@ class AuthorizationError extends AppError {}
 ## モニタリング設計
 
 ### ログ出力
-- 標準出力（Fly.io推奨）
-- JSON形式
-- リクエストID追跡
+
+**ハイブリッド方式（標準出力 + ファイル出力）**:
+
+1. **標準出力**:
+   - `docker logs` でリアルタイムモニタリング
+   - JSON形式で構造化ログ
+   - リクエストID追跡
+   - Oracle Cloudのログモニタリングと統合可能
+
+2. **ファイル出力（ローカルストレージ）**:
+   - 詳細な調査・デバッグ用
+   - 日付別ローテーション（14日保持）
+   - エラーログ別ファイル
+   - docker-compose volumeマウント（例: `./storage/logs:/app/logs`）
+   - 長期保存・バックアップ可能
+
+**ログレベル**:
+- `error`: システムエラー、予期しない例外
+- `warn`: 設定不備、非推奨機能の使用
+- `info`: 起動、シャットダウン、重要イベント
+- `debug`: 詳細なデバッグ情報（開発環境のみ）
 
 ### メトリクス（将来）
 - コマンド実行回数
@@ -372,6 +397,49 @@ class AuthorizationError extends AppError {}
 - エラー率
 - DB接続プール状態
 
+## 国際化（i18n）設計
+
+### Guild別言語対応
+
+各ギルドが独立して言語を設定できるよう、`GuildConfig`に`locale`フィールドを含めます。
+
+**実装方針**:
+1. **GuildConfigにlocale保存**: デフォルト `'ja'`
+2. **@hi18n/core使用**: 既存のi18nライブラリを継続利用
+3. **動的言語切り替え**: コマンド実行時にGuildのlocaleを取得して表示
+
+**使用例**:
+
+```typescript
+// src/shared/locale/index.ts
+import { Book } from '@hi18n/core';
+import catalogJa from './ja';
+import catalogEn from './en';
+
+export const localeBook = new Book({ ja: catalogJa, en: catalogEn });
+
+export function getLocaleForGuild(guildId: string): string {
+  // GuildConfigからlocaleを取得
+  const config = await guildConfigRepository.findByGuildId(guildId);
+  return config?.locale || 'ja'; // デフォルトは日本語
+}
+
+// Bot層での利用
+const locale = await getLocaleForGuild(interaction.guildId);
+const t = localeBook.t(locale);
+await interaction.reply(t('success'));
+```
+
+**WebUIでの言語変更**:
+- WebUI設定画面で言語ドロップダウンを表示
+- `PUT /api/guilds/:guildId/config`で`locale`を更新
+- Bot側は次回コマンド実行時に新しいlocaleを適用
+
+**対応言語**:
+- **Phase 1**: 日本語（ja）のみ
+- **Phase 2**: 英語（en）追加（将来）
+- **拡張**: 各言語カタログファイル追加で対応
+
 ## まとめ
 
-このアーキテクチャは、現在のBot機能を維持しつつ、将来のWebUI実装やKubernetes移行を見据えた拡張可能な設計です。レイヤー分離により、各機能を独立して開発・テスト・デプロイできます。
+このアーキテクチャは、現在のBot機能を維持しつつ、将来のWebUI実装やKubernetes移行を見据えた拡張可能な設計です。レイヤー分離により、各機能を独立して開発・テスト・デプロイできます。Guild別の言語設定により、多国籍サーバーでも柔軟に対応可能です。
