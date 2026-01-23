@@ -1,0 +1,89 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.ORACLE_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to Oracle Cloud
+      env:
+        ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+        ORACLE_USER: ${{ secrets.ORACLE_USER }}
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+      run: |
+        ssh $ORACLE_USER@$ORACLE_HOST << 'EOF'
+          set -e
+          cd ~/guild-mng-bot
+          
+          # Pull latest code
+          git fetch origin
+          git checkout main
+          git pull origin main
+          
+          # Update .env with secrets (preserve existing DATABASE_URL)
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+          
+          # Update environment variables
+          sed -i "s|TOKEN=.*|TOKEN=\"${{ secrets.DISCORD_TOKEN }}\"|" .env
+          sed -i "s|APP_ID=.*|APP_ID=\"${{ secrets.DISCORD_APP_ID }}\"|" .env
+          sed -i "s|LOCALE=.*|LOCALE=\"ja\"|" .env
+          
+          # Ensure DATABASE_URL is set (if not already)
+          if ! grep -q "DATABASE_URL=" .env; then
+            echo 'DATABASE_URL="sqlite://storage/db.sqlite"' >> .env
+          fi
+          
+          # Build and restart
+          docker compose down
+          docker compose build
+          docker compose up -d
+          
+          # Wait for startup
+          sleep 5
+          
+          # Check status
+          docker compose ps
+          docker compose logs --tail=50
+        EOF
+        
+    - name: Verify deployment
+      env:
+        ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+        ORACLE_USER: ${{ secrets.ORACLE_USER }}
+      run: |
+        ssh $ORACLE_USER@$ORACLE_HOST << 'EOF'
+          cd ~/guild-mng-bot
+          
+          # Check if container is running
+          if [ $(docker compose ps -q | wc -l) -eq 0 ]; then
+            echo "Error: Container is not running"
+            docker compose logs --tail=100
+            exit 1
+          fi
+          
+          echo "Deployment successful!"
+          docker compose ps
+        EOF
+        
+    - name: Cleanup SSH
+      if: always()
+      run: rm -rf ~/.ssh/id_rsa

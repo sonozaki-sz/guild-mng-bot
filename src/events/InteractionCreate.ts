@@ -1,6 +1,5 @@
 import { Events, GuildTextBasedChannel, Interaction } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
-import { discordBotKeyvs } from "../services/discordBotKeyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 

@@ -4,7 +4,9 @@
   "description": "",
   "main": ".build/src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "start": "node .build/src/main.js",
@@ -24,8 +26,11 @@
   },
   "devDependencies": {
     "@hi18n/cli": "^0.1.11",
+    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20.17.22",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.2"
   },
