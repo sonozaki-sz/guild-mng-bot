@@ -1,11 +1,13 @@
 import { Collection } from 'discord.js';
 import Keyv from 'keyv';
 
+const DATABASE_URL = process.env.DATABASE_URL || "sqlite://storage/db.sqlite";
+
 export class Keyvs {
     private readonly keyvs: Collection<string, Keyv> = new Collection();
 
     setkeyv(namespace: string) {
-        return this.keyvs.set(namespace, new Keyv("sqlite://storage/db.sqlite", { namespace: namespace }));
+        return this.keyvs.set(namespace, new Keyv(DATABASE_URL, { namespace: namespace }));
     }
 
     async deletekeyv(namespace: string) {

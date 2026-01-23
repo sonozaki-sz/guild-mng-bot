@@ -11,6 +11,7 @@ services:
       TOKEN: ${TOKEN}
       APP_ID: ${APP_ID}
       LOCALE: ${LOCALE}
+      DATABASE_URL: ${DATABASE_URL:-sqlite://storage/db.sqlite}
 volumes:
   logs:
   storage:

@@ -1,3 +1,5 @@
 {
+    "npm.packageManager": "pnpm",
+    "typescript.tsserver.log": "off",
     "todo-tree.tree.scanMode": "workspace only"
 }

@@ -1,7 +1,6 @@
 import { ChannelType, Events, VoiceState } from "discord.js";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { discordBotKeyvs } from "../services/discordBotKeyvs";
-import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -17,12 +16,6 @@ export const voiceStateUpdateEvent: BotEvent = {
                 const errorDescLog = error.stack || error.message || "unknown error";
                 const logMsg = __t("log/bot/vcAutoCreation/error", { guild: newState.guild.id, error: errorDescLog });
                 logger.error(logMsg);
-                if (error instanceof KeyvsError) {
-                    discordBotKeyvs.keyvs.setkeyv(newState.guild.id);
-                    logger.info(__t("log/keyvs/reset", { namespace: newState.guild.id }));
-                    const embed = getReplyEmbed(__t("bot/config/reset", { namespace: newState.guild.id }), ReplyEmbedType.Info);
-                    await newState.channel?.send({ embeds: [embed] });
-                }
             });
     }
 };

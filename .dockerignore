@@ -1,6 +1,30 @@
+# Git
 .git
 .gitignore
+.github
+
+# Dependencies
 node_modules
-db.sqlite
 npm-debug.logs
+
+# Build artifacts
+.build
+
+# Runtime data
+db.sqlite
+db.sqlite.corrupted
+logs
+storage
+
+# Documentation
 *.md
+docs
+
+# Development files
+.env
+.env.example
+.vscode
+.idea
+
+# Deployment
+deploy

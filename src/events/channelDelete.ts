@@ -1,7 +1,6 @@
 import { ChannelType, DMChannel, Events, GuildChannel, VoiceChannel } from "discord.js";
 import { BotEvent } from "../services/discord";
 import { discordBotKeyvs } from "../services/discordBotKeyvs";
-import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -15,10 +14,6 @@ export const channelDeleteEvent: BotEvent = {
                         const errorDesc = error.stack || error.message || "unknown error";
                         const logMsg = __t("log/bot/vcAutoCreation/error", { guild: channel.guildId, error: errorDesc });
                         logger.error(logMsg);
-                        if (error instanceof KeyvsError) {
-                            discordBotKeyvs.keyvs.setkeyv(channel.guildId);
-                            logger.info(__t("log/keyvs/reset", { namespace: channel.guildId }));
-                        }
                     });
                 break;
             }
