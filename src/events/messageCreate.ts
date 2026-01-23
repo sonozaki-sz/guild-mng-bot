@@ -2,7 +2,6 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, DiscordAPI
 import { debounce } from "lodash";
 import { BotEvent, ReplyEmbedType, getReplyEmbed } from "../services/discord";
 import { discordBotKeyvs } from "../services/discordBotKeyvs";
-import { KeyvsError } from "../services/keyvs";
 import { __t } from "../services/locale";
 import { logger } from "../services/logger";
 
@@ -13,19 +12,11 @@ export const messageCreateEvent: BotEvent = {
             .catch((error: Error) => {
                 const errorDesc = error.stack || error.message || "unknown error";
                 logger.error(__t("log/bot/bumpReminder/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
-                if (error instanceof KeyvsError) {
-                    discordBotKeyvs.keyvs.setkeyv(message.guildId!);
-                    logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
-                }
             });
 
         await debouncedExecuteStickMessage(message)?.catch((error: Error) => {
             const errorDesc = error.stack || error.message || "unknown error";
             logger.error(__t("log/bot/stickMessage/error", { guild: message.guildId!, channel: message.channelId, error: errorDesc }));
-            if (error instanceof KeyvsError) {
-                discordBotKeyvs.keyvs.setkeyv(message.guildId!);
-                logger.info(__t("log/keyvs/reset", { namespace: message.guildId! }));
-            }
         });
     }
 };

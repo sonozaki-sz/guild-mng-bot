@@ -43,8 +43,8 @@ jobs:
           fi
           
           # Update environment variables
-          sed -i "s|TOKEN=.*|TOKEN=\"${{ secrets.DISCORD_TOKEN }}\"|" .env
-          sed -i "s|APP_ID=.*|APP_ID=\"${{ secrets.DISCORD_APP_ID }}\"|" .env
+          sed -i "s|DISCORD_TOKEN=.*|DISCORD_TOKEN=\"${{ secrets.DISCORD_TOKEN }}\" |" .env
+          sed -i "s|DISCORD_APP_ID=.*|DISCORD_APP_ID=\"${{ secrets.DISCORD_APP_ID }}\" |" .env
           sed -i "s|LOCALE=.*|LOCALE=\"ja\"|" .env
           
           # Ensure DATABASE_URL is set (if not already)
@@ -54,11 +54,11 @@ jobs:
           
           # Build and restart
           docker compose down
-          docker compose build
+          docker compose build --no-cache
           docker compose up -d
           
           # Wait for startup
-          sleep 5
+          sleep 10
           
           # Check status
           docker compose ps

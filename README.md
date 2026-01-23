@@ -1,6 +1,43 @@
 # guild-mng-bot
-## 機能
-開発中。。。
+
+Discord サーバー管理Botです。
+
+## 📖 ドキュメント
+
+- **デプロイ手順**: [docs/deployment/QUICK_START.md](docs/deployment/QUICK_START.md) - Oracle Cloudへの最短デプロイ手順
+- **リファクタリング計画**: [docs/REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md)
+- **アーキテクチャ**: [docs/design/ARCHITECTURE.md](docs/design/ARCHITECTURE.md)
+
+## 🚀 クイックスタート（Oracle Cloud）
+
+### 1. GitHub Secrets設定
+
+```bash
+./scripts/show-secrets-info.sh
+```
+
+### 2. 初回デプロイ
+
+```bash
+export ORACLE_HOST="YOUR_PUBLIC_IP"
+./scripts/deploy-initial.sh
+```
+
+### 3. Bot起動
+
+```bash
+ssh ubuntu@YOUR_PUBLIC_IP
+cd ~/guild-mng-bot
+nano .env  # TOKENとAPP_IDを設定
+docker compose up -d
+```
+
+詳細: [docs/deployment/QUICK_START.md](docs/deployment/QUICK_START.md)
+
+---
+
+## 💻 ローカル開発
+
 ## 事前準備
 1. .env.exampleを参考にBotのトークンなどを記載した.envファイルをプロジェクトルートディレクトリに作成する。
 

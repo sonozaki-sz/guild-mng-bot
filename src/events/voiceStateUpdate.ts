@@ -21,29 +21,37 @@ export const voiceStateUpdateEvent: BotEvent = {
 };
 
 const executeCreateVc = async (oldState: VoiceState, newState: VoiceState) => {
+    // トリガーチャンネルが設定されていないときは何もしない
     const vacTriggerVcIds = await discordBotKeyvs.getVacTriggerVcIds(newState.guild.id);
-    const enteredTriggerVcId = vacTriggerVcIds?.find(triggerVcId => triggerVcId === newState.channelId);
-    if (!enteredTriggerVcId) return;
-    if (oldState.member && oldState.member.voice.channelId === enteredTriggerVcId) {
-        const newChannel = await newState.guild.channels.create({
-            parent: newState.channel?.parent,
-            name: `${oldState.member.displayName}'s Room`,
-            type: ChannelType.GuildVoice,
-            userLimit: 99,
-        })
-        const vacChannelIds = await discordBotKeyvs.getVacChannelIds(newState.guild.id) || <string[]>[];
-        vacChannelIds.push(newChannel.id);
-        await discordBotKeyvs.setVacChannelIds(newState.guild.id, vacChannelIds);
-        await oldState.member?.voice.setChannel(newChannel);
-        logger.info(__t("log/bot/vcAutoCreation/createChannel", { guild: newState.guild.id, channel: newChannel.id }));
-    }
+    if (!vacTriggerVcIds) return;
+    // メンバーがVCに入室していないときは何もしない
+    if (!newState.channelId) return;
+    // メンバーが入室したVCがトリガーVCでないときは何もしない
+    if (!vacTriggerVcIds.includes(newState.channelId)) return;
+
+    // 新しいVCを作成してメンバーを移動させる
+    const newChannel = await newState.guild.channels.create({
+        parent: newState.channel?.parent,
+        name: `${newState.member?.displayName}'s Room`,
+        type: ChannelType.GuildVoice,
+        userLimit: 99,
+    })
+    const vacChannelIds = await discordBotKeyvs.getVacChannelIds(newState.guild.id) || <string[]>[];
+    vacChannelIds.push(newChannel.id);
+    await discordBotKeyvs.setVacChannelIds(newState.guild.id, vacChannelIds);
+    await newState.member?.voice.setChannel(newChannel);
+    logger.info(__t("log/bot/vcAutoCreation/createChannel", { guild: newState.guild.id, channel: newChannel.id }));
 };
 
 const executeDeleteVc = async (oldState: VoiceState, newState: VoiceState) => {
+    // 自動作成したVCがないときは何もしない
     const vacChannelIds = await discordBotKeyvs.getVacChannelIds(newState.guild.id);
     if (!vacChannelIds) return;
+    // 退出したVCが自動作成されたVCでないときは何もしない
     if (!vacChannelIds.some(channelId => channelId === oldState.channelId)) return;
+    // 退出したVCにまだメンバーがいるときは何もしない
     if (oldState.channel?.members.size !== 0) return;
+    // VCを削除し、Keyvからも削除する
     oldState.channel?.delete();
     vacChannelIds.splice(vacChannelIds.indexOf(oldState.channelId!), 1);
     discordBotKeyvs.setVacChannelIds(newState.guild.id, vacChannelIds);

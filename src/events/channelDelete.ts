@@ -22,11 +22,20 @@ export const channelDeleteEvent: BotEvent = {
 };
 
 const deleteVacTriggerVc = async (channel: VoiceChannel) => {
+    // VC自動作成のトリガーVCが削除された場合、Keyvから該当VCを削除する
     const vacTriggerVcIds = await discordBotKeyvs.getVacTriggerVcIds(channel.guildId!);
     if (vacTriggerVcIds?.some(triggerVcId => triggerVcId === channel.id)) {
         vacTriggerVcIds.splice(vacTriggerVcIds.indexOf(channel.id), 1);
         await discordBotKeyvs.setVacTriggerVcIds(channel.guildId!, vacTriggerVcIds);
         logger.info(__t("log/bot/vcAutoCreation/deleteTriggerChannel", { guild: channel.guildId!, channel: channel.id }));
+    }
+
+    // 自動作成されたVCが手動削除された場合もvacChannelIdsから削除
+    const vacChannelIds = await discordBotKeyvs.getVacChannelIds(channel.guildId!);
+    if (vacChannelIds?.some(channelId => channelId === channel.id)) {
+        vacChannelIds.splice(vacChannelIds.indexOf(channel.id), 1);
+        await discordBotKeyvs.setVacChannelIds(channel.guildId!, vacChannelIds);
+        logger.info(__t("log/bot/vcAutoCreation/deleteAutoCreatedChannel", { guild: channel.guildId!, channel: channel.id }));
     }
 };
 

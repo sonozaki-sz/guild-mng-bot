@@ -1,17 +1,23 @@
-version: '3'
+version: '3.8'
 services:
-  bot:
-    image: ghcr.io/sonozakisz/guild-mng-bot:latest
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: guild-mng-bot:latest
+    container_name: guild-mng-bot
+    restart: unless-stopped
     volumes:
-      - logs:/app/logs
-      - storage:/app/storage
-    # init: true  # docker stackでは使えないので不可
-    # .envファイルではなく、環境変数を使用するが、docker-compose.ymlに直接書くのはよくないので、以下のようにする
+      - ./logs:/app/logs
+      - ./storage:/app/storage
     environment:
-      TOKEN: ${TOKEN}
-      APP_ID: ${APP_ID}
-      LOCALE: ${LOCALE}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_APP_ID: ${DISCORD_APP_ID}
+      LOCALE: ${LOCALE:-ja}
       DATABASE_URL: ${DATABASE_URL:-sqlite://storage/db.sqlite}
+    env_file:
+      - .env
+
 volumes:
   logs:
   storage:
