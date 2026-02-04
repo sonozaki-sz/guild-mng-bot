@@ -4,7 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: guild-mng-bot:latest
+    # For CI-driven deploy we publish to GHCR and pull on hosts.
+    # CI pushes to ghcr.io/sonozakiSZ/guild-mng-bot:latest
+    image: ghcr.io/sonozakiSZ/guild-mng-bot:latest
     container_name: guild-mng-bot
     restart: unless-stopped
     volumes:

@@ -28,6 +28,10 @@ jobs:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
       run: |
+        export ORACLE_HOST="${ORACLE_HOST}"
+        export ORACLE_USER="${ORACLE_USER}"
+        export DISCORD_TOKEN="${DISCORD_TOKEN}"
+        export DISCORD_APP_ID="${DISCORD_APP_ID}"
         ssh $ORACLE_USER@$ORACLE_HOST << 'EOF'
           set -e
           cd ~/guild-mng-bot
@@ -42,9 +46,9 @@ jobs:
             cp .env.example .env
           fi
           
-          # Update environment variables
-          sed -i "s|DISCORD_TOKEN=.*|DISCORD_TOKEN=\"${{ secrets.DISCORD_TOKEN }}\" |" .env
-          sed -i "s|DISCORD_APP_ID=.*|DISCORD_APP_ID=\"${{ secrets.DISCORD_APP_ID }}\" |" .env
+          # Update environment variables (use env vars to avoid embedding secrets in workflow)
+          sed -i "s|DISCORD_TOKEN=.*|DISCORD_TOKEN=\"${DISCORD_TOKEN}\" |" .env
+          sed -i "s|DISCORD_APP_ID=.*|DISCORD_APP_ID=\"${DISCORD_APP_ID}\" |" .env
           sed -i "s|LOCALE=.*|LOCALE=\"ja\"|" .env
           
           # Ensure DATABASE_URL is set (if not already)
