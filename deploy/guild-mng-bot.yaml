@@ -13,28 +13,28 @@ spec:
         app: guild-mng-bot
     spec:
       containers:
-      - name: bot
-        image: ghcr.io/sonozakisz/guild-mng-bot:latest
-        envFrom:
-        - configMapRef:
-            name: guild-mng-bot-config   
-        volumeMounts:
-        - name: logs
-          mountPath: /app/logs
-        - name: storage
-          mountPath: /app/storage
+        - name: bot
+          image: ghcr.io/sonozaki-sz/guild-mng-bot:latest
+          envFrom:
+            - configMapRef:
+                name: guild-mng-bot-config
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: storage
+              mountPath: /app/storage
       tolerations:
         - effect: NoSchedule
           key: dedicated
           operator: Equal
           value: turbine
       volumes:
-      - name: logs
-        persistentVolumeClaim:
-          claimName: logs-pvc
-      - name: storage
-        persistentVolumeClaim:
-          claimName: storage-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: logs-pvc
+        - name: storage
+          persistentVolumeClaim:
+            claimName: storage-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
